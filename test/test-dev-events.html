@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<meta name="viewport" content="initial-scale=1.0; maximum-scale=1.0"/>  
+        <title>Test Event</title>
+
+		<!-- Generic Test Includes -->
+		<script type="text/javascript" src="../js-dependencies/jquery.js" ></script>
+		<!-- /Generic Test Includes -->
+
+		<script type="text/javascript" src="../src/js/snow.core.js" ></script>
+
+
+		<style type="text/css">
+		*{
+			-webkit-tap-highlight-color: rgba(0,0,0,0);
+		}
+		#eventBox{
+				width: 400px;
+				height: 400px;
+				border: dotted 2px #777;
+				margin: 30px auto 30px auto;
+			}
+		#box1{
+			width: 100px;
+			height: 100px;
+			margin: 100px 0 0 200px;
+			border: dotted 1px #777;
+		}			
+		#eventLog{
+			width: 600px;
+			height: 300px;
+			margin: 0px auto 0 auto;
+			border: dotted 1px #333;
+			overflow: auto;
+			font-family: courier;
+			font-size: 11px;
+		}
+		</style>
+		
+
+		
+
+    </head>
+    <body>
+    	
+		<div id="eventBox">
+			
+			<div id="box1">
+				
+			</div>
+			
+		</div>
+		
+		<center><button id="clearLog">Clear</button></center>
+		<div id="eventLog">
+			
+		</div>
+		<div id="uiFlush"></div>
+		<script type="text/javascript">
+			$(function(){
+				var $eventBox = $("#eventBox");
+				var $eventLog = $("#eventLog");
+				var $uiFlush = $("#uiFlush");
+				var uiFlushCount = 0;
+				$("#eventBox").bind("touchmove",function(event){
+					event.preventDefault(); 
+					event.stopPropagation();
+				});
+				$eventBox.bind("mousemove click mousedown touchstart touchend touchmove",function(e){
+					log(e);		
+					//$uiFlush.html(uiFlushCount++);
+					//$uiFlush.css("width",uiFlushCount % 200);
+								
+				});
+				
+				$("#clearLog").click(function(){
+					$eventLog.empty();
+				});
+				
+				var logCounter = 0;
+				var lastLogInfo = null; 
+				
+				function log(e,text){
+					var logInfo = {type: e.type,
+					               targetId: e.target.id,
+								   text: text};
+					var pagePos = getEventPagePosition(e);
+					
+					var $overElem = $(document.elementFromPoint(pagePos.pageX,pagePos.pageY));
+					
+					if (lastLogInfo && logInfo.type == lastLogInfo.type && logInfo.targetId == lastLogInfo.targetId && logInfo.text == lastLogInfo.text) {
+						var $logInfo = $eventLog.children(".info:first");
+						var count = 1 * $logInfo.attr("data-count") + 1;
+						$logInfo.attr("data-count",count) 
+						if (count == 2){
+							$logInfo.children(".targetId:first").after("<span class='count'> - " + count + "</span>");
+						}else{
+							$logInfo.children(".count:first").text(" (" +  count + ")" );
+						}
+						
+						$logInfo.children(".pagePos:first").text("" + pagePos.pageX + "," + pagePos.pageY + " " + $overElem.attr("id"));
+					}
+					
+					else {
+						var h = ["<div class='info' data-count='1'>"];
+						h.push("<span class='counter'>" + (logCounter++) + "</span>");
+						h.push("<span class='eventName'> - " + logInfo.type + "</span>");
+						h.push("<span class='targetId'> - " + logInfo.targetId + "</span>");
+						
+						if (e.type.indexOf("touch") > -1){
+							
+							h.push("  <span class='touch'> {touchevent " + e.originalEvent.touches.length  + "} </span>");
+						}
+						
+						if (logInfo.text) {
+							h.push("  <span class='info'>" + logInfo.text + "</span>");
+						}
+						
+						h.push("  <span class='pagePos'>" + pagePos.pageX + "," + pagePos.pageY + "</span>");
+						h.push("</div>");
+						$eventLog.prepend(h.join(""));
+					}
+					lastLogInfo = logInfo;
+				}
+				
+				function getEventPagePosition(event){
+					var pageX, pageY;
+					if (event.originalEvent.touches){
+						pageX = event.originalEvent.touches[0].pageX;
+						pageY = event.originalEvent.touches[0].pageY;
+					}else{
+						pageX = event.pageX;
+						pageY = event.pageY;
+					}
+					return {
+						pageX: pageX,
+						pageY: pageY
+					}
+				}
+			});
+		</script>
+    </body>
+</html>

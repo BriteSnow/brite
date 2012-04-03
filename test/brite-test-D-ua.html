@@ -1,0 +1,57 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>briteUITest - brite.ua</title>
+
+		<!-- Generic Test Includes -->
+		<link rel="stylesheet" href="css/sTestHelper.css"/>
+		<script type="text/javascript" src="../js-dependencies/jquery.js" ></script>
+		<script type="text/javascript" src="js/sTestHelper.js" ></script>
+		<script type="text/javascript">
+		$(function(){
+			showTestSources();
+		});
+		</script>
+		<!-- /Generic Test Includes -->
+
+
+		<script type="text/javascript" src="../src/js/brite.core.js" ></script>
+    </head>
+    <body>
+        <h2>Has Functionality</h2>
+		
+		<p><strong>brite.ua.hasTouch()</strong> <span id="hasTouch"></span> </p>
+		
+		<p><strong>brite.ua.hasTransition()</strong> <span id="hasTransition"></span></p>
+		
+		<p><strong>brite.ua.hasCanvas()</strong> <span id="hasCanvas"></span></p>
+		
+		<p><strong>brite.ua.cssHas()</strong> <span id="cssHas"></span> </p>
+		
+		<p><strong>brite.ua.cssHasNo()</strong> <span id="cssHasNo"></span> </p>
+		
+		<p><strong>brite.ua.supportsEvent("mouseover")</strong> <span id="supportsMouseover"></span></p>
+		
+		
+		<p><strong>brite.ua.transitionPrefix()</strong> <span id="transitionPrefix"></span></p>
+		
+		<script type="text/javascript">
+			$(function(){
+				$("#hasTouch").html("" + brite.ua.hasTouch());
+				
+				$("#hasTransition").html("" + brite.ua.hasTransition());
+				
+				$("#hasCanvas").html("" + brite.ua.hasCanvas());
+				
+				$("#cssHas").html("" + brite.ua.cssHas());
+				
+				$("#cssHasNo").html("" + brite.ua.cssHasNo());
+				
+				$("#supportsMouseover").html("" + brite.ua.supportsEvent("mouseover"));
+				
+				$("#transitionPrefix").html("" + brite.ua.transitionPrefix());
+			});
+		</script>
+    </body>
+</html>

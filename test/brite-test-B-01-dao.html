@@ -1,0 +1,197 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>briteUITest - brite.dm</title>
+
+		<!-- Generic Test Includes -->
+		<link rel="stylesheet" href="css/sTestHelper.css"/>
+		<script type="text/javascript" src="../js-dependencies/jquery.js" ></script>
+		<script type="text/javascript" src="js/sTestHelper.js" ></script>
+		<script type="text/javascript">
+		$(function(){
+			showTestSources();
+		});
+		</script>
+		<!-- /Generic Test Includes -->
+
+		<script type="text/javascript" src="../src/js/brite.core.js" ></script>
+		<script type="text/javascript" src="../src/js/brite.dm.js" ></script>
+		
+		<style type="text/css">
+			.action{
+				color: #5588bb;
+				cursor: pointer;
+			}
+			
+			#userList{
+				width: 400px;
+			}
+			#userList li{
+				list-style: none;
+				margin-bottom: 3px;
+				border: solid 1px #aaaaaa;
+				padding: 3px 5px;
+				
+			}
+			
+			#userList li .name{
+				display: inline-block;
+				margin-right: 10px;
+			}
+			
+			#userList li .city{
+				color: #777777;
+			}
+			
+			#userList li .del{
+				font-family: courier;
+				font-size: 14px;
+				float: right;
+				cursor: pointer;
+				color: #555555;
+			}
+		
+		</style>
+		
+
+		
+
+    </head>
+    <body>
+    	<div class="sTestSection">
+	        <h2>Simple User Dao CRUD using the brite Deferred Data Manager (brite.dm)</h2>
+
+			<div class="sTestSrc sTestShowSrc">
+				
+				<h3>Create new User (<span class='action' id="resetStore">Reset</span>) (<span class='action' id="removeAll">Remove All</span> )</h3>
+				<div>User Name: <input id="userNameIpt" type="text" /> City: <input id="userCityIpt" type="text" /> <button id="userCreateBut">Create</button></div>
+				
+	
+				<h3>User List</h3>
+				<ul id="userList">
+				</ul>
+				
+				<!-- Simple User CRUD UI Logic -->
+				<script type="text/javascript">
+				
+				$(function(){
+					var $userList = $("#userList");
+					
+					// Initialize the UI component
+					updateUserListDiv();
+					
+					// Update the userListDiv on change
+					brite.addDataChangeListener("user",function(daoChangeEvent){
+						updateUserListDiv();
+					});
+					
+					// register a dao listener
+					
+					brite.addDaoListener(function(daoEvent){
+						if (daoEvent.objectType === "user" && daoEvent.action === "resetStore"){
+							console.log("Refreshing UI since user store has been reset");
+							updateUserListDiv();				
+						}
+					});
+										
+					// --- Delete User --- //
+					$userList.delegate(".del","click",function(){
+						// get the user objRef that this html element belong to.
+						var objRef = $(this).bObjRef("user");
+						if (objRef){
+							brite.dm.remove("user",objRef.id).done(function(){
+								// here the remove
+							});
+						}
+					});
+					// --- /Delete User --- //
+					
+					// --- Create User --- //
+					$("#userCreateBut").click(function(){
+						brite.dm.create("user",{name: $("#userNameIpt").val(),
+											 city: $("#userCityIpt").val()});
+						
+						//clean the input and focus
+						$("#userNameIpt").val("").focus();
+						$("#userCityIpt").val("");
+						
+					});
+					// --- /Create User --- //
+					
+					// reset store
+					$("#resetStore").click(function(){
+						brite.dm.invoke("resetStore","user");
+					});
+					
+					$("#removeAll").click(function(){
+						brite.dm.invoke("resetStore","user",true);
+					});
+					
+					//TODO: support for Edit user
+				});
+				
+				function updateUserListDiv(){
+					brite.dm.list("user").done(function(userList){
+						var user, 
+					    i,
+						$userList = $("#userList");
+					
+						//clean the list
+						$userList.empty();
+						
+						for (i = 0; i < userList.length; i++) {
+							user = userList[i];
+							$li = $("<li></li>");
+							$li.attr("data-obj_type", "user");
+							$li.attr("data-obj_id", user.id);
+							
+							//Note: The 'name' and 'city' class are just for css layout
+							//      The 'del' class is use for delegate
+							$li.append("<span class='name'>" + user.name + "</span>" +
+							           "<span class='city'>(" + user.city + ")</span>" + 
+									   "<span class='del'>x</span>" );
+							$userList.append($li);
+						}						
+					});
+				}
+				</script>
+				<!--  /Simple User CRUD UI Logic -->
+				
+				<!-- User Dao -->
+				<script type="text/javascript">		
+					var userStore = [{id:"001",name:"Mike",city:"San Francisco"}];
+					
+					// register the brite simple DAO
+					//brite.registerDao("user",new brite.dao.SimpleDao(userStore));
+					
+					// doing an extension
+					function ExtendedSimpleDao(store){
+						this._super.constructor.call(this,store);
+					};
+					brite.util.inherit(ExtendedSimpleDao,brite.dao.SimpleDao);
+					
+					// custom dao
+					ExtendedSimpleDao.prototype.resetStore = function(objectType, empty){
+						
+						if (empty){
+							this._super.init.call(this,[]);
+						}else{
+							this._super.init.call(this,userStore.slice(0));	
+						}
+							
+						
+						return "any returned value";
+					}
+					
+					
+					// close the userStore and set it as the store of this DAO
+					brite.registerDao("user",new ExtendedSimpleDao(userStore.slice(0)));
+
+				</script>
+				<!-- /User Dao -->
+				
+			</div> <!-- .sTestShowSrc -->			
+		</div> <!-- .sTestSection -->
+    </body>
+</html>

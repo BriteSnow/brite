@@ -1,0 +1,83 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>briteUITest - brite</title>
+
+		<!-- Generic Test Includes -->
+		<link rel="stylesheet" href="css/sTestHelper.css"/>
+		<script type="text/javascript" src="../js-dependencies/jquery.js" ></script>
+		<script type="text/javascript" src="js/sTestHelper.js" ></script>
+		<script type="text/javascript">
+		$(function(){
+			showTestSources();
+		});
+		</script>
+		<!-- /Generic Test Includes -->
+
+		<!-- We are using jQuery Render here, but can use any templating engine -->
+		<script type="text/javascript" src="../js-dependencies/jquery.render.js" ></script>
+		
+		<script type="text/javascript" src="../src/js/brite.core.js" ></script>
+		
+		<script type="text/javascript" src="js/HelloComponent.js"></script>		
+		
+    </head>
+    <body>
+    	<div class="sTestSection">
+	        <h2>brite Transition</h2>
+
+			<div class="sTestSrc sTestShowSrc">
+				
+				<!-- Here we override the config with the transition:'wipe' -->
+				<button onclick="brite.display('HelloComponent',{name:'Mike'},{transition:'wipe'})">Display Hello World</button>
+				
+				
+				<div id="HelloWorld-Container" style="margin: 30px;border: solid 1px #dddddd;height: 30px;overflow:hidden;position:relative;">
+					
+				</div>
+				
+				<!-- Transition -->
+				<!-- This is a reusable transition for any components that use the transition "wipe" -->
+				<script type="text/javascript">
+					brite.registerTransition("wipe",function(component,data,config){
+						//This is new 
+						var $new = component.$element;
+						
+						var $parent = $(config.parent);
+						var $old = $parent.children();
+						
+						//if we have already some elements, then, do the animation
+						if ($old.length > 0) {
+							$old.animate({
+								left: "300px",
+								opacity: "0"
+							}, 500, function(){
+								// make sure to call sRemove so that the component lifecyle get removed
+								$old.bRemove();
+							});
+						}
+						
+						$new.css({
+							left: "-200px"
+						});
+						
+						$parent.append($new);
+						
+						$new.animate({
+							left: "0px"
+						});
+						
+						
+								
+					});
+				</script>
+				<!-- /Transition -->				
+				
+				
+
+				
+			</div> <!-- .sTestShowSrc -->			
+		</div> <!-- .sTestSection -->
+    </body>
+</html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>briteUITest - brite</title>
+
+		<!-- jQuery is the only required library in Snow -->
+		<script type="text/javascript" src="../js-dependencies/jquery.js" ></script>
+		
+		
+		<!-- Generic Test Includes -->
+		<link rel="stylesheet" href="css/sTestHelper.css"/>
+		<script type="text/javascript" src="js/sTestHelper.js" ></script>
+		<script type="text/javascript">
+		$(function(){
+			showTestSources();
+		});
+		</script>
+		<!-- /Generic Test Includes -->
+
+		<!-- Utility Lib -->
+		<script type="text/javascript" src="../js-dependencies/jquery.render.js" ></script>
+		
+		
+		<!-- brite core lib -->
+		<script type="text/javascript" src="../src/js/brite.core.js" ></script>
+		
+		
+		<!-- DialogPrompt Resources -->
+		<script type="text/javascript" src="js/DialogPrompt.js" ></script>
+		<link rel="stylesheet" href="css/DialogPrompt.css"/>
+		<!-- /DialogPrompt Resources -->
+
+    </head>
+    <body>
+    	<div class="sTestSection">
+	        <h2>brite Dialog</h2>
+
+			<div class="sTestSrc sTestShowSrc">
+				
+				<h3>Dialog</h3>
+				
+				<button id="promptBut">Continue</button>
+				
+				
+				<div id="promptAnswer" style="margin: 30px;border: solid 1px #dddddd;height: 30px;overflow:hidden;position:relative;">
+				</div>
+				
+				
+				<script type="text/javascript">
+          $(document).ready(function() {
+            $("#promptBut").click(function() {
+
+              // Note: brite.display always return a jQuery Deferred that will get resolved with the component instance
+
+              var dfd = brite.display('DialogPrompt', {
+                title : 'Test Dialog',
+                prompt : 'Are you sure you want to continue?'
+              });
+
+              dfd.done(function(dialog) {
+                dialog.onAnswer(function(result) {
+                  $("#promptAnswer").text("You answered: " + result);
+                });
+              });
+
+            });
+
+          });
+
+				</script>			
+			</div> <!-- .sTestShowSrc -->			
+		</div> <!-- .sTestSection -->
+    </body>
+</html>

@@ -1,0 +1,80 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>briteUITest - brite.ua</title>
+
+		<!-- Generic Test Includes -->
+		<link rel="stylesheet" href="css/sTestHelper.css"/>
+		<script type="text/javascript" src="../js-dependencies/jquery.js" ></script>
+		<script type="text/javascript" src="js/sTestHelper.js" ></script>
+		<script type="text/javascript">
+		$(function(){
+			showTestSources();
+		});
+		</script>
+		<!-- /Generic Test Includes -->
+	    
+		<script type="text/javascript" src="../src/js/brite.core.js" ></script>
+		<script type="text/javascript" src="../src/js/brite.event.js" ></script>
+		
+		<style>
+			.button{
+				display: inline-block;
+				padding: 5px 10px;
+				margin: 0 10px 0 0;
+				border: solid 1px #333333;
+				background: #e0e0e0;
+				color: #333333;
+				cursor: pointer;
+			}
+			.button.on{
+				background: #e0ffe0;
+			}
+		</style>
+		
+    </head>
+    <body>
+    	<p>UserAgent with touch events will use the "touchstart" event, others will use the tranditional "click" event.</p>
+		
+        <h2>Single bTouch bind</h2>
+		<div class="sTestSrc sTestShowSrc">
+		
+		
+		<div id="touchButton" class="button">Click me</div>
+		<div id="touchButtonResult"></div>
+		
+		
+		<script type="text/javascript">
+			$(function(){
+				var count = 0;
+				$("#touchButton").bTouch(function(){
+					$(this).toggleClass("on");
+				});
+				
+			});
+		</script>
+		</div>
+		
+		<h2>Deleguate bTouch</h2>
+		<div class="sTestSrc sTestShowSrc">
+			<div id="touchButtons">
+				<div class="button">Click me</div><div class="button">Click me too</div><div class="button">Me too</div>
+			</div>
+			
+			<script type="text/javascript">
+			$(function(){
+				
+				var count = 0;
+				$("#touchButtons").bTouch(".button",function(){
+					$(this).toggleClass("on");
+				});
+				
+			});
+		</script>			
+		</div>
+		
+		
+		
+    </body>
+</html>
