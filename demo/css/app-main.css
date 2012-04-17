@@ -1,0 +1,22 @@
+html{
+  height: 100%;
+}
+
+body{
+  overflow: hidden;
+  background: #ffddff;
+  background-image: url(images/bg2.jpg);
+  background-size: 100% ; 
+  background-attachment: fixed;
+  
+  font-family: "helvetica neue",helvetica,arial,sans-serif;
+  font-size: 100%;
+}
+
+.cb{
+  clear: both;
+}
+
+
+
+

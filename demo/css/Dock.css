@@ -1,0 +1,68 @@
+.Dock{
+  position: absolute;
+  bottom: 2px;
+  left: 10%;
+  right: 10%;
+  height:60px; 
+}
+
+.Dock-bar{
+   position: absolute;
+   right: 0; bottom: 0; left: 0;
+   height: 30px; 
+   z-index: -1;
+}
+
+.Dock-bar canvas{
+  position: absolute;
+}   
+
+.Dock-items{
+  position: absolute;
+  top: 0; right: 0; bottom: 0; left: 0;
+  margin: 0 40px 0px 40px;
+}
+
+.Dock-item{
+  float: left; 
+  position: relative;
+  margin: 0 10px 20px 10px; 
+  width: 48px;
+  height: 48px;
+  -webkit-transition: all .2s; /* Safari and Chrome */
+}
+
+
+
+.Dock-item > img{
+  position: absolute;
+  top: 0; left: 0;
+  -webkit-transition: all .2s; /* Safari and Chrome */
+  width: 48px;
+  height: 48px;
+  z-index: 100;
+}
+
+.Dock-item > label{
+  display: none;
+  position: absolute;
+  top: -1.2em; left: 0; right: 0;
+  color: #fff;  
+  text-align: center;
+}
+
+.Dock-item:hover > label{
+  display: block;
+}
+
+.Dock-item:hover > img{
+  width: 64px;
+  height: 64px;
+}
+
+.Dock-item:hover{
+  width: 64px;
+  height: 64px;
+  margin-left: 2px;
+  margin-top: -8px; 
+}

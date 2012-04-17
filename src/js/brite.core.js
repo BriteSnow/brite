@@ -1,6 +1,8 @@
 //TODO: needs to make it "reload safe"
 var brite = brite || {};
 
+brite.version = "0.8";
+
 // ---------------------- //
 // ------ brite ------ //
 

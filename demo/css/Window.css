@@ -1,0 +1,53 @@
+.Window{
+  position: absolute;
+  width: 500px;
+  height: 500px;
+  border: solid 1px #b8b8b8;
+  -webkit-border-top-left-radius: 5px;
+  -webkit-border-top-right-radius: 5px;
+  background: #fff;
+  -webkit-transform-style: preserve-3d;
+  opacity: .6;
+  z-index: 100;
+}
+
+.Window-active{
+  z-index: 1000;
+  opacity: 1;
+}
+
+.Window-header{
+  position: relative;
+  cursor: pointer;
+  background: -webkit-gradient(linear, left top, left bottom, from(#cfcfcf), to(#afafaf));
+  height: 18px;
+  padding: 5px;
+  color: #333;
+  -webkit-border-top-left-radius: 5px;
+  -webkit-border-top-right-radius: 5px;
+  
+}
+
+.Window-header > h2{
+  padding: 0;
+  margin: 0;
+  font-size: 1.1em;
+  letter-spacing: .1em;
+  margin-top: -5px;
+  margin-left: 25px;
+}
+
+
+.Window-content{
+  position: absolute;
+  top: 30px; right: 0; bottom: 0; left: 0;
+}
+
+.Window-resizeHandle{
+  position: absolute;
+  right: 0; bottom: 0; 
+  width: 32px;
+  height: 32px;
+  background: red;
+}
+  

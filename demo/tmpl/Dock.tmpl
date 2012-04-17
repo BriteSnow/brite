@@ -1,0 +1,12 @@
+<script id="tmpl-Dock" type="text/html">
+  <div class="Dock">
+     <div class="Dock-bar">
+       <canvas></canvas>
+     </div>
+     <div class="Dock-items">
+      {{for apps}}
+      <div class="Dock-item"><img class="Dock-item-ico" src="images/app-ico-info.png" ></i><label>{{:title}}</label></div>
+      {{/for}}
+     </div>
+  </div>
+</script>
