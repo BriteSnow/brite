@@ -67,7 +67,7 @@ brite.dm = {};
 	 * @returns listenerId that can be used to remove the listener with brite.removeDaoListener(listenerId)
 	 */
 	brite.addDaoListener = function(daoListener){
-		var listenerId = brite.util.uuid();
+		var listenerId = brite.uuid();
 		daoListeners[listenerId] = daoListener;
 		
 		return listenerId;
@@ -90,7 +90,7 @@ brite.dm = {};
 	 * dataChangeEvent.saveData {object} The data object that was used to do the create/update. Could be partial object.  (if applicable) (TODO: need to clarify)
 	 */
 	brite.addDataChangeListener = function(objectType, listener) {
-		var bindingId = brite.util.uuid();
+		var bindingId = brite.uuid();
 		var listeners = daoChangeEventListeners[objectType];
 		if (!listeners) {
 			listeners = {};
@@ -386,7 +386,7 @@ brite.dao = {};
 	}
 
 	SimpleDao.prototype.get = function(objectType, id) {
-		var idx = brite.util.array.getIndex(this._store, "id", id);
+		var idx = brite.array.getIndex(this._store, "id", id);
 		return this._store[idx];
 	}
 
@@ -397,7 +397,7 @@ brite.dao = {};
 
 		if (opts) {
 			if (opts.orderBy) {
-				resultSet = brite.util.array.sortBy(resultSet, opts.orderBy)
+				resultSet = brite.array.sortBy(resultSet, opts.orderBy)
 			}
 			if (opts.match) {
 				resultSet = $.map(resultSet, function(val, idx) {
@@ -430,7 +430,7 @@ brite.dao = {};
 
 		}
 
-		data[idName] = brite.util.uuid(12);
+		data[idName] = brite.uuid(12);
 
 		this._store.push(data);
 
@@ -460,9 +460,9 @@ brite.dao = {};
 
 	SimpleDao.prototype.remove = function(objectType, id) {
 		var oldData = this.get(objectType, id);
-		var idx = brite.util.array.getIndex(this._store, "id", id);
+		var idx = brite.array.getIndex(this._store, "id", id);
 		if (idx > -1) {
-			brite.util.array.remove(this._store, idx);
+			brite.array.remove(this._store, idx);
 		} else {
 			var er = "SimpleDao.remove error: Ojbect " + objectType + "[" + id + "] not found. Cannot delete.";
 			brite.log.debug(er);
@@ -499,7 +499,7 @@ brite.dao = {};
 		}
 	}
 
-	brite.util.inherit(SimpleRelDao, brite.dao.SimpleDao);
+	brite.inherit(SimpleRelDao, brite.dao.SimpleDao);
 
 	SimpleRelDao.prototype.get = function(objectType, id) {
 		var result = this._super.get.call(this, objectType, id);

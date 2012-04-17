@@ -1,7 +1,7 @@
 //TODO: needs to make it "reload safe"
 var brite = brite || {};
 
-brite.version = "0.8";
+brite.version = "0.9";
 
 // ---------------------- //
 // ------ brite ------ //
@@ -837,8 +837,8 @@ brite.util = {};
 	 * Code from: Math.uuid 2010 Robert Kieffer http://www.broofa.com
 	 * 
 	 * 
-	 * @example brite.util.uuid(); // returns "92329D39-6F5C-4520-ABFC-AAB64544E172" brite.util.uuid(15); // 15
-	 *          character ID (default base=62), returns "VcydxgltxrVZSTV" brite.util.uuid(8, 2); // returns "01001010"
+	 * @example brite.uuid(); // returns "92329D39-6F5C-4520-ABFC-AAB64544E172" brite.uuid(15); // 15
+	 *          character ID (default base=62), returns "VcydxgltxrVZSTV" brite.uuid(8, 2); // returns "01001010"
 	 * 
 	 * @param {Number}
 	 *            len (optional) length in char of the returned random ID. If absent, the standard UUID format will be
@@ -846,7 +846,7 @@ brite.util = {};
 	 * @param {Number}
 	 *            radix (optional) radix of the random number. (Default: 62)
 	 */
-	brite.util.uuid = function(len, radix) {
+	brite.uuid = function(len, radix) {
 		var chars = CHARS, uuid = [];
 		radix = radix || chars.length;
 		len = len || 10;
@@ -865,10 +865,10 @@ brite.util = {};
 	 * @param {String}
 	 *            pathToValue this is the "." delimited path to the value
 	 * 
-	 * @example brite.util.value({contact:{firstName:"Mike"}},"contact.firstName"); // return Mike
+	 * @example brite.value({contact:{firstName:"Mike"}},"contact.firstName"); // return Mike
 	 * 
 	 */
-	brite.util.value = function(rootObj, pathToValue) {
+	brite.value = function(rootObj, pathToValue) {
 		if (!rootObj) {
 			return rootObj;
 		}
@@ -897,7 +897,7 @@ brite.util = {};
 	 * 
 	 * Array utilities
 	 */
-	brite.util.array = {
+	brite.array = {
 
 		/**
 		 * Remove item(s) from an array. <br />
@@ -967,7 +967,7 @@ brite.util = {};
 		 * value is the array item. If the propName does not on an item exist, it will ingore the item.
 		 * 
 		 * @example var myVehicules = [{id:"truck",speed:80},{id:"racecar",speed:200}]; var vehiculeById =
-		 *          brite.util.array.toMap(myVehicules,"id"); // vehiculeById["truck"].speed == 80
+		 *          brite.array.toMap(myVehicules,"id"); // vehiculeById["truck"].speed == 80
 		 * @param {Object}
 		 *            a The array
 		 * @param {Object}
@@ -995,13 +995,13 @@ brite.util = {};
 	 * @param {Object}
 	 *            to
 	 */
-	brite.util.randomInt = function(from, to) {
+	brite.randomInt = function(from, to) {
 		var offset = to - from;
 		return from + Math.floor(Math.random() * (offset + 1));
 	}
 
 	// from the "JavaScript Pattern" book
-	brite.util.inherit = function(C, P) {
+	brite.inherit = function(C, P) {
 		var F = function() {
 		};
 		F.prototype = P.prototype;

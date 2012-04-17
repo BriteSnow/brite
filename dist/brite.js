@@ -1,7 +1,7 @@
 //TODO: needs to make it "reload safe"
 var brite = brite || {};
 
-brite.version = "0.8";
+brite.version = "0.9";
 
 // ---------------------- //
 // ------ brite ------ //
@@ -837,8 +837,8 @@ brite.util = {};
 	 * Code from: Math.uuid 2010 Robert Kieffer http://www.broofa.com
 	 * 
 	 * 
-	 * @example brite.util.uuid(); // returns "92329D39-6F5C-4520-ABFC-AAB64544E172" brite.util.uuid(15); // 15
-	 *          character ID (default base=62), returns "VcydxgltxrVZSTV" brite.util.uuid(8, 2); // returns "01001010"
+	 * @example brite.uuid(); // returns "92329D39-6F5C-4520-ABFC-AAB64544E172" brite.uuid(15); // 15
+	 *          character ID (default base=62), returns "VcydxgltxrVZSTV" brite.uuid(8, 2); // returns "01001010"
 	 * 
 	 * @param {Number}
 	 *            len (optional) length in char of the returned random ID. If absent, the standard UUID format will be
@@ -846,7 +846,7 @@ brite.util = {};
 	 * @param {Number}
 	 *            radix (optional) radix of the random number. (Default: 62)
 	 */
-	brite.util.uuid = function(len, radix) {
+	brite.uuid = function(len, radix) {
 		var chars = CHARS, uuid = [];
 		radix = radix || chars.length;
 		len = len || 10;
@@ -865,10 +865,10 @@ brite.util = {};
 	 * @param {String}
 	 *            pathToValue this is the "." delimited path to the value
 	 * 
-	 * @example brite.util.value({contact:{firstName:"Mike"}},"contact.firstName"); // return Mike
+	 * @example brite.value({contact:{firstName:"Mike"}},"contact.firstName"); // return Mike
 	 * 
 	 */
-	brite.util.value = function(rootObj, pathToValue) {
+	brite.value = function(rootObj, pathToValue) {
 		if (!rootObj) {
 			return rootObj;
 		}
@@ -897,7 +897,7 @@ brite.util = {};
 	 * 
 	 * Array utilities
 	 */
-	brite.util.array = {
+	brite.array = {
 
 		/**
 		 * Remove item(s) from an array. <br />
@@ -967,7 +967,7 @@ brite.util = {};
 		 * value is the array item. If the propName does not on an item exist, it will ingore the item.
 		 * 
 		 * @example var myVehicules = [{id:"truck",speed:80},{id:"racecar",speed:200}]; var vehiculeById =
-		 *          brite.util.array.toMap(myVehicules,"id"); // vehiculeById["truck"].speed == 80
+		 *          brite.array.toMap(myVehicules,"id"); // vehiculeById["truck"].speed == 80
 		 * @param {Object}
 		 *            a The array
 		 * @param {Object}
@@ -995,13 +995,13 @@ brite.util = {};
 	 * @param {Object}
 	 *            to
 	 */
-	brite.util.randomInt = function(from, to) {
+	brite.randomInt = function(from, to) {
 		var offset = to - from;
 		return from + Math.floor(Math.random() * (offset + 1));
 	}
 
 	// from the "JavaScript Pattern" book
-	brite.util.inherit = function(C, P) {
+	brite.inherit = function(C, P) {
 		var F = function() {
 		};
 		F.prototype = P.prototype;
@@ -1515,7 +1515,7 @@ brite.dm = {};
 	 * @returns listenerId that can be used to remove the listener with brite.removeDaoListener(listenerId)
 	 */
 	brite.addDaoListener = function(daoListener){
-		var listenerId = brite.util.uuid();
+		var listenerId = brite.uuid();
 		daoListeners[listenerId] = daoListener;
 		
 		return listenerId;
@@ -1538,7 +1538,7 @@ brite.dm = {};
 	 * dataChangeEvent.saveData {object} The data object that was used to do the create/update. Could be partial object.  (if applicable) (TODO: need to clarify)
 	 */
 	brite.addDataChangeListener = function(objectType, listener) {
-		var bindingId = brite.util.uuid();
+		var bindingId = brite.uuid();
 		var listeners = daoChangeEventListeners[objectType];
 		if (!listeners) {
 			listeners = {};
@@ -1834,7 +1834,7 @@ brite.dao = {};
 	}
 
 	SimpleDao.prototype.get = function(objectType, id) {
-		var idx = brite.util.array.getIndex(this._store, "id", id);
+		var idx = brite.array.getIndex(this._store, "id", id);
 		return this._store[idx];
 	}
 
@@ -1845,7 +1845,7 @@ brite.dao = {};
 
 		if (opts) {
 			if (opts.orderBy) {
-				resultSet = brite.util.array.sortBy(resultSet, opts.orderBy)
+				resultSet = brite.array.sortBy(resultSet, opts.orderBy)
 			}
 			if (opts.match) {
 				resultSet = $.map(resultSet, function(val, idx) {
@@ -1878,7 +1878,7 @@ brite.dao = {};
 
 		}
 
-		data[idName] = brite.util.uuid(12);
+		data[idName] = brite.uuid(12);
 
 		this._store.push(data);
 
@@ -1908,9 +1908,9 @@ brite.dao = {};
 
 	SimpleDao.prototype.remove = function(objectType, id) {
 		var oldData = this.get(objectType, id);
-		var idx = brite.util.array.getIndex(this._store, "id", id);
+		var idx = brite.array.getIndex(this._store, "id", id);
 		if (idx > -1) {
-			brite.util.array.remove(this._store, idx);
+			brite.array.remove(this._store, idx);
 		} else {
 			var er = "SimpleDao.remove error: Ojbect " + objectType + "[" + id + "] not found. Cannot delete.";
 			brite.log.debug(er);
@@ -1947,7 +1947,7 @@ brite.dao = {};
 		}
 	}
 
-	brite.util.inherit(SimpleRelDao, brite.dao.SimpleDao);
+	brite.inherit(SimpleRelDao, brite.dao.SimpleDao);
 
 	SimpleRelDao.prototype.get = function(objectType, id) {
 		var result = this._super.get.call(this, objectType, id);
@@ -2248,7 +2248,7 @@ brite.event = brite.event || {};
             var $elem = $(this);
             
             var $document = $(document);
-            var id = "_" + brite.util.uuid(7);
+            var id = "_" + brite.uuid(7);
             
             var dragStarted = false;
             var startEvent = e;

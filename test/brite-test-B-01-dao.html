@@ -169,7 +169,7 @@
 					function ExtendedSimpleDao(store){
 						this._super.constructor.call(this,store);
 					};
-					brite.util.inherit(ExtendedSimpleDao,brite.dao.SimpleDao);
+					brite.inherit(ExtendedSimpleDao,brite.dao.SimpleDao);
 					
 					// custom dao
 					ExtendedSimpleDao.prototype.resetStore = function(objectType, empty){

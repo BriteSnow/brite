@@ -181,7 +181,7 @@ brite.event = brite.event || {};
             var $elem = $(this);
             
             var $document = $(document);
-            var id = "_" + brite.util.uuid(7);
+            var id = "_" + brite.uuid(7);
             
             var dragStarted = false;
             var startEvent = e;
