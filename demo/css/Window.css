@@ -32,8 +32,9 @@
   padding: 0;
   margin: 0;
   font-size: 1.1em;
+  line-height: 1em;
   letter-spacing: .1em;
-  margin-top: -5px;
+  margin-top: -2px;
   margin-left: 25px;
 }
 

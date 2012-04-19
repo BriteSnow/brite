@@ -238,6 +238,7 @@ brite.version = "0.9-snapshot";
 		// if the component is not loaded, load it
 		else {
 			var currentLoaderDeferred = _deferredByComponentName[name];
+			console.log("loadComponent failed : " + name);
 			// if there is already a loading going on, replace the loaderDeferred to be returned by the
 			// currentLoaderDeferred
 			if (currentLoaderDeferred) {
@@ -271,7 +272,7 @@ brite.version = "0.9-snapshot";
 		processPromise.whenCreate = createDeferred.promise();
 		processPromise.whenInit = initDeferred.promise();
 		processPromise.whenPostDisplay = postDisplayDeferred.promise();
-
+    
 		loaderDeferred.done(function(componentDef) {
 			config = buildConfig(componentDef, config);
 			var component = instantiateComponent(componentDef);

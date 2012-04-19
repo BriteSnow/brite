@@ -16,7 +16,9 @@ var demo = demo || {};
     var windowInfo = {
       header : appInfo.title
     }
-
+    if (appInfo.name){
+      windowInfo.componentName = appInfo.name;
+    }
     // NOTE: for now, just assume a single Demo container
     brite.display("Window", windowInfo, {
       parent : $(".Demo:first")

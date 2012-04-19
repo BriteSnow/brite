@@ -5,32 +5,31 @@
     
     <title>Brite - Demo</title>
 
-    <link rel="stylesheet" href="boostrap/css/boostrap.min.css" />
-    <link rel="stylesheet" href="boostrap/css/boostrap-responsive.min.css" />
+    <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="bootstrap/css/bootstrap-responsive.min.css" />
 
     <link rel="stylesheet" href="css/app-main.css" />
     <link rel="stylesheet" href="css/app-icons.css" />
     
     <script type="text/javascript" src="../js-dependencies/jquery.js" ></script>
-    <script type="text/javascript" src="../dist/brite.js" ></script>
     
+    <!-- Including brite, usually should include brite.min.js or brite.js, 
+         but here we load the individual source files to ease brite development -->
+    <script type="text/javascript" src="../src/js/brite.core.js" ></script>
+    <script type="text/javascript" src="../src/js/brite.dm.js" ></script>
+    <script type="text/javascript" src="../src/js/brite.event.js" ></script>
+    
+    <!-- Set the default component config to load template -->
+    <script type="text/javascript">
+    brite.defaultComponentConfig.loadTmpl = true;
+    brite.defaultComponentConfig.loadCss = true;
+    </script>
+
     <script type="text/javascript" src="js/jsrender.js" ></script>
     
     
     <script type="text/javascript" src="js/demo-commons.js" ></script>
     <script type="text/javascript" src="js/demo-data.js" ></script>
-    
-    <!-- Demo Component -->
-    <script type="text/javascript" src="js/Demo.js" ></script>
-    <link rel="stylesheet" href="css/Demo.css" />
-    
-    <!-- Dock Component -->
-    <script type="text/javascript" src="js/Dock.js" ></script>
-    <link rel="stylesheet" href="css/Dock.css" />    
-
-    <!-- Window Component -->
-    <script type="text/javascript" src="js/Window.js" ></script>
-    <link rel="stylesheet" href="css/Window.css" />    
     
     <!-- Display the main Demo screen (which will display the sub components) -->
     <script type="text/javascript">

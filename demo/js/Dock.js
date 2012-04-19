@@ -74,9 +74,7 @@
   // --------- /Component Private Methods --------- //  
     
   // --------- Component Registration --------- //
-  brite.registerComponent("Dock", {
-    loadTemplate : true
-  },
+  brite.registerComponent("Dock", {},
   // Note in this way, when a function is passed, this function will be use as the factory for the new instance it is responsible to return an instance of the Component
   function() {
     return new Dock();

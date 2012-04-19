@@ -25,8 +25,9 @@
     var c = this;
     
     // if we have a content component to include, then, we include it
-    if (data && data.contentComponentName){
-        
+    if (data && data.componentName){
+        var $windowContent = c.$element.find(".Window-content");
+        brite.display(data.componentName,null,{parent:$windowContent});
     }
   }  
   
@@ -94,8 +95,7 @@
   
   // --------- Component Registration --------- //
   brite.registerComponent("Window", {
-    parent : "body",
-    loadTemplate : true
+    parent : "body"
   },
   function() {
     return new Window();
