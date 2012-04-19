@@ -1,7 +1,7 @@
 //TODO: needs to make it "reload safe"
 var brite = brite || {};
 
-brite.version = "0.9";
+brite.version = "0.9-snapshot";
 
 // ---------------------- //
 // ------ brite ------ //
@@ -50,12 +50,12 @@ brite.version = "0.9";
 	 *            config.unique (experimental) {Boolean} if true, the component will be display only if there is not already one component with
 	 *            the same name in the page.
 	 * 
-	 *            config.loadTemplate {Boolean|String} (default false) If true, then, it will load the template the first time this component is displayed.
+	 *            config.loadTmpl {Boolean|String} (default false) If true, then, it will load the template the first time this component is displayed.
 	 *                                                 If it is a string it use it as the file name to be loaded from the directory. If it starts with "/" then, it will be from the base, otherwise,
 	 * 												   it will be relative to the template folder. The default template folder is "template/" but can be set by brite.config.tmplPath.
 	 *                                                 
 	 * 
-	 *            config.checkTemplate {Boolean|String|jQuery} (default false). (require config.loadTemplate) If true, it will check if the template for this component has been added, by default it will check "#tmpl-ComponentName". 
+	 *            config.checkTmpl {Boolean|String|jQuery} (default false). (require config.loadTmpl) If true, it will check if the template for this component has been added, by default it will check "#tmpl-ComponentName". 
 	 *                                                                   If it is a string or jQuery, then it will be use with jQuery if it exists.
 	 *                                       							 Note that the check happen only the first time, then, brite will remember for subsequent brite.display  
 	 *                                     
@@ -168,6 +168,7 @@ brite.version = "0.9";
 	}
 
 	brite.defaultComponentConfig = {
+	  loadTmpl: false,
 		emptyParent : false,
 		postDisplayDelay : 0
 	}
@@ -201,7 +202,7 @@ brite.version = "0.9";
 		
 		// if the component already has been registered, check if we need to load the template, and then resolve it.
 		if (componentDef) {
-			var loadTemplate = componentDef.config.loadTemplate; 
+			var loadTemplate = componentDef.config.loadTmpl; 
 			if (loadTemplate && !_templateLoadedPerComponentName[name] ){
 
 				// if we have a check template, we need to check if the template has been already loaded
@@ -938,6 +939,15 @@ brite.util = {};
 				}
 			}
 			return -1;
+		},
+		
+		getItem : function(a, propName, propValue){
+		  var idx = this.getIndex(a,propName,propValue);
+		  if (idx > -1){
+		    return a[idx];
+		  }else{
+		    return null;
+		  }
 		},
 
 		/**

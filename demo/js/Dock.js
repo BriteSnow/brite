@@ -20,11 +20,12 @@
     });
     
     
-    brite.display("Window",null,{parent:c.$element.closest(".Demo")});
-    
     // Handling the dock item click
     $(c.$element).on("click",".Dock-item",function(){
-       brite.display("Window",null,{parent:c.$element.closest(".Demo")});  
+      var $dockItem = $(this);
+      var appName = $dockItem.attr("data-appname");
+      
+      demo.appLauncher.launch(appName);
     });
   }
   

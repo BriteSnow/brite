@@ -13,7 +13,7 @@
    * 
    */
   Window.prototype.create = function(data){
-    var html = $("#tmpl-Window").render({});
+    var html = $("#tmpl-Window").render(data || {});
     var $e = $(html);
     // we hide it since we will reposition it on postDisplay (otherwise, it will flicker)
     $e.hide();

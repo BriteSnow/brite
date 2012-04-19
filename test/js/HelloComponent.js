@@ -14,7 +14,7 @@
 		// Tell to empty the parent before adding this one
 		emptyParent: true,
 		// Tell to load the template (by default template/[ComponentName].html so, here it will be template/HelloComponent).
-		loadTemplate: true
+		loadTmpl: true
 	},
 	//Component factory build the component $element.
 	//Note: since this is just a JS Structure it will be clone when brite create an instance of this component (on brite.display...)
