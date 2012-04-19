@@ -169,6 +169,7 @@ brite.version = "0.9-snapshot";
 
 	brite.defaultComponentConfig = {
 	  loadTmpl: false,
+	  loadCss: false,
 		emptyParent : false,
 		postDisplayDelay : 0
 	}
@@ -198,65 +199,94 @@ brite.version = "0.9-snapshot";
 	function loadComponent(name) {
 		var loaderDeferred = $.Deferred();
 
-		var componentDef = _componentDefStore[name];
+		var loadComponentDefDfd = loadComponentDef(name);
 		
-		// if the component already has been registered, check if we need to load the template, and then resolve it.
-		if (componentDef) {
-			var loadTemplate = componentDef.config.loadTmpl; 
-			if (loadTemplate && !_templateLoadedPerComponentName[name] ){
-
-				// if we have a check template, we need to check if the template has been already loaded
-				var needsToLoadTemplate = true;
-				var checkTemplate = componentDef.config.checkTemplate;				
-				if (checkTemplate){
-					var templateSelector = (typeof checkTemplate == "string")?checkTemplate:("#tmpl-" + name);
-					if ($(templateSelector).length > 0){
-						needsToLoadTemplate = false;
-					}					
-				}
-				 
-				if (needsToLoadTemplate){
-					// if it is a string, then, it is the templatename, otherwise, the component name is the name
-					var templateName = (typeof loadTemplate == "string")?templateName:(name + ".html");
-					$.ajax({
-						url : brite.config.tmplPath + name + brite.config.tmplExt,
-						async : true
-					}).complete(function(jqXHR, textStatus) {
-						$(brite.config.componentsHTMLHolder).append(jqXHR.responseText);
-						_templateLoadedPerComponentName[name] = true;
-						loaderDeferred.resolve(componentDef);
-					});				
-				}else{
-					loaderDeferred.resolve(componentDef);
-				}
-				
-			}else{
-				loaderDeferred.resolve(componentDef);
-			}
-			
-		}
-		// if the component is not loaded, load it
-		else {
-			var currentLoaderDeferred = _deferredByComponentName[name];
-			console.log("loadComponent failed : " + name);
-			// if there is already a loading going on, replace the loaderDeferred to be returned by the
-			// currentLoaderDeferred
-			if (currentLoaderDeferred) {
-				loaderDeferred = currentLoaderDeferred;
-			}
-			// otherwise, do the loading
-			else {
-				_deferredByComponentName[name] = loaderDeferred;
-				$.ajax({
-					url : brite.config.tmplPath + name + brite.config.tmplExt,
-					async : true
-				}).complete(function(jqXHR, textStatus) {
-					$(brite.config.componentsHTMLHolder).append(jqXHR.responseText);
-				});
-			}
-		}
+		
+		loadComponentDefDfd.done(function(componentDef){
+		  var loadTemplateDfd, loadCssDfd;
+		  // --------- Load the tmpl if needed --------- //
+      var loadTemplate = componentDef.config.loadTmpl; 
+      if (loadTemplate && !_templateLoadedPerComponentName[name] ){
+        // if we have a check template, we need to check if the template has been already loaded
+        var needsToLoadTemplate = true;
+        var checkTemplate = componentDef.config.checkTemplate;        
+        if (checkTemplate){
+          var templateSelector = (typeof checkTemplate == "string")?checkTemplate:("#tmpl-" + name);
+          if ($(templateSelector).length > 0){
+            needsToLoadTemplate = false;
+          }         
+        }
+         
+        if (needsToLoadTemplate){
+          loadTemplateDfd = $.Deferred();
+          // if it is a string, then, it is the templatename, otherwise, the component name is the name
+          var templateName = (typeof loadTemplate == "string")?templateName:(name + ".html");
+          $.ajax({
+            url : brite.config.tmplPath + name + brite.config.tmplExt,
+            async : true
+          }).complete(function(jqXHR, textStatus) {
+            $(brite.config.componentsHTMLHolder).append(jqXHR.responseText);
+            _templateLoadedPerComponentName[name] = true;
+            loadTemplateDfd.resolve();
+          });       
+        }
+        
+      }
+      // --------- /Load the tmpl if needed --------- //
+      
+      // --------- Load the css if needed --------- //
+      var loadCss = brite.defaultComponentConfig.loadCss;
+      if (loadCss){
+        //TODO: need to add the checkCss support
+        loadCssDfd = $.Deferred();
+        var cssFileName = "css/" + name + ".css";
+        var includeDfd = includeFile(cssFileName,"css");
+        includeDfd.done(function(){
+          
+          loadCssDfd.resolve();
+        }).fail(function(){
+          console.log("Brite ERROR: cannot load " + cssFileName + ". Ignoring issue");
+          loadCssDfd.resolve();
+        });      
+      }
+      // --------- /Load the Template if needed --------- //
+      
+      
+      $.when(loadTemplateDfd,loadCssDfd).done(function(){
+        loaderDeferred.resolve(componentDef);
+      });
+      
+      		  
+		});
+		
+		loadComponentDefDfd.fail(function(){
+		  console.log("BRITE-ERROR: Brite cannot load component: " + name);
+		});
+		
 		return loaderDeferred.promise();
 	}
+
+  // Load the componentDef if needed and return the promise for it
+  function loadComponentDef(name){
+    var dfd = $.Deferred();
+    
+    var componentDef = _componentDefStore[name];
+    
+    if (componentDef){
+      dfd.resolve(componentDef);
+    }else{
+      var includeDfd = includeFile("js/" + name + ".js","js");
+      includeDfd.done(function(){
+        componentDef = _componentDefStore[name];
+        dfd.resolve(componentDef);
+      }).fail(function(){
+        dfd.reject();
+      });
+    }
+    
+    return dfd.promise();
+    
+  }
 
 	// if $element exist, then, bypass the create
 	function process(name, data, config, $element) {
@@ -300,7 +330,7 @@ brite.version = "0.9-snapshot";
 				var createReturn = invokeCreate(component, data, config);
 				// if it custom Deferred, then, assume it will get resolved with the $element (as by the API contract)
 				if (createReturn && $.isFunction(createReturn.promise) && !createReturn.jquery) {
-					// FIXME: will need to use the new jQuery 1.6 pipe here (right now, just trigger on done
+					// TODO: will need to use the new jQuery 1.6 pipe here (right now, just trigger on done
 					createReturn.done(function($element) {
 						deferred$element.resolve($element);
 					}).fail(function() {
@@ -523,6 +553,57 @@ brite.version = "0.9-snapshot";
 		return invokeDfd.promise();
 	}
 	// ------ /Private Helpers ------ //
+
+  // --------- File Include (JS & CSS) ------ //
+  /*
+   * Include the file name in the <head> part of the DOM and return a deferred that will resolve when done
+   */
+  function includeFile(fileName, fileType) {
+    var dfd = $.Deferred();
+    
+    if(fileType === "js") {
+      var fileref = document.createElement('script');
+      fileref.setAttribute("type", "text/javascript");
+      fileref.setAttribute("src", fileName);
+    } else if(fileType === "css") {
+      var fileref = document.createElement("link");
+      fileref.setAttribute("rel", "stylesheet");
+      fileref.setAttribute("type", "text/css");
+      fileref.setAttribute("href", fileName);
+    }
+    
+    if (fileType === "js"){
+      // TODO: need to add support for IE
+      fileref.onload = function(){
+        dfd.resolve(fileName);
+      }
+      
+      fileref.addEventListener('error', function(){
+        dfd.reject();
+      }, true);
+    }else if (fileType === "css"){
+      // hack from: http://www.backalleycoder.com/2011/03/20/link-tag-css-stylesheet-load-event/
+      var html = document.getElementsByTagName('html')[0];
+      var img = document.createElement('img');
+      img.onerror = function(){
+        html.removeChild(img);
+        // for css, we cannot know if it fail to load for now
+        dfd.resolve(fileName);
+      }
+      html.appendChild(img);
+      img.src = fileName;      
+    }
+    
+    
+    
+    if( typeof fileref != "undefined") {
+      document.getElementsByTagName("head")[0].appendChild(fileref);
+    }
+    
+    return dfd.promise();
+  }
+
+  // --------- /File Include (JS & CSS) ------ //
 
 })(jQuery);
 
