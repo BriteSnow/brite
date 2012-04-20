@@ -39,8 +39,12 @@
     var $demo = c.$element.closest(".Demo");
     var screenWidth = $demo.width();
     var screenHeight = $demo.height();
-    var x = screenWidth / 2 - c.$element.width() / 2;
-    var y = screenHeight / 2 - c.$element.height() / 2;
+    var w = screenWidth / 3;
+    var h = screenHeight / 3;
+    c.$element.width(w);
+    c.$element.height(h);
+    var x = screenWidth / 2 - w;
+    var y = screenHeight / 2 - h;
     c.$element.css({top: "" + y + "px",
                     left: "" + x + "px"}); 
     
@@ -53,6 +57,48 @@
     c.$element.on("mousedown touchstart",function(){
       setActive.call(c);
     });
+    
+    // action dialog
+    c.$element.on("touchstart mousedown",".ico-window",function(){
+      console.log("click");
+      var $popupScreen = c.$element.find(".Window-popupScreen");
+      // if we have a popup, then close it
+      if ($popupScreen.length > 0){
+        closePopup.call(c);
+      }
+      // otherwise, we create it
+      else{
+        console.log("add popup");
+        var html = $("#tmpl-Window-actionsPopup").render({});
+        $popupScreen = $(html);
+        $popupScreen.css("opacity",0);
+        var $popup = $popupScreen.find(".Window-popup");
+        c.$element.append($popupScreen);
+        var h = $popup.outerHeight();
+        $popup.css("top",-h);
+        $popupScreen.css("opacity",1);
+        $popup.animate({top:0});
+        
+        $popup.on("click","[data-action='close']",function(){
+          c.$element.bRemove();
+        });
+        
+        $popup.on("click","[data-action='maximize']",function(){
+          // remove the width/height to have the position take effect
+          c.$element.css({width:"",height:""});
+          c.$element.css({top:0,right:0,bottom:80,left:0});
+        });
+      }
+    });
+    
+    // closing the popup
+    c.$element.on("click",".Window-popupScreen, .Window-closePopup",function(event){
+      var $target = $(event.target);
+      if ($target.hasClass("Window-popupScreen") || $target.hasClass("Window-closePopup")){ 
+          closePopup.call(c);
+      }
+    });
+
                     
     // handle the window drag
     c.$element.bDrag(".Window-header",{
@@ -91,7 +137,20 @@
       c.$element.addClass("Window-active");    
     }
   }
+  
+  function closePopup(){
+    var c = this;
+    
+    var $popupScreen = c.$element.find(".Window-popupScreen");
+    var $popup = $popupScreen.find(".Window-popup");
+    var h = $popup.outerHeight();
+    $popup.animate({top:-h},function(){
+      $popupScreen.bRemove();
+    });
+  }
   // --------- /Private Component Methods ---------- //
+  
+
   
   // --------- Component Registration --------- //
   brite.registerComponent("Window", {

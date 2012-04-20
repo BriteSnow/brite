@@ -17,6 +17,16 @@ body{
   clear: both;
 }
 
+*{
+  -webkit-tap-highlight-color: transparent; /* "turn off" link highlight */
+}
+
+/* --------- Boostrap Fix --------- */ 
+.btn > i{
+  margin-right: 3px;
+  margin-left: -3px;
+}
+
 
 
 

@@ -8,5 +8,13 @@
  display: block;
  float: left;
  background-image: url(images/demo-sprite.png);
-  
+}
+
+.ico-cornerResize{
+ width: 16px; 
+ height: 16px;
+ display: block;
+ float: left;
+ background-image: url(images/demo-sprite.png);
+ background-position: -32px 0;
 }

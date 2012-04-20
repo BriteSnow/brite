@@ -1,7 +1,5 @@
 .Window{
   position: absolute;
-  width: 500px;
-  height: 500px;
   border: solid 1px #b8b8b8;
   -webkit-border-top-left-radius: 5px;
   -webkit-border-top-right-radius: 5px;
@@ -15,6 +13,7 @@
   z-index: 1000;
   opacity: 1;
 }
+
 
 .Window-header{
   position: relative;
@@ -41,7 +40,7 @@
 
 .Window-content{
   position: absolute;
-  top: 30px; right: 0; bottom: 0; left: 0;
+  top: 27px; right: 0; bottom: 0; left: 0;
 }
 
 .Window-resizeHandle{
@@ -49,6 +48,39 @@
   right: 0; bottom: 0; 
   width: 32px;
   height: 32px;
-  background: red;
 }
-  
+
+.Window-resizeHandle i.ico-cornerResize{
+  position: absolute;
+  bottom: 0; right: 0;
+}
+
+.Window-popupScreen{
+  position: absolute;
+  top: 27px; right: 0; bottom: 0; left: 0;
+  overflow: hidden;
+  background: rgba(200,200,200,.4);
+}  
+
+.Window-popup{
+  box-shadow: 0px 1px 3px 1px #888;
+}
+
+/* --------- Actions Popup --------- */
+.Window-actionsPopup{
+  position: absolute;
+  top: 0px; left: 27px;
+  padding: 16px;
+  background: rgba(100,100,100,.9);
+}  
+
+.Window-actionsPopup > button{
+  display: block;
+  margin: 5px 0;
+  width: 8em;
+}
+
+.Window-actionsPopup .Window-closePopup{
+  position: absolute;
+  bottom: 0; right: 0;
+} 
