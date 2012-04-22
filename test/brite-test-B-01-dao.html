@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-        <title>briteUITest - brite.dm</title>
+        <title>briteUITest - brite.dao</title>
 
 		<!-- Generic Test Includes -->
 		<link rel="stylesheet" href="css/sTestHelper.css"/>
@@ -16,7 +16,7 @@
 		<!-- /Generic Test Includes -->
 
 		<script type="text/javascript" src="../src/js/brite.core.js" ></script>
-		<script type="text/javascript" src="../src/js/brite.dm.js" ></script>
+		<script type="text/javascript" src="../src/js/brite.dao.js" ></script>
 		
 		<style type="text/css">
 			.action{
@@ -60,7 +60,7 @@
     </head>
     <body>
     	<div class="sTestSection">
-	        <h2>Simple User Dao CRUD using the brite Deferred Data Manager (brite.dm)</h2>
+	        <h2>Simple User Dao CRUD using the brite Deferred Data Manager (brite.dao)</h2>
 
 			<div class="sTestSrc sTestShowSrc">
 				
@@ -100,7 +100,7 @@
 						// get the user objRef that this html element belong to.
 						var objRef = $(this).bObjRef("user");
 						if (objRef){
-							brite.dm.remove("user",objRef.id).done(function(){
+							brite.dao.remove("user",objRef.id).done(function(){
 								// here the remove
 							});
 						}
@@ -109,7 +109,7 @@
 					
 					// --- Create User --- //
 					$("#userCreateBut").click(function(){
-						brite.dm.create("user",{name: $("#userNameIpt").val(),
+						brite.dao.create("user",{name: $("#userNameIpt").val(),
 											 city: $("#userCityIpt").val()});
 						
 						//clean the input and focus
@@ -121,18 +121,18 @@
 					
 					// reset store
 					$("#resetStore").click(function(){
-						brite.dm.invoke("resetStore","user");
+						brite.dao.invoke("resetStore","user");
 					});
 					
 					$("#removeAll").click(function(){
-						brite.dm.invoke("resetStore","user",true);
+						brite.dao.invoke("resetStore","user",true);
 					});
 					
 					//TODO: support for Edit user
 				});
 				
 				function updateUserListDiv(){
-					brite.dm.list("user").done(function(userList){
+					brite.dao.list("user").done(function(userList){
 						var user, 
 					    i,
 						$userList = $("#userList");

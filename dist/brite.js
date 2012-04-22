@@ -1541,11 +1541,11 @@ brite.ua = {};
 var brite = brite || {};
 
 /**
- * @namespace brite.dm data manager layers to register, access DAOs.
+ * @namespace brite.dao data manager layers to register, access DAOs.
  * DAOs are javascript objects that must implement the following CRUD methods get, list, create, update, remove, and the getIdName method.<br /> 
- * Signatures of these methods should match the corresponding brite.dm.** methods.<br />
+ * Signatures of these methods should match the corresponding brite.dao.** methods.<br />
  * <br />
- * Note that DAO CRUD methods can return directly the result or a deferred object. Also, it is important to note that brite.dm.*** CRUD access methods
+ * Note that DAO CRUD methods can return directly the result or a deferred object. Also, it is important to note that brite.dao.*** CRUD access methods
  * will always return deferred object (either the DAO return deferred, or a wrapped deferred if the DAO method did not return a deferred)<br />
  * <br />
  * The deferred pattern for daos allows the application to be agnostic about the call mode, synchronous or asynchronous (e.g. Ajax, Workers, and other callback based called), 
@@ -1553,7 +1553,7 @@ var brite = brite || {};
  * <br />
  * If there is a need to access the daos result directly, the brite.sdm ("straight dm") can be used.  
  */
-brite.dm = {};
+brite.dao = {};
 
 (function($) {
 
@@ -1594,7 +1594,7 @@ brite.dm = {};
 	 * Add a dao Listener.
 	 * 
 	 * @param {function} daoListener  function that will get called with the following argument
-	 *     							  daoListener(DaoEvent). Deferred is the deferred returned by the brite.dm.***, and DaoEvent is the event object
+	 *     							  daoListener(DaoEvent). Deferred is the deferred returned by the brite.dao.***, and DaoEvent is the event object
 	 *     
 	 * DaoEvent will have the following format:
 	 *    DaoEvent.action: the action of the dao method (create, update, get, list, remove)
@@ -1650,56 +1650,56 @@ brite.dm = {};
 	/**
 	 * Return the id property name (this is the only method in brite.ddm that is not deferred)
 	 */
-	brite.dm.getIdName = function(objectType) {
+	brite.dao.getIdName = function(objectType) {
 		return brite.sdm.getIdName(objectType);
 	}
 
 	/**
 	 * Wrap the brite.sdm.get(objectType,id) with a deferred result
 	 */
-	brite.dm.get = function(objectType, id) {
+	brite.dao.get = function(objectType, id) {
 		return wrapWithDeferred(brite.sdm.get(objectType, id));
 	}
 
 	/**
 	 * Wrap the brite.sdm.list(objectType,opts) with a deferred result
 	 */
-	brite.dm.list = function(objectType, opts) {
+	brite.dao.list = function(objectType, opts) {
 		return wrapWithDeferred(brite.sdm.list(objectType, opts));
 	}
 
 	/**
 	 * Wrap the brite.sdm.create(objectType,data) with a deferred result
 	 */
-	brite.dm.create = function(objectType, data) {
+	brite.dao.create = function(objectType, data) {
 		return wrapWithDeferred(brite.sdm.create(objectType, data));
 	}
 
 	/**
 	 * Wrap the brite.sdm.update(objectType,id,data) with a deferred result
 	 */
-	brite.dm.update = function(objectType, id, data) {
+	brite.dao.update = function(objectType, id, data) {
 		return wrapWithDeferred(brite.sdm.update(objectType, id, data));
 	}
 
 	/**
 	 * Wrap the brite.sdm.remove(objectType,id) with a deferred result
 	 */
-	brite.dm.remove = function(objectType, id) {
+	brite.dao.remove = function(objectType, id) {
 		return wrapWithDeferred(brite.sdm.remove(objectType, id));
 	}
 	
 	/**
 	 * Wrap the brite.sdm.invoke(methodName,objectType) with a deferred result
 	 */
-	brite.dm.invoke = function(methodName, objectType) {
+	brite.dao.invoke = function(methodName, objectType) {
 		var args = Array.prototype.slice.call(arguments,0); 
 		return wrapWithDeferred(brite.sdm.invoke.apply(null,args));
 	}	
 
 	// ------- brite.sdm DAO API ------ //
 	/**
-	 * @namespace brite.sdm Straight Data Manager API that just return what the DAO returns (it does not Deferred wrap). This is mostly used by the brite.dm, but
+	 * @namespace brite.sdm Straight Data Manager API that just return what the DAO returns (it does not Deferred wrap). This is mostly used by the brite.dao, but
 	 * could be used by the application when it is ok to have blocking data calls (i.e. local data) or to expose the async/sync to the application layer.
 	 */
 	brite.sdm = {};
@@ -1907,8 +1907,6 @@ brite.dm = {};
 /**
  * @namespace Some default convenient DAOs (for now, only development DAOs)
  */
-brite.dao = {};
-
 (function($) {
 
 	function SimpleDao(store) {
@@ -1960,7 +1958,7 @@ brite.dao = {};
 	}
 
 	SimpleDao.prototype.create = function(objectType, data) {
-		var idName = brite.dm.getIdName(objectType);
+		var idName = brite.dao.getIdName(objectType);
 
 		// if the id has already been created, no biggies, otherwise, create it.
 		if (typeof data[idName] !== "undefined") {
@@ -1979,7 +1977,7 @@ brite.dao = {};
 
 	SimpleDao.prototype.update = function(objectType, id, data) {
 		// if there is an id, make sure it matches
-		var idName = brite.dm.getIdName(objectType);
+		var idName = brite.dao.getIdName(objectType);
 		var dataId = data[idName];
 		if (typeof dataId !== "undefined" && dataId != id) {
 			var er = "SimpleDao.update error: Id in param and data does not match. Cannot update data.";
@@ -2023,93 +2021,10 @@ brite.dao = {};
 	 * @param {Array}  store (optional) Array of json object representing each data item
 	 */
 	brite.dao.SimpleDao = SimpleDao;
+	
 })(jQuery);
 
 // ------ /Simple DAO ------ //
-
-// ------ Simple Rel DAO ------ //
-(function($) {
-
-	function SimpleRelDao(store, rels) {
-		this._super.init.call(this, store);
-		this._rels = rels;
-		this._relDic = {};
-		for (var i = 0, l = rels.length; i < l; i++) {
-			this._relDic[rels[i]] = rels[i] + "_id";
-		}
-	}
-
-	brite.inherit(SimpleRelDao, brite.dao.SimpleDao);
-
-	SimpleRelDao.prototype.get = function(objectType, id) {
-		var result = this._super.get.call(this, objectType, id);
-		return completeData.call(this, result);
-	}
-
-	SimpleRelDao.prototype.list = function(objectType, opts) {
-		var resultSet = this._super.list.call(this, objectType, opts);
-
-		// Now, go through the list, adn load the other object type.
-		if (this._rels) {
-			var dao = this;
-			$.each(resultSet, function(idx, val) {
-				completeData.call(dao, val);
-			});
-
-		}
-
-		return resultSet;
-
-	}
-
-	SimpleRelDao.prototype.save = function(objectType, data) {
-		// make sure to remove the direct object reference (we expect the rel_id at this point)
-		// TODO: probably need to extra the id from the object reference in case there is now rel_id
-		if (this._rels) {
-			var tmpPropName;
-			for (var i = 0, l = this._rels.length; i < l; i++) {
-				tmpPropName = this._rels[i];
-				if (typeof data[tmpPropName] !== "undefined") {
-					delete data[tmpPropName];
-				}
-			}
-		}
-
-		var result = this._super.save.call(this, objectType, data);
-		return completeData.call(this, result);
-	}
-
-	// ------ Private Helpers ------ //
-	// complete the data with the related objects
-	function completeData(val) {
-		var rels = this._rels;
-		var rel, propIdName, obj, objId;
-		for (var i = 0; i < rels.length; i++) {
-			rel = rels[i];
-			propIdName = this._relDic[rel];
-			objId = val[propIdName];
-			if (typeof objId !== "undefined") {
-				obj = brite.dm.get(rel, objId);
-				if (typeof obj !== "undefined" && obj != null) {
-					val[rel] = obj;
-				}
-			}
-		}
-		return val;
-	}
-
-	// ------ /Private Helpers ------ //
-
-	/**
-	 * SimpleRelDao is a Many to Many Dao that will do a best attempt to join the entities it is responsible to join. <br />
-	 *
-	 * This is only for development, as there is not storage behind it.
-	 *
-	 * @param {Array}  store (optional) Array of json object representing each data item
-	 */
-	brite.dao.SimpleRelDao = SimpleRelDao;
-	
-})(jQuery);
 
 // ------ jQuery DAO Helper ------ //
 (function($) {
