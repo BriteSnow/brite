@@ -1098,7 +1098,7 @@ brite.util = {};
 		};
 		F.prototype = P.prototype;
 		C.prototype = new F();
-		C.prototype._super = P.prototype;
+		C._super = P.prototype; 
 		C.prototype.constructor = C;
 	};
 

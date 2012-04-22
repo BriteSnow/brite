@@ -167,7 +167,7 @@
 					
 					// doing an extension
 					function ExtendedSimpleDao(store){
-						this._super.constructor.call(this,store);
+						ExtendedSimpleDao._super.constructor.call(this,store);
 					};
 					brite.inherit(ExtendedSimpleDao,brite.dao.SimpleDao);
 					
@@ -175,9 +175,9 @@
 					ExtendedSimpleDao.prototype.resetStore = function(objectType, empty){
 						
 						if (empty){
-							this._super.init.call(this,[]);
+							ExtendedSimpleDao._super.init.call(this,[]);
 						}else{
-							this._super.init.call(this,userStore.slice(0));	
+							ExtendedSimpleDao._super.init.call(this,userStore.slice(0));	
 						}
 							
 						
