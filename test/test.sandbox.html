@@ -1,0 +1,82 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Sandbox</title>
+    <!-- Generic Test Includes -->
+    <script type="text/javascript" src="../js-dependencies/jquery.js" ></script>
+    <script type="text/javascript">
+      /// In Brite, Brite.inherit
+      // or copy this function on top of your first .js file
+      function inherit(Child, Parent) {
+        var F = function() {
+        };
+
+
+        F.prototype = Parent.prototype;
+        Child.prototype = new F();
+        Child._super = Parent.prototype;
+        Child.prototype.constructor = Child;
+      };
+
+      // in annother file (preferrably)
+      var mymodule = mymodule || {}; (function() {
+
+        function Person(name) {
+          this._name = name;
+        }
+
+
+        Person.prototype.name = function(name) {
+          if( typeof name === "undefined") {
+            return this._name;
+          } else {
+            this._name = name;
+          }
+        }
+
+
+        Person.prototype.canCode = function(canCode) {
+          if( typeof canCode === "undefined") {
+            return this._canCode || false;
+          } else {
+            this._canCode = canCode;
+          }
+        }
+
+        function Programmer() {
+          // forward the call to the parent (using the _super notation)
+          Programmer._super.constructor.apply(this, arguments);
+          this.canCode(true);
+          this.language("js");
+        }
+        // inherit Programmer with Person, call this after the Programmer constructor
+        inherit(Programmer, Person);
+
+        Programmer.prototype.language = function(language) {
+          // sort version of the if/else
+          return (typeof language === "undefined")?this._language:this._language = language;
+        }
+
+
+
+        // Note: Here you could override or ovewrite person methods with
+        // Programmer.prototype.****
+
+        mymodule.Person = Person;
+        mymodule.Programmer = Programmer;
+
+      })();
+
+      // in the application code
+
+      var mike = new mymodule.Person("mike");
+      var nick = new mymodule.Programmer("nick");
+
+      console.log(mike.constructor.name + " " + mike.name() + " can code: " + mike.canCode());
+      console.log(nick.constructor.name + " " + nick.name() + " can code: " + nick.canCode() + " language: " + nick.language());
+
+    </script>
+  </head>
+  <body></body>
+</html>
