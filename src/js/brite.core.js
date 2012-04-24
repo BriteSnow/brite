@@ -280,7 +280,6 @@ brite.version = "0.9-snapshot";
     }else{
       var resourceFile = "js/" + name + ".js";
       var includeDfd = includeFile(resourceFile,"js");
-      console.log("load component: " + name);
       includeDfd.done(function(){
         componentDef = _componentDefStore[name];
         if (componentDef){
