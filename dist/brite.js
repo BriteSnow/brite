@@ -11,6 +11,8 @@ brite.version = "0.9-snapshot";
  * 
  */
 (function($) {
+  
+  var cidSeq = 0;
 
 	var _componentDefStore = {};
 	
@@ -259,8 +261,9 @@ brite.version = "0.9-snapshot";
       		  
 		});
 		
-		loadComponentDefDfd.fail(function(){
-		  console.log("BRITE-ERROR: Brite cannot load component: " + name);
+		loadComponentDefDfd.fail(function(ex){
+		  console.log("BRITE-ERROR: Brite cannot load component: " + name + "\n\t " + ex);
+		  loaderDeferred.reject();
 		});
 		
 		return loaderDeferred.promise();
@@ -275,12 +278,20 @@ brite.version = "0.9-snapshot";
     if (componentDef){
       dfd.resolve(componentDef);
     }else{
-      var includeDfd = includeFile("js/" + name + ".js","js");
+      var resourceFile = "js/" + name + ".js";
+      var includeDfd = includeFile(resourceFile,"js");
+      console.log("load component: " + name);
       includeDfd.done(function(){
         componentDef = _componentDefStore[name];
-        dfd.resolve(componentDef);
+        if (componentDef){
+          dfd.resolve(componentDef);
+        }else{ 
+          dfd.reject("Component js file [" + resourceFile + 
+                     "] loaded, but it did not seem to have registered the component - it needs to call brite.registerComponent('" + name + 
+                     "',...config...) - see documentation");        
+        }
       }).fail(function(){
-        dfd.reject();
+        dfd.reject("Component resource file " + resourceFile + " not found");
       });
     }
     
@@ -309,12 +320,12 @@ brite.version = "0.9-snapshot";
 
 			// If the config.unique is set, and there is a component with the same name, we resolve the deferred now
 			// NOTE: the whenCreate and whenPostDisplay won't be resolved again
-			// TODO: an optimization point would be to add a "bComponentUnique" in the class for data-bcomponent that
+			// TODO: an optimization point would be to add a "bComponentUnique" in the class for data-brite-component that
 			// have a confi.unique = true
 			// This way, the query below could be ".bComponentUnique [....]" and should speedup the search significantly
 			// on UserAgents that supports the getElementsByClassName
 			if (config.unique) {
-				var $component = $("[data-bcomponent='" + name + "']");
+				var $component = $("[data-brite-component='" + name + "']");
 				if ($component.length > 0) {
 					component = $component.bComponent();
 					processDeferred.resolve(component);
@@ -390,7 +401,7 @@ brite.version = "0.9-snapshot";
 
 					// if there is a parent component, then need to wait until it display to display this one.
 					if ($element && $element.parent()) {
-						var parentComponent$Element = $element.parent().closest("[data-bcomponent]");
+						var parentComponent$Element = $element.parent().closest("[data-brite-component]");
 
 						if (parentComponent$Element.length > 0) {
 							parentComponentProcessPromise = parentComponent$Element.data("componentProcessPromise");
@@ -422,6 +433,13 @@ brite.version = "0.9-snapshot";
 				processDeferred.resolve(component);
 			});
 		});
+
+    loaderDeferred.fail(function(){
+      processDeferred.reject();
+      createDeferred.reject();
+      initDeferred.reject();
+      postDisplayDeferred.reject();
+    });
 
 		return processPromise;
 	}
@@ -484,6 +502,7 @@ brite.version = "0.9-snapshot";
 
 		if (component) {
 			component.name = componentDef.name;
+			component.cid = cidSeq++;
 		}
 		return component;
 	}
@@ -510,7 +529,8 @@ brite.version = "0.9-snapshot";
 		component.$element = $element;
 		$element.data("component", component);
 
-		$element.attr("data-bcomponent", config.componentName);
+		$element.attr("data-brite-component", config.componentName);
+		$element.attr("data-brite-cid", component.cid);
 	}
 
 	function invokePostDisplay(component, data, config) {
@@ -641,9 +661,9 @@ brite.version = "0.9-snapshot";
 		// iterate and process each matched element
 		var $componentElement;
 		if (componentName) {
-			$componentElement = $(this).closest("[data-bcomponent='" + componentName + "']");
+			$componentElement = $(this).closest("[data-brite-component='" + componentName + "']");
 		} else {
-			$componentElement = $(this).closest("[data-bcomponent]");
+			$componentElement = $(this).closest("[data-brite-component]");
 		}
 
 		return $componentElement.data("component");
@@ -666,9 +686,9 @@ brite.version = "0.9-snapshot";
 			var $componentElements;
 
 			if (componentName) {
-				$componentElements = $(this).find("[data-bcomponent='" + componentName + "']");
+				$componentElements = $(this).find("[data-brite-component='" + componentName + "']");
 			} else {
-				$componentElements = $(this).find("[data-bcomponent]");
+				$componentElements = $(this).find("[data-brite-component]");
 			}
 
 			$componentElements.each(function() {
@@ -696,9 +716,9 @@ brite.version = "0.9-snapshot";
 			var $componentElements;
 
 			if (componentName) {
-				$componentElements = $(this).find("[data-bcomponent='" + componentName + "']:first");
+				$componentElements = $(this).find("[data-brite-component='" + componentName + "']:first");
 			} else {
-				$componentElements = $(this).find("[data-bcomponent]:first");
+				$componentElements = $(this).find("[data-brite-component]:first");
 			}
 
 			$componentElements.each(function() {
@@ -749,7 +769,7 @@ brite.version = "0.9-snapshot";
 			var $this = $(this);
 			$this.bEmpty();
 
-			if ($this.is("[data-bcomponent]")) {
+			if ($this.is("[data-brite-component]")) {
 				var component = $this.data("component");
 				processDestroy(component);
 

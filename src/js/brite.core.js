@@ -11,6 +11,8 @@ brite.version = "0.9-snapshot";
  * 
  */
 (function($) {
+  
+  var cidSeq = 0;
 
 	var _componentDefStore = {};
 	
@@ -259,8 +261,8 @@ brite.version = "0.9-snapshot";
       		  
 		});
 		
-		loadComponentDefDfd.fail(function(){
-		  console.log("BRITE-ERROR: Brite cannot load component: " + name);
+		loadComponentDefDfd.fail(function(ex){
+		  console.log("BRITE-ERROR: Brite cannot load component: " + name + "\n\t " + ex);
 		  loaderDeferred.reject();
 		});
 		
@@ -276,12 +278,20 @@ brite.version = "0.9-snapshot";
     if (componentDef){
       dfd.resolve(componentDef);
     }else{
-      var includeDfd = includeFile("js/" + name + ".js","js");
+      var resourceFile = "js/" + name + ".js";
+      var includeDfd = includeFile(resourceFile,"js");
+      console.log("load component: " + name);
       includeDfd.done(function(){
         componentDef = _componentDefStore[name];
-        dfd.resolve(componentDef);
+        if (componentDef){
+          dfd.resolve(componentDef);
+        }else{ 
+          dfd.reject("Component js file [" + resourceFile + 
+                     "] loaded, but it did not seem to have registered the component - it needs to call brite.registerComponent('" + name + 
+                     "',...config...) - see documentation");        
+        }
       }).fail(function(){
-        dfd.reject();
+        dfd.reject("Component resource file " + resourceFile + " not found");
       });
     }
     
@@ -307,7 +317,6 @@ brite.version = "0.9-snapshot";
 		loaderDeferred.done(function(componentDef) {
 			config = buildConfig(componentDef, config);
 			var component = instantiateComponent(componentDef);
-			component.cid = brite.uuid();
 
 			// If the config.unique is set, and there is a component with the same name, we resolve the deferred now
 			// NOTE: the whenCreate and whenPostDisplay won't be resolved again
@@ -493,6 +502,7 @@ brite.version = "0.9-snapshot";
 
 		if (component) {
 			component.name = componentDef.name;
+			component.cid = cidSeq++;
 		}
 		return component;
 	}
@@ -520,6 +530,7 @@ brite.version = "0.9-snapshot";
 		$element.data("component", component);
 
 		$element.attr("data-brite-component", config.componentName);
+		$element.attr("data-brite-cid", component.cid);
 	}
 
 	function invokePostDisplay(component, data, config) {
