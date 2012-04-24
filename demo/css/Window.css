@@ -7,6 +7,7 @@
   -webkit-transform-style: preserve-3d;
   opacity: .6;
   z-index: 100;
+  min-width: 400px;
 }
 
 .Window-active{
@@ -67,20 +68,22 @@
 }
 
 /* --------- Actions Popup --------- */
-.Window-actionsPopup{
+.Window-controls{
   position: absolute;
-  top: 0px; left: 27px;
-  padding: 16px;
-  background: rgba(100,100,100,.9);
+  top: 0px; left: 32px;
+  right: 0;
+  height: 27px;
+  overflow: hidden;
 }  
 
-.Window-actionsPopup > button{
-  display: block;
-  margin: 5px 0;
-  width: 8em;
-}
-
-.Window-actionsPopup .Window-closePopup{
+.Window-controls-inner{
   position: absolute;
-  bottom: 0; right: 0;
-} 
+  top: 0px;
+  left: 0px;
+  
+}
+.Window-controls  button{
+  display: block;
+  float: left;
+  margin: 3px 10px 0 0;
+}

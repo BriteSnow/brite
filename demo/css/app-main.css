@@ -4,13 +4,17 @@ html{
 
 body{
   overflow: hidden;
-  background: #ffddff;
-  background-image: url(images/bg2.jpg);
-  background-size: 100% ; 
-  background-attachment: fixed;
-  
+  background-image: url(images/bgPat.png);
   font-family: "helvetica neue",helvetica,arial,sans-serif;
   font-size: 100%;
+}
+
+#bodyBg{
+  display: none; /* turn it off for now */
+  z-index: -4;
+  position: absolute;
+  top: 0; left; 0;
+  max-width: 100%;
 }
 
 .cb{

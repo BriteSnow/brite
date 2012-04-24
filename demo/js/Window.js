@@ -17,82 +17,76 @@
     var $e = $(html);
     // we hide it since we will reposition it on postDisplay (otherwise, it will flicker)
     $e.hide();
-    
     return $e;
   }
   
   Window.prototype.init = function(data){
     var c = this;
     
+    var dfd;
     // if we have a content component to include, then, we include it
     if (data && data.componentName){
         var $windowContent = c.$element.find(".Window-content");
-        brite.display(data.componentName,null,{parent:$windowContent});
-    }
+        dfd = brite.display(data.componentName,null,{parent:$windowContent}).whenInit;
+        dfd.fail(function(){
+          console.log("failing");
+        });
+    }    
+    
+    
+    return $.when(dfd);
   }  
   
   
-  Window.prototype.postDisplay = function(){
+  Window.prototype.postDisplay = function(data){
     var c = this;
+    var $e = c.$element;
     
-    // position the window
+
+    // Very simple default positioning logic (just to avoid the common overlap)
+    var space = 32;
     var $demo = c.$element.closest(".Demo");
-    var screenWidth = $demo.width();
-    var screenHeight = $demo.height();
-    var w = screenWidth / 3;
-    var h = screenHeight / 3;
-    c.$element.width(w);
-    c.$element.height(h);
-    var x = screenWidth / 2 - w;
-    var y = screenHeight / 2 - h;
-    c.$element.css({top: "" + y + "px",
-                    left: "" + x + "px"}); 
+    var x = $demo.innerWidth() * 0.1;
+    var y = $demo.innerHeight() * 0.1;
+    $demo.find(".Window").each(function(){
+      var $window = $(this);
+      if (!$window.is($e)){
+        var winPos = $window.position();
+        if (x > winPos.left -8 && x < winPos.left + 8 && 
+            y > winPos.top -8 && y < winPos.top + 8){
+          x += space;
+          y += space;
+        }
+      }
+    });
+    // todo: need to check that width or height is not over screen
+    $e.css({top:y+"px",left:x+"px",width:"60%",height:"60%"});
     
     // now, we can show it.                 
-    c.$element.show();
+    $e.show();
 
     setActive.call(c);
     
     // set active on click
-    c.$element.on("mousedown touchstart",function(){
+    $e.on("mousedown touchstart",function(){
       setActive.call(c);
     });
     
-    // action dialog
-    c.$element.on("touchstart mousedown",".ico-window",function(){
-      console.log("click");
-      var $popupScreen = c.$element.find(".Window-popupScreen");
+    // window-controls
+    $e.on("touchstart mousedown",".ico-window",function(){
+      var $controls = c.$element.find(".Window-controls");
       // if we have a popup, then close it
-      if ($popupScreen.length > 0){
-        closePopup.call(c);
+      if ($controls.length > 0){
+        hideControls.call(c);
       }
       // otherwise, we create it
       else{
-        console.log("add popup");
-        var html = $("#tmpl-Window-actionsPopup").render({});
-        $popupScreen = $(html);
-        $popupScreen.css("opacity",0);
-        var $popup = $popupScreen.find(".Window-popup");
-        c.$element.append($popupScreen);
-        var h = $popup.outerHeight();
-        $popup.css("top",-h);
-        $popupScreen.css("opacity",1);
-        $popup.animate({top:0});
-        
-        $popup.on("click","[data-action='close']",function(){
-          c.$element.bRemove();
-        });
-        
-        $popup.on("click","[data-action='maximize']",function(){
-          // remove the width/height to have the position take effect
-          c.$element.css({width:"",height:""});
-          c.$element.css({top:0,right:0,bottom:80,left:0});
-        });
+        showControls.call(c);
       }
     });
     
     // closing the popup
-    c.$element.on("click",".Window-popupScreen, .Window-closePopup",function(event){
+    $e.on("click",".Window-popupScreen, .Window-closePopup",function(event){
       var $target = $(event.target);
       if ($target.hasClass("Window-popupScreen") || $target.hasClass("Window-closePopup")){ 
           closePopup.call(c);
@@ -101,7 +95,7 @@
 
                     
     // handle the window drag
-    c.$element.bDrag(".Window-header",{
+    $e.bDrag(".Window-header",{
       drag: function(event, extra){
         var pos = c.$element.position();
         var newX = pos.left + extra.deltaPageX;
@@ -113,7 +107,7 @@
     });                
     
     // handle the resize
-    c.$element.bDrag(".Window-resizeHandle",{
+    $e.bDrag(".Window-resizeHandle",{
       drag: function(event, extra){
         var w = c.$element.width() + extra.deltaPageX;
         var h = c.$element.height() + extra.deltaPageY;
@@ -127,6 +121,37 @@
   // --------- /Component Interface Implementation ---------- //
   
   // --------- Private Component Methods ---------- //
+  function maximize(){
+    var c = this;
+    var $e = c.$element;
+    
+    // record the position
+    var pos = $e.position();
+    $e.data("lastPosition",{left:pos.left,top:pos.top,w:$e.width(),h:$e.height()});
+    
+    var $parent = $e.parent();
+    var w = $parent.innerWidth();
+    var h = $parent.innerHeight() - 64; // for now, harcode dock height
+    
+    $e.css({top:0,left:0});
+    $e.width(w).height(h);
+    
+    hideControls.call(c,true);
+  }
+  
+  function restore(){
+    c = this;
+    var $e = c.$element;
+    
+    var pos = $e.data("lastPosition");
+    if (pos){
+      $e.css({top:pos.top,left:pos.left});
+      $e.width(pos.w).height(pos.h);
+    }
+    $e.data("lastPosition",null);
+    hideControls.call(c,true);
+  }
+  
   function setActive(){
     var c = this;
     
@@ -138,15 +163,55 @@
     }
   }
   
-  function closePopup(){
+  function showControls(){
     var c = this;
     
-    var $popupScreen = c.$element.find(".Window-popupScreen");
-    var $popup = $popupScreen.find(".Window-popup");
-    var h = $popup.outerHeight();
-    $popup.animate({top:-h},function(){
-      $popupScreen.bRemove();
+    var isMaximized = c.$element.data("lastPosition") && true;
+    
+    var tmplData = {maximized:isMaximized};
+    
+    var html = $("#tmpl-Window-controls").render(tmplData);
+    $controls = $(html);
+    var $inner = $controls.find(".Window-controls-inner");
+    $controls.css("opacity","0");
+    c.$element.append($controls);
+    
+    // do the animation
+    var startLeft = -$inner.outerWidth();
+    $inner.css("left",startLeft);
+    $controls.css("opacity","1");
+    $inner.animate({left:0});
+    c.$element.find(".Window-header h2").fadeOut();
+    
+    $controls.on("click","[data-action='close']",function(){
+      c.$element.bRemove();
     });
+    
+    $controls.on("click","[data-action='maximize']",function(){
+      maximize.call(c);
+    });  
+    
+    $controls.on("click","[data-action='restore']",function(){
+      restore.call(c);
+    });    
+  }
+  
+  function hideControls(instant){
+    var c = this;
+    
+    var $controls = c.$element.find(".Window-controls");
+    
+    if (instant){
+      $controls.bRemove();
+      c.$element.find(".Window-header h2").fadeIn();
+    }else{
+      var $inner = $controls.find(".Window-controls-inner");
+      var endLeft = -$inner.outerWidth();
+      $inner.animate({left:endLeft},function(){
+        $controls.bRemove();
+        c.$element.find(".Window-header h2").fadeIn();
+      });
+    }
   }
   // --------- /Private Component Methods ---------- //
   

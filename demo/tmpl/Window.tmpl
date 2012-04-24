@@ -11,13 +11,17 @@
   </div>
 </script>
 
-<script id="tmpl-Window-actionsPopup" type="text/html">
-  <div class="Window-popupScreen">
-    <div class="Window-actionsPopup Window-popup">
-      <button class="btn  btn-info" data-action="settings"><i class="icon-cog  icon-white"></i>Settings</button>
-      <button class="btn btn-success" data-action="maximize"><i class="icon-resize-full  icon-white"></i>Maximize</button>
-      <button class="btn btn-danger" data-action="close"><i class="icon-remove  icon-white"></i>Close</button>
-      <i class="Window-closePopup icon-remove  icon-white"></i>
+<script id="tmpl-Window-controls" type="text/html">
+  <div class="Window-controls">
+    <div class="Window-controls-inner">
+      <button class="btn btn-mini btn-danger" data-action="close"><i class="icon-remove  icon-white"></i>Close</button>
+      {{if maximized}}
+      <button class="btn btn-mini btn-success" data-action="restore"><i class="icon-resize-small  icon-white"></i>Restore</button>      
+      {{else}}
+      <button class="btn btn-mini btn-success" data-action="maximize"><i class="icon-resize-full  icon-white"></i>Maximize</button>
+      {{/if}}
+      
+      <button class="btn btn-mini btn-info" data-action="settings"><i class="icon-cog  icon-white"></i>Settings</button>      
     </div>
   </div>
 </script>

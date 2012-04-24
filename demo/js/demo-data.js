@@ -6,9 +6,9 @@ var demo = demo || {};
                 title:"Info",
                 ico:"images/app-ico-info.png", 
               },
-              {name:"Todos",
-               title:"Todos",
-               ico:"images/app-ico-info.png", 
+              {name:"Draw",
+               title:"Draw",
+               ico:"images/app-ico-draw.png", 
               }];
               
 })();
