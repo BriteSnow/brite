@@ -6,7 +6,7 @@
   }
   
   DrawToolbar.prototype.create = function(data, config){
-    var html = $("#tmpl-DrawToolbar").render({apps:demo.apps});
+    var html = $("#tmpl-" + this.name).render({apps:demo.apps});
     return $(html);
   }
   

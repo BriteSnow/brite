@@ -59,7 +59,7 @@
 
     
     // bottom border
-    g.beginPath().strokeStyle("#333").lineWidth(3);
+    g.beginPath().strokeStyle("rgba(200,200,200,.1)").lineWidth(3);
     g.moveTo(0,h).lineTo(w - 30,h).stroke();
     
     // right border

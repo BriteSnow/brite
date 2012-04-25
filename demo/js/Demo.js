@@ -17,7 +17,7 @@
     brite.display("Dock",null,{parent:c.$element});
 
     // launch the default app
-    demo.appLauncher.launch("Info");    
+    demo.appLauncher.launch("Draw");    
   }  
   // --------- /Component Interface Implementation ---------- //
 

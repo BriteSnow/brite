@@ -1,0 +1,4 @@
+<draw>
+  <moveTo x="100" y="200" />
+  <lineTo x="500" y="500" />
+</draw>
