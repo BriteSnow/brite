@@ -30,17 +30,17 @@ brite.event = brite.event || {};
      * @param {jQuery Event} e the jquery event object
      */
     brite.event.eventPagePosition = function(e){
-		if (e.originalEvent && e.originalEvent.touches){
-			pageX = e.originalEvent.touches[0].pageX;
-			pageY = e.originalEvent.touches[0].pageY;
-		}else{
-			pageX = e.pageX;
-			pageY = e.pageY;
-		}
-		return {
-			pageX: pageX,
-			pageY: pageY
-		}
+  		if (e.originalEvent && e.originalEvent.touches){
+  			pageX = e.originalEvent.touches[0].pageX;
+  			pageY = e.originalEvent.touches[0].pageY;
+  		}else{
+  			pageX = e.pageX;
+  			pageY = e.pageY;
+  		}
+  		return {
+  			pageX: pageX,
+  			pageY: pageY
+  		}
     }
 })(jQuery);
 
@@ -82,6 +82,82 @@ brite.event = brite.event || {};
 })(jQuery);
 
 
+
+;(function($){
+  var mouseEvents = {
+      down: "mousedown",
+      move: "mousemove",
+      up: "mouseup"
+  }
+  
+  var touchEvents = {
+      down: "touchstart",
+      move: "touchmove",
+      up: "touchend"
+  }
+  
+  function getTapEvents(){
+    if (brite.ua.hasTouch()){
+      return touchEvents;
+    }else{
+      return mouseEvents;
+    }
+  }  
+  
+  // --------- btap & btaphold --------- //
+  $.event.special.btap = {
+
+    setup : function(data, namespaces) {
+
+      var tapEvents = getTapEvents();
+
+      $(this).on(tapEvents.down, function(event) {
+        var elem = this;
+        var $elem = $(elem);
+        
+        var origTarget = event.target, origEvent = event.originalEvent, timer;
+
+        function handleUp(event){
+          clearAll();
+          if (event.target === origTarget){
+            triggerCustomEvent(elem, "btap", event);
+          }
+        }
+        
+        function clearAll(){
+          clearTimeout(timer);
+          $elem.off(tapEvents.up,handleUp);
+          
+        }  
+        
+        $elem.on(tapEvents.up,handleUp);
+        
+        timer = setTimeout(function() {
+          triggerCustomEvent( elem, "btaphold", event);
+        }, 750 );
+      });
+
+    }
+
+  }; 
+
+  $.event.special.btaphold = {
+    setup: function() {
+      $(this).bind( "btap", $.noop );
+    }
+  };
+  
+  // --------- /btap & btaphold --------- //
+  
+    
+  function triggerCustomEvent( obj, eventType, event ) {
+    var originalType = event.type;
+    event.type = eventType;
+    $.event.handle.call( obj, event );
+    event.type = originalType;
+  }  
+    
+})(jQuery);
 
 
 

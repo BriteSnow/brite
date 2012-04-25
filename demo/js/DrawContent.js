@@ -27,10 +27,8 @@
     g.fitParent();
     g.clear();
     
-    console.log("drawing: " + $xmlDoc);
-    ttt = $xmlDoc;
     $xmlDoc.children().each(function(idx,node){
-      console.log("drawing: " + node.nodeName);
+      //console.log("drawing: " + node.nodeName);
     });
     /*
     // fill the gradient    

@@ -14,8 +14,8 @@
     var c = this;
     
     brite.display("DrawToolbar",null,{parent:c.$element});
+    
     brite.display("DrawContent",null,{parent:c.$element}).done(function(drawContent){
-      
       $.ajax({url:"data/draw-sample.xml",
               dataType: "text"}).done(function(result){
         var parser = new DOMParser();
@@ -23,8 +23,8 @@
         var $xmlDoc = $(xmlDoc.firstChild);
         drawContent.draw($xmlDoc);        
       });
-    });;
-
+    });
+    
   }
   
   Draw.prototype.destroy = function(){
