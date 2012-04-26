@@ -1,22 +1,20 @@
 ;(function() {
 
   // --------- Component Interface Implementation ---------- //
-  function DrawToolbar() {
+  function DrawSide() {
   }
 
 
-  DrawToolbar.prototype.create = function(data, config) {
-    var html = $("#tmpl-" + this.name).render({
-      apps : demo.apps
-    });
+  DrawSide.prototype.create = function(data, config) {
+    var html = $("#tmpl-" + this.name).render({});
     return $(html);
   }
 
   // --------- /Component Interface Implementation ---------- //
 
   // --------- Component Registration --------- //
-  brite.registerComponent("DrawToolbar", null, function() {
-    return new DrawToolbar();
+  brite.registerComponent("DrawSide", null, function() {
+    return new DrawSide();
   });
   // --------- Component Registration --------- //
 

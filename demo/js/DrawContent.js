@@ -28,17 +28,15 @@
     g.clear();
     
     $xmlDoc.children().each(function(idx,node){
-      //console.log("drawing: " + node.nodeName);
+      var renderer = renderers[node.nodeName];
+      renderer(g,node);
     });
-    /*
-    // fill the gradient    
-    var fillStyle = g.createLinearGradient(0,0,0,h);
-    fillStyle.addColorStops(0, 'rgba(23, 0, 0, 0.6)',1,'rgba(200, 50, 50, 0.6)');
-    g.fillStyle(fillStyle);
-    g.beginPath().moveTo(0,h).lineTo(30,0).lineTo(w,0).lineTo(w - 30, h).lineTo(0,h);
-    g.fill();
-*/
     
+  }
+  
+  DrawContent.prototype.getCanvas = function(){
+    var c = this;
+    return c.$element.find("canvas")[0];
   }
   // --------- /Component Public API --------- //
   
@@ -49,6 +47,24 @@
     return new DrawContent();
   });
   // --------- Component Registration --------- //  
+  
+  
+  var renderers = {
+    
+    path: function(g,node){
+      g.beginPath().strokeStyle("rgba(50, 50, 50, 0.3)").lineWidth(2);
+      $(node).children().each(function(idx,node){
+        var $node = $(node);
+        if (idx === 0){
+          g.moveTo($node.attr("x"),$node.attr("y"));
+        }else{
+          g.lineTo($node.attr("x"),$node.attr("y"));
+        }
+      });
+      g.stroke();
+      
+    }
+  }
   
   
 })();

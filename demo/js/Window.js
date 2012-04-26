@@ -73,7 +73,7 @@
     });
     
     // window-controls
-    $e.on("touchstart mousedown",".ico-window",function(){
+    $e.on("btap",".ico-window",function(){
       var $controls = c.$element.find(".Window-controls");
       // if we have a popup, then close it
       if ($controls.length > 0){
@@ -85,15 +85,6 @@
       }
     });
     
-    // closing the popup
-    $e.on("click",".Window-popupScreen, .Window-closePopup",function(event){
-      var $target = $(event.target);
-      if ($target.hasClass("Window-popupScreen") || $target.hasClass("Window-closePopup")){ 
-          closePopup.call(c);
-      }
-    });
-
-                    
     // handle the window drag
     $e.bDrag(".Window-header",{
       drag: function(event, extra){
@@ -134,7 +125,7 @@
     var h = $parent.innerHeight() - 64; // for now, harcode dock height
     
     $e.css({top:0,left:0});
-    $e.width(w).height(h);
+    $e.width("100%").height("100%");
     
     hideControls.call(c,true);
   }
@@ -183,15 +174,15 @@
     $inner.animate({left:0});
     c.$element.find(".Window-header h2").fadeOut();
     
-    $controls.on("click","[data-action='close']",function(){
+    $controls.on("btap","[data-action='close']",function(){
       c.$element.bRemove();
     });
     
-    $controls.on("click","[data-action='maximize']",function(){
+    $controls.on("btap","[data-action='maximize']",function(){
       maximize.call(c);
     });  
     
-    $controls.on("click","[data-action='restore']",function(){
+    $controls.on("btap","[data-action='restore']",function(){
       restore.call(c);
     });    
   }
