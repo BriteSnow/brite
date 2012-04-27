@@ -45,55 +45,17 @@ brite.event = brite.event || {};
 })(jQuery);
 
 // ------ /brite event helpers ------ //
-
-// bTouch
-(function($){
-
-    /**
-     * This event either bind a touchend if available, otherwise, bind a click.
-     * In future iterations, we might want make the "touch" case a little bit more advanced (checking touchstart/touchend are from the same element and no drag was initiated)
-     * @param {Function or String} arg0 can be the function or a "delegate" selector string if we want this event to be delegated
-     * @param {Function} arg1 if arg0 is the del
-     */
-    $.fn.bTouch = function(arg0, arg1){
-        var callback = arg1 || arg0;
-        var delegate = (arg1) ? arg0 : null;
-        
-        var eventName = (brite.ua.hasTouch()) ? "touchend" : "click";
-		
-        return this.each(function(){
-            var $this = $(this);
-            
-            if (delegate) {
-                $this.delegate(delegate, eventName, callback);
-            }
-            else {
-                $this.bind(eventName, callback);
-            }
-            
-            
-        });
-        
-    };
-    
-    // samplePlugin default options
-    $.fn.bTouch.defaults = {};
-    
-})(jQuery);
-
-
-
 ;(function($){
   var mouseEvents = {
-      down: "mousedown",
+      start: "mousedown",
       move: "mousemove",
-      up: "mouseup"
+      end: "mouseup"
   }
   
   var touchEvents = {
-      down: "touchstart",
+      start: "touchstart",
       move: "touchmove",
-      up: "touchend"
+      end: "touchend"
   }
   
   function getTapEvents(){
@@ -111,13 +73,13 @@ brite.event = brite.event || {};
 
       var tapEvents = getTapEvents();
 
-      $(this).on(tapEvents.down, function(event) {
+      $(this).on(tapEvents.start, function(event) {
         var elem = this;
         var $elem = $(elem);
         
         var origTarget = event.target, origEvent = event.originalEvent, timer;
 
-        function handleUp(event){
+        function handleEnd(event){
           clearAll();
           if (event.target === origTarget){
             triggerCustomEvent(elem, "btap", event);
@@ -126,11 +88,11 @@ brite.event = brite.event || {};
         
         function clearAll(){
           clearTimeout(timer);
-          $elem.off(tapEvents.up,handleUp);
+          $elem.off(tapEvents.end,handleEnd);
           
         }  
         
-        $elem.on(tapEvents.up,handleUp);
+        $elem.on(tapEvents.end,handleEnd);
         
         timer = setTimeout(function() {
           triggerCustomEvent( elem, "btaphold", event);

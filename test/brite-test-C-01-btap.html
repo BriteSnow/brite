@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-        <title>briteUITest - brite.ua</title>
+        <title>brite test - event - btap</title>
 
 		<!-- Generic Test Includes -->
 		<link rel="stylesheet" href="css/sTestHelper.css"/>
@@ -37,7 +37,7 @@
     <body>
     	<p>UserAgent with touch events will use the "touchstart" event, others will use the tranditional "click" event.</p>
 		
-        <h2>Single bTouch bind</h2>
+        <h2>Single btap bind</h2>
 		<div class="sTestSrc sTestShowSrc">
 		
 		
@@ -48,7 +48,7 @@
 		<script type="text/javascript">
 			$(function(){
 				var count = 0;
-				$("#touchButton").bTouch(function(){
+				$("#touchButton").on("btap",function(){
 					$(this).toggleClass("on");
 				});
 				
@@ -56,7 +56,7 @@
 		</script>
 		</div>
 		
-		<h2>Deleguate bTouch</h2>
+		<h2>Deleguate btap</h2>
 		<div class="sTestSrc sTestShowSrc">
 			<div id="touchButtons">
 				<div class="button">Click me</div><div class="button">Click me too</div><div class="button">Me too</div>
@@ -66,7 +66,7 @@
 			$(function(){
 				
 				var count = 0;
-				$("#touchButtons").bTouch(".button",function(){
+				$("#touchButtons").on("btap",".button",function(){
 					$(this).toggleClass("on");
 				});
 				
