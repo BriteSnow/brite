@@ -244,7 +244,6 @@ brite.version = "0.9-snapshot";
         var cssFileName = "css/" + name + ".css";
         var includeDfd = includeFile(cssFileName,"css");
         includeDfd.done(function(){
-          
           loadCssDfd.resolve();
         }).fail(function(){
           console.log("Brite ERROR: cannot load " + cssFileName + ". Ignoring issue");
@@ -604,6 +603,7 @@ brite.version = "0.9-snapshot";
       // hack from: http://www.backalleycoder.com/2011/03/20/link-tag-css-stylesheet-load-event/
       var html = document.getElementsByTagName('html')[0];
       var img = document.createElement('img');
+      $(img).css("display","none"); // hide the image
       img.onerror = function(){
         html.removeChild(img);
         // for css, we cannot know if it fail to load for now
