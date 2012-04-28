@@ -154,8 +154,10 @@ brite.event = brite.event || {};
         
         // drag end
         $document.on(tapEvents.end + "." + uid, function(event){
-          var bextra = buildDragExtra(event, $origTarget, BDRAGMOVE);
-          triggerCustomEvent( origTarget, event,{type:BDRAGEND,target:origTarget,bextra:bextra});  
+          if (dragStarted){
+            var bextra = buildDragExtra(event, $origTarget, BDRAGEND);
+            triggerCustomEvent( origTarget, event,{type:BDRAGEND,target:origTarget,bextra:bextra});
+          }  
           $document.off("." + uid);
         });
             
