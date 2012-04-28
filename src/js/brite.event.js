@@ -112,7 +112,7 @@ brite.event = brite.event || {};
   var BDRAGSTART="bdragstart",BDRAGMOVE="bdragmove",BDRAGEND="bdragend";
   var BDRAGENTER="bdragenter",BDRAGOVER="bdragover",BDRAGLEAVE="bdragleave",BDROP="bdrop";
   
-  var dragThreshold = 10;
+  var dragThreshold = 5;
   
   $.event.special[BDRAGMOVE] = {
 
@@ -141,8 +141,8 @@ brite.event = brite.event || {};
             if(Math.abs(startPagePos.pageX - currentPagePos.pageX) > dragThreshold) {
               dragStarted = true;
               $origTarget.data("bDragCtx", {});
-              var bextra = buildDragExtra(event, $origTarget, BDRAGSTART);
-              triggerCustomEvent( origTarget, event,{type:BDRAGSTART,target:origTarget,bextra:bextra});  
+              var bextra = buildDragExtra(startEvent, $origTarget, BDRAGSTART);
+              triggerCustomEvent( origTarget, startEvent,{type:BDRAGSTART,target:origTarget,bextra:bextra});  
             }
           }
           
