@@ -138,11 +138,11 @@ brite.event = brite.event || {};
           var currentPagePos = brite.event.eventPagePosition(event);
           
           if (!dragStarted){
-            if(Math.abs(startPagePos.pageX - currentPagePos.pageX) > dragThreshold) {
+            if(Math.abs(startPagePos.pageX - currentPagePos.pageX) > dragThreshold || Math.abs(startPagePos.pageY - currentPagePos.pageY) > dragThreshold) {
               dragStarted = true;
               $origTarget.data("bDragCtx", {});
-              var bextra = buildDragExtra(startEvent, $origTarget, BDRAGSTART);
-              triggerCustomEvent( origTarget, startEvent,{type:BDRAGSTART,target:origTarget,bextra:bextra});  
+              var bextra = buildDragExtra(event, $origTarget, BDRAGSTART);
+              triggerCustomEvent( origTarget, event,{type:BDRAGSTART,target:origTarget,bextra:bextra});  
             }
           }
           
