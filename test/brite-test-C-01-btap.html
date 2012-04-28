@@ -41,16 +41,23 @@
 		<div class="sTestSrc sTestShowSrc">
 		
 		
-		<div id="touchButton" class="button">Click me</div>
+		<div id="tapButton" class="button">Tap me</div>
+		
+		<div id="tapholdButton" class="button">Tap and Hold</div>
+		
 		<div id="touchButtonResult"></div>
 		
 		
 		<script type="text/javascript">
 			$(function(){
 				var count = 0;
-				$("#touchButton").on("btap",function(){
+				$("#tapButton").on("btap",function(){
 					$(this).toggleClass("on");
 				});
+				
+        $("#tapholdButton").on("btaphold",function(){
+          $(this).toggleClass("on");
+        });				
 				
 			});
 		</script>

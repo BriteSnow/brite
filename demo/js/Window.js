@@ -85,28 +85,21 @@
       }
     });
     
-    // handle the window drag
-    $e.bDrag(".Window-header",{
-      drag: function(event, extra){
+    $e.on("bdragmove",".Window-header",function(event){
         var pos = c.$element.position();
-        var newX = pos.left + extra.deltaPageX;
-        var newY = pos.top + extra.deltaPageY;
+        var newX = pos.left + event.bextra.deltaX;
+        var newY = pos.top + event.bextra.deltaY;
         c.$element.css({top: "" + newY + "px",
                         left: "" + newX + "px"}); 
-        
-      }
-    });                
+    });
     
-    // handle the resize
-    $e.bDrag(".Window-resizeHandle",{
-      drag: function(event, extra){
-        var w = c.$element.width() + extra.deltaPageX;
-        var h = c.$element.height() + extra.deltaPageY;
+    $e.on("bdragmove",".Window-resizeHandle",function(event){
+        var w = c.$element.width() + event.bextra.deltaX;
+        var h = c.$element.height() + event.bextra.deltaY;
         
         c.$element.width(w);
-        c.$element.height(h);
-      }
-    }); 
+        c.$element.height(h);      
+    });
     
   }
   // --------- /Component Interface Implementation ---------- //

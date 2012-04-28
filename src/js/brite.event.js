@@ -82,20 +82,19 @@ brite.event = brite.event || {};
         function handleEnd(event){
           clearAll();
           if (event.target === origTarget){
-            triggerCustomEvent(elem, "btap", event);
+            triggerCustomEvent(elem, event,{type:"btap"});
           }
         }
         
         function clearAll(){
           clearTimeout(timer);
           $elem.off(tapEvents.end,handleEnd);
-          
         }  
         
         $elem.on(tapEvents.end,handleEnd);
         
         timer = setTimeout(function() {
-          triggerCustomEvent( elem, "btaphold", event);
+          triggerCustomEvent( elem, event,{type:"btaphold"});
         }, 750 );
       });
 
@@ -103,21 +102,132 @@ brite.event = brite.event || {};
 
   }; 
 
-  $.event.special.btaphold = {
-    setup: function() {
-      $(this).bind( "btap", $.noop );
-    }
-  };
+
+  linkSpecialEventsTo(["btaphold"],"btap");
   
   // --------- /btap & btaphold --------- //
   
+  
+  // --------- bdrag* --------- //
+  var BDRAGSTART="bdragstart",BDRAGMOVE="bdragmove",BDRAGEND="bdragend";
+  var BDRAGENTER="bdragenter",BDRAGOVER="bdragover",BDRAGLEAVE="bdragleave",BDROP="bdrop";
+  
+  var dragThreshold = 10;
+  
+  $.event.special[BDRAGMOVE] = {
+
+    setup : function(data, namespaces) {
+      
+      var tapEvents = getTapEvents();
+      
+      $(this).on(tapEvents.start, function(event) {
+        var elem = this;
+        var $elem = $(this);
+        var dragStarted = false;
+        var startEvent = event;
+        var startPagePos = brite.event.eventPagePosition(startEvent);
+        var origTarget = event.target;
+        var $origTarget = $(origTarget);
+        
+        var $document = $(document);
+        var uid = "_" + brite.uuid(7);
+        
+        // drag move (and start)
+        $document.on(tapEvents.move + "." + uid,function(event){
+          
+          var currentPagePos = brite.event.eventPagePosition(event);
+          
+          if (!dragStarted){
+            if(Math.abs(startPagePos.pageX - currentPagePos.pageX) > dragThreshold) {
+              dragStarted = true;
+              $origTarget.data("bDragCtx", {});
+              var bextra = buildDragExtra(event, $origTarget, BDRAGSTART);
+              triggerCustomEvent( origTarget, event,{type:BDRAGSTART,target:origTarget,bextra:bextra});  
+            }
+          }
+          
+          if(dragStarted) {
+            var bextra = buildDragExtra(event, $origTarget, BDRAGMOVE);
+            triggerCustomEvent( origTarget, event,{type:BDRAGMOVE,target:origTarget,bextra:bextra});
+          }
+        });
+        
+        // drag end
+        $document.on(tapEvents.end + "." + uid, function(event){
+          var bextra = buildDragExtra(event, $origTarget, BDRAGMOVE);
+          triggerCustomEvent( origTarget, event,{type:BDRAGEND,target:origTarget,bextra:bextra});  
+          $document.off("." + uid);
+        });
+            
+      });
+    }
+  };
+  
+  linkSpecialEventsTo([BDRAGSTART,BDRAGEND],BDRAGMOVE);
+  
+   /**
+   * Build the extra event info for the drag event. 
+   */
+  function buildDragExtra(event,$elem,dragType){
+    brite.event.fixTouchEvent(event);
+    var hasTouch = brite.ua.hasTouch();
+    var extra = {
+      eventSource: event,
+      pageX: event.pageX,
+      pageY: event.pageY      
+    };
     
-  function triggerCustomEvent( obj, eventType, event ) {
-    var originalType = event.type;
-    event.type = eventType;
-    $.event.handle.call( obj, event );
-    event.type = originalType;
-  }  
+    var oe = event.originalEvent;
+    if (hasTouch){
+      extra.touches = oe.touches;
+    }
+    
+    var bDragCtx = $elem.data("bDragCtx");
+    
+    if (dragType === BDRAGSTART){
+      bDragCtx.startPageX = extra.startPageX = extra.pageX;
+      bDragCtx.startPageY = extra.startPageY = extra.pageY;
+      
+      bDragCtx.lastPageX = bDragCtx.startPageX = extra.startPageX;
+      bDragCtx.lastPageY = bDragCtx.startPageY = extra.startPageY;
+    }else if (dragType === BDRAGEND){
+      // because, on iOs, the touchEnd event does not have the .touches[0].pageX
+      extra.pageX = bDragCtx.lastPageX;
+      extra.pageY = bDragCtx.lastPageY;
+    }
+    
+    extra.startPageX = bDragCtx.startPageX;
+    extra.startPageY = bDragCtx.startPageY;
+    extra.deltaX = extra.pageX - bDragCtx.lastPageX;
+    extra.deltaY = extra.pageY - bDragCtx.lastPageY;
+    
+    bDragCtx.lastPageX = extra.pageX;
+    bDragCtx.lastPageY = extra.pageY;
+    return extra;
+  }
+  // --------- /bdrag* --------- //
+  
+  // --------- Event Utilities --------- //
+  
+  // Link
+  function linkSpecialEventsTo(eventNames,eventRef){
+    $.each(eventNames,function(idx,val){
+      $.event.special[ val ] = {
+        setup: function() {
+          $( this ).bind( eventRef, $.noop );
+        }
+      };      
+    });
+  }
+    
+  function triggerCustomEvent( elem, nativeEvent, override ) {
+    var newEvent = jQuery.extend(
+      new jQuery.Event(),
+      nativeEvent,override
+    );
+    $(elem).trigger(newEvent);    
+  }
+  // --------- /Event Utilities --------- //  
     
 })(jQuery);
 
@@ -148,10 +258,6 @@ brite.event = brite.event || {};
         end: "touchend"
     }
     
-    
-    
-    
-    
     /**
      * Drag event for mouse and touch based user agents. 
      * 
@@ -178,165 +284,164 @@ brite.event = brite.event || {};
      * @param {DOMElement} dragExtra.overElement this is for bdrag and bdragend event, and represent the over element (the drop over element) if the opts.draggable was set to true
      * @param {DOMElement} dragExtra.helperElement this is the element that is used for the drag effect. Could be the same as the draggable element, or a clone or custom element.
      */
-    $.fn.bDrag = function(delegate, opts){
-        var options = opts || delegate;
-        var delegate = (opts) ? delegate : null;
-        var hasTouch = brite.ua.hasTouch();
-        
-        options = $.extend({},$.fn.bDrag.defaults,options);
-        
-        var dragEvents = (hasTouch) ? touchDragEvents : mouseDragEvents;
-        
-        //for now, support the not delegatable way
-        // iterate and process each matched element
-        return this.each(function(){
-            var $this = $(this); // jQuery object for this element
-            if (delegate == null) {
-				(options.start)?$this.bind(BDRAGSTART,options.start):null;
-				(options.drag)?$this.bind(BDRAGDRAG,options.drag):null;
-				(options.end)?$this.bind(BDRAGEND,options.end):null;
-							
-                $this.bind(dragEvents.start, function(e){
-                   	handleDragEvent.call(this,e,options);
-                });
-            }else{
-
-				(options.start)?$this.delegate(delegate,BDRAGSTART,options.start):null;
-				(options.drag)?$this.delegate(delegate,BDRAGDRAG,options.drag):null;
-				(options.end)?$this.delegate(delegate,BDRAGEND,options.end):null;	
-				
-				$this.delegate(delegate,dragEvents.start,function(e){
-					handleDragEvent.call(this,e,options);
-				})
-			}
-        });
-        
-		// Handler the event
-		// "this" of this function will be the element
-        function handleDragEvent(e, options){
-			//var $this = $(this);
-            
-            var $elem = $(this);
-            
-            var $document = $(document);
-            var id = "_" + brite.uuid(7);
-            
-            var dragStarted = false;
-            var startEvent = e;
-            var startPagePos = brite.event.eventPagePosition(startEvent);
-            
-            
-            
-            
-            // create the $helper if it is a draggable event.
-            var $helper; 
-			
-			// so far, we prevent the default, otherwise, we see some text select which can be of a distracting
-			e.preventDefault();
-			
-			// drag
-            $document.bind(dragEvents.drag + "." + id, function(e){
-            	
-            	// if the drag has not started, check if we need to start it
-            	if (!dragStarted){
-            		var currentPagePos = brite.event.eventPagePosition(e);
-            		
-            		// if the diff > threshold, then, we start the drag
-            		if (Math.abs(startPagePos.pageX - currentPagePos.pageY) > options.threshold){
-            			dragStarted = true;
-            			//create the bDragCtx
-            			$elem.data("bDragCtx",{});
-            			
-            			
-						if (options.draggable === true){
-							if ($.isFunction(options.helper)){
-								$helper = $(options.helper.call($elem.get(0)));
-							}else if (options.helper === "original"){
-								
-								$helper = $elem;
-							}else if (options.helper === "clone"){
-								$helper = $elem.clone();
-								// make sure to remove the DOMElement ID
-								$helper.attr("id",null);
-								$helper.css("position","absolute");
-								var elemPos = $elem.offset();
-								$helper.css({
-									top: elemPos.top,
-									left: elemPos.left
-								})
-								//todo need to allow configurable helper parent (right now, it is the body)
-								$("body").append($helper);					
-							}
-						}   
-						var dragStartExtra = buildDragExtra(startEvent,$elem,$helper,BDRAGSTART);
-            			$elem.trigger(BDRAGSTART,[dragStartExtra]);
-            		}
-            	}
-            	
-            	if (dragStarted){
-					var dragExtra = buildDragExtra(e,$elem,$helper,BDRAGDRAG);
-					
-	                var overElem;
-	                if (options.draggable === true){
-	                  overElem = findOverElement($helper,dragExtra);
-	                  dragExtra.overElement = overElem;
-	                }				
-					
-	            	$elem.trigger(BDRAGDRAG,[dragExtra]);
-	            	
-	            	if (options.draggable === true){
-	            		moveElement($helper,dragExtra);
-	            		var dropExtra = buildDropExtra($elem,$helper);
-						triggerDropEventOnOverElement(BDRAGOVER,e,$elem,overElem,dropExtra);
-					}
-					
-					// since we create "meta events" we consume this one	
-	                e.preventDefault();
-					e.stopPropagation();
-				}
-            });
-            
-            // drag end
-            $document.bind(dragEvents.end + "." + id, function(e){
-            	if (dragStarted){
-	                var extra = buildDragExtra(e,$elem,$helper,BDRAGEND);
-	                var dropExtra; 
-	                
-	                var overElem;
-	                if (options.draggable === true){
-	                  overElem = findOverElement($helper,extra);
-	                  extra.overElement = overElem;
-	                }
-	                 
-	            	$elem.trigger(BDRAGEND,[extra]);
-					
-					// get the $overElem
-					if (options.draggable === true){
-						moveElement($helper,extra);
-						dropExtra = buildDropExtra($elem,$helper);
-						triggerDropEventOnOverElement(BDROP,e,$elem,overElem,dropExtra);
-						
-						if (!$helper.is($elem)){
-							$helper.remove();
-						}
-					}				
-					
-					// delete the dragContext
-					$elem.data("bDragCtx",null);
-					
-					// since we create "meta events" we consume this one
-	                e.preventDefault();
-					e.stopPropagation();
-				}
-				
-				// unbind the document event
-	            $(document).unbind(dragEvents.drag + "." + id);
-	            $(document).unbind(dragEvents.end + "." + id);
-					
-            });
+    $.fn.bDrag = function(delegate, opts) {
+      var options = opts || delegate;
+      var delegate = (opts) ? delegate : null;
+      var hasTouch = brite.ua.hasTouch();
+  
+      options = $.extend({}, $.fn.bDrag.defaults, options);
+  
+      var dragEvents = (hasTouch) ? touchDragEvents : mouseDragEvents;
+  
+      //for now, support the not delegatable way
+      // iterate and process each matched element
+      return this.each(function() {
+        var $this = $(this);
+        // jQuery object for this element
+        if(delegate == null) {
+          (options.start) ? $this.bind(BDRAGSTART, options.start) : null;
+          (options.drag) ? $this.bind(BDRAGDRAG, options.drag) : null;
+          (options.end) ? $this.bind(BDRAGEND, options.end) : null;
+  
+          $this.bind(dragEvents.start, function(e) {
+            handleDragEvent.call(this, e, options);
+          });
+        } else {
+  
+          (options.start) ? $this.delegate(delegate, BDRAGSTART, options.start) : null;
+          (options.drag) ? $this.delegate(delegate, BDRAGDRAG, options.drag) : null;
+          (options.end) ? $this.delegate(delegate, BDRAGEND, options.end) : null;
+  
+          $this.delegate(delegate, dragEvents.start, function(e) {
+            handleDragEvent.call(this, e, options);
+          })
+  
         }
-        
+      });
+  
+      // Handler the event
+      // "this" of this function will be the element
+      function handleDragEvent(e, options) {
+        //var $this = $(this);
+  
+        var $elem = $(this);
+  
+        var $document = $(document);
+        var id = "_" + brite.uuid(7);
+  
+        var dragStarted = false;
+        var startEvent = e;
+        var startPagePos = brite.event.eventPagePosition(startEvent);
+  
+        // create the $helper if it is a draggable event.
+        var $helper;
+  
+        // so far, we prevent the default, otherwise, we see some text select which can be of a distracting
+        e.preventDefault();
+  
+        // drag
+        $document.bind(dragEvents.drag + "." + id, function(e) {
+  
+          // if the drag has not started, check if we need to start it
+          if(!dragStarted) {
+            var currentPagePos = brite.event.eventPagePosition(e);
+  
+            // if the diff > threshold, then, we start the drag
+            if(Math.abs(startPagePos.pageX - currentPagePos.pageY) > options.threshold) {
+              dragStarted = true;
+              //create the bDragCtx
+              $elem.data("bDragCtx", {});
+  
+              if(options.draggable === true) {
+                if($.isFunction(options.helper)) {
+                  $helper = $(options.helper.call($elem.get(0)));
+                } else if(options.helper === "original") {
+  
+                  $helper = $elem;
+                } else if(options.helper === "clone") {
+                  $helper = $elem.clone();
+                  // make sure to remove the DOMElement ID
+                  $helper.attr("id", null);
+                  $helper.css("position", "absolute");
+                  var elemPos = $elem.offset();
+                  $helper.css({
+                    top : elemPos.top,
+                    left : elemPos.left
+                  })
+                  //todo need to allow configurable helper parent (right now, it is the body)
+                  $("body").append($helper);
+                }
+              }
+              var dragStartExtra = buildDragExtra(startEvent, $elem, $helper, BDRAGSTART);
+              $elem.trigger(BDRAGSTART, [dragStartExtra]);
+            }
+          }
+  
+          if(dragStarted) {
+            var dragExtra = buildDragExtra(e, $elem, $helper, BDRAGDRAG);
+  
+            var overElem;
+            if(options.draggable === true) {
+              overElem = findOverElement($helper, dragExtra);
+              dragExtra.overElement = overElem;
+            }
+  
+            $elem.trigger(BDRAGDRAG, [dragExtra]);
+  
+            if(options.draggable === true) {
+              moveElement($helper, dragExtra);
+              var dropExtra = buildDropExtra($elem, $helper);
+              triggerDropEventOnOverElement(BDRAGOVER, e, $elem, overElem, dropExtra);
+            }
+  
+            // since we create "meta events" we consume this one
+            e.preventDefault();
+            e.stopPropagation();
+          }
+        });
+  
+        // drag end
+        $document.bind(dragEvents.end + "." + id, function(e) {
+          if(dragStarted) {
+            var extra = buildDragExtra(e, $elem, $helper, BDRAGEND);
+            var dropExtra;
+  
+            var overElem;
+            if(options.draggable === true) {
+              overElem = findOverElement($helper, extra);
+              extra.overElement = overElem;
+            }
+  
+            $elem.trigger(BDRAGEND, [extra]);
+  
+            // get the $overElem
+            if(options.draggable === true) {
+              moveElement($helper, extra);
+              dropExtra = buildDropExtra($elem, $helper);
+              triggerDropEventOnOverElement(BDROP, e, $elem, overElem, dropExtra);
+  
+              if(!$helper.is($elem)) {
+                $helper.remove();
+              }
+            }
+  
+            // delete the dragContext
+            $elem.data("bDragCtx", null);
+  
+            // since we create "meta events" we consume this one
+            e.preventDefault();
+            e.stopPropagation();
+          }
+  
+          // unbind the document event
+          $(document).unbind(dragEvents.drag + "." + id);
+          $(document).unbind(dragEvents.end + "." + id);
+  
+        });
+      }
+  
     }
+
     
     
     function moveElement($elem,extra){
