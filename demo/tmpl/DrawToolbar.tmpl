@@ -1,5 +1,7 @@
 <script id="tmpl-DrawToolbar" type="text/html">
   <div class="DrawToolbar">
-    <div class="DrawToolbar-tool">T</div>
+    {{for tools}}{{: this}}
+    <div class="DrawToolbar-tool" data-tool="{{:#data}}"><i class="Draw-ico-{{:#data}}"></i></div>
+    {{/for}}
   </div>
 </script>

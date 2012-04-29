@@ -30,6 +30,7 @@ brite.event = brite.event || {};
      * @param {jQuery Event} e the jquery event object
      */
     brite.event.eventPagePosition = function(e){
+      var pageX, pageY;
   		if (e.originalEvent && e.originalEvent.touches){
   			pageX = e.originalEvent.touches[0].pageX;
   			pageY = e.originalEvent.touches[0].pageY;
@@ -77,12 +78,13 @@ brite.event = brite.event || {};
         var elem = this;
         var $elem = $(elem);
         
-        var origTarget = event.target, origEvent = event.originalEvent, timer;
+        var origTarget = event.target, startEvent = event, timer;
 
         function handleEnd(event){
           clearAll();
           if (event.target === origTarget){
-            triggerCustomEvent(elem, event,{type:"btap"});
+            brite.event.fixTouchEvent(startEvent);
+            triggerCustomEvent(elem, startEvent,{type:"btap"});
           }
         }
         
@@ -94,7 +96,8 @@ brite.event = brite.event || {};
         $elem.on(tapEvents.end,handleEnd);
         
         timer = setTimeout(function() {
-          triggerCustomEvent( elem, event,{type:"btaphold"});
+          brite.event.fixTouchEvent(startEvent);
+          triggerCustomEvent( elem, startEvent,{type:"btaphold"});
         }, 750 );
       });
 
@@ -143,12 +146,16 @@ brite.event = brite.event || {};
               $origTarget.data("bDragCtx", {});
               var bextra = buildDragExtra(event, $origTarget, BDRAGSTART);
               triggerCustomEvent( origTarget, event,{type:BDRAGSTART,target:origTarget,bextra:bextra});  
+              event.stopPropagation();
+              event.preventDefault();
             }
           }
           
           if(dragStarted) {
             var bextra = buildDragExtra(event, $origTarget, BDRAGMOVE);
             triggerCustomEvent( origTarget, event,{type:BDRAGMOVE,target:origTarget,bextra:bextra});
+            event.stopPropagation();
+            event.preventDefault();
           }
         });
         
@@ -157,6 +164,8 @@ brite.event = brite.event || {};
           if (dragStarted){
             var bextra = buildDragExtra(event, $origTarget, BDRAGEND);
             triggerCustomEvent( origTarget, event,{type:BDRAGEND,target:origTarget,bextra:bextra});
+            event.stopPropagation();
+            event.preventDefault();            
           }  
           $document.off("." + uid);
         });

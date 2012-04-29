@@ -2,6 +2,11 @@
   position: absolute;
   top: 30px; right: 0;
   width: 80px;
+  
+}
+
+.DrawSide > .Draw-panel{
+  margin-bottom: 10px;
   padding: 10px 5px;
   background: #444;
   border-top: solid 1px #333;

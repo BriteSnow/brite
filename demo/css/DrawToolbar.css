@@ -1,10 +1,28 @@
 .DrawToolbar{
   position: absolute;
   top: 30px; 
-  width: 32px;
-  height: 100px;
+  padding: 0 0px;
   background: #444;
   border-top: solid 1px #333;
   border-right: solid 1px #333;
   border-bottom: solid 1px #333;
+}
+
+.DrawToolbar-tool [class^="Draw-ico-"]{
+  float: none;
+  margin: 6px;
+}
+.DrawToolbar-tool{
+  width: 28px;
+  height: 28px;  
+  padding: 2px 2px 4px 2px;
+  border-bottom: solid 1px #3f3f3f;
+  
+}
+
+.DrawToolbar-tool.sel{
+  background: #666;
+}
+.DrawToolbar-tool:hover{
+  background: #555;
 }

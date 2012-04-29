@@ -7,13 +7,19 @@ body{
   background-image: url(images/bgPat.png);
   font-family: "helvetica neue",helvetica,arial,sans-serif;
   font-size: 100%;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 #bodyBg{
   display: none; /* turn it off for now */
   z-index: -4;
   position: absolute;
-  top: 0; left; 0;
+  top: 0; left: 0;
   max-width: 100%;
 }
 

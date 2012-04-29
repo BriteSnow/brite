@@ -1,6 +1,16 @@
 <draw>
-  <path>
-    <p x="100" y="200" />
-    <p x="500" y="500" />
-  </path>
+  
+  <layer>
+    <path>
+      <p x="100" y="200" />
+      <p x="500" y="500" />
+    </path>
+  </layer>
+  
+  <layer>
+    <path>
+      <p x="30" y="20" />
+      <p x="100" y="80" />
+    </path>
+  </layer>
 </draw>

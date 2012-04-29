@@ -1,0 +1,25 @@
+.DrawLayersPanel{
+  
+}
+
+.DrawLayersPanel-layer{
+ padding: 5px 0 2px 5px;
+ background: #666; 
+ border-bottom: dotted 1px #444;
+}
+
+.DrawLayersPanel-layer.sel{
+  background: #999;
+}
+
+.DrawLayersPanel-thumb{
+  float: left;
+  border: solid 1px #555;
+  width: 10px;
+  height: 10px;
+  margin: 3px 5px 0 0;
+}
+
+.DrawLayersPanel-layer label{
+  
+}

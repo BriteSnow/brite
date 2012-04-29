@@ -27,9 +27,12 @@
     g.fitParent();
     g.clear();
     
-    $xmlDoc.children().each(function(idx,node){
-      var renderer = renderers[node.nodeName];
-      renderer(g,node);
+    $xmlDoc.children().each(function(idx,layer){
+      var $layer = $(this);
+      $layer.children().each(function(idx,node){
+        var renderer = renderers[node.nodeName];
+        renderer(g,node);
+      });
     });
     
   }
