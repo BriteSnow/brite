@@ -4,6 +4,7 @@
   background-color: #555;
 }
 
+/* --------- Edit Layers --------- */
 .Draw-selectLayer{
   position: absolute;
   top: 0; right: 0; bottom: 0; left: 0;
@@ -30,6 +31,20 @@
   top: 0; right: 0; bottom: 0; left: 0;  
   cursor: url("pen.cur"), default;
 }
+
+.Draw-circleLayer{
+  position: absolute;
+  top: 0; right: 0; bottom: 0; left: 0;  
+  cursor: url("circle.cur"), default;
+}
+
+.Draw-selectBox{
+    position: absolute;
+    border: dotted 1px #999;
+    cursor:move;
+}
+
+/* --------- /Edit Layers --------- */
 
 
 /* --------- Draw Icons --------- */

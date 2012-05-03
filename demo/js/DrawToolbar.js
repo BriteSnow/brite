@@ -1,6 +1,6 @@
 ;(function() {
 
-  var tools = ["pointer","pen"];//,"square","circle"];
+  var tools = ["pointer","pen","circle"];//,"square","circle"];
   
   // --------- Component Interface Implementation ---------- //
   function DrawToolbar() {

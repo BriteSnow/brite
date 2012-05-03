@@ -65,8 +65,17 @@
         }
       });
       g.stroke();
-      
+    },
+    
+    circle: function(g,node){
+      g.beginPath().strokeStyle("rgba(200, 50, 50, 0.3)").lineWidth(2);
+      var $node = $(node);
+      //g.arc(100,100,50,0,Math.PI*2,true).stroke();
+      g.arc($node.attr("x"),$node.attr("y"),$node.attr("r"),0,Math.PI*2,true).stroke();
+      //g.moveTo(100,100).lineTo(300,300).stroke();
     }
+    
+    
   }
   
   

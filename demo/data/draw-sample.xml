@@ -1,16 +1,41 @@
 <draw>
+
+  <layer name="Simple line">
+    <path>
+      <p x="321" y="337"/>
+      <p x="409" y="383"/>
+      <p x="492" y="338"/>
+    </path>
+  </layer>
+
   
   <layer>
     <path>
-      <p x="100" y="200" />
-      <p x="500" y="500" />
+      <p x="382" y="269"/>
+      <p x="410" y="323"/>
+      <p x="437" y="271"/>
     </path>
+  </layer>
+
+  <layer>
+    <circle x="457" y="211" r="8"/>
+  </layer>  
+  
+  
+  <layer>
+    <circle x="408" y="253" r="203"/>
   </layer>
   
   <layer>
-    <path>
-      <p x="30" y="20" />
-      <p x="100" y="80" />
-    </path>
+    <circle x="344" y="193" r="57"/>
   </layer>
+  
+  <layer>
+    <circle x="472" y="194" r="53"/>
+  </layer>
+
+  <layer>
+    <circle x="364" y="208" r="8"/>
+  </layer>
+
 </draw>

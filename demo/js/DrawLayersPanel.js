@@ -28,6 +28,10 @@
     // respond to layer event
     c.draw.$element.on(demo.draw.event.LAYER_SELECT_CHANGE + "." + c.cid, function(event,layeridx){
         c.$element.find(".DrawLayersPanel-layer").removeClass("sel").eq(layeridx).addClass("sel");
+    });
+    
+    c.draw.$element.on(demo.draw.event.XML_DOC_LAYERS_CHANGE + "." + c.cid, function(event){
+      refreshLayers.call(c);
     });  
     
   }
