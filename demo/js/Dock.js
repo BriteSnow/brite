@@ -42,7 +42,7 @@
     var g = brite.gtx($docBarCanvas);
     g.fitParent();
     g.clear();
-    var h = $docBarCanvas.height();
+    var h = $docBarCanvas.height() ;
     var w = $docBarCanvas.width();
     
     
@@ -50,21 +50,21 @@
     var clockFillStyle = g.createLinearGradient(0,0,0,h);
     clockFillStyle.addColorStops(0, 'rgba(0, 0, 0, 0.6)',1,'rgba(50, 50, 50, 0.6)');
     g.fillStyle(clockFillStyle);
-    g.beginPath().moveTo(0,h).lineTo(30,0).lineTo(w,0).lineTo(w - 30, h).lineTo(0,h);
+    g.beginPath().moveTo(0,h - 2).lineTo(30,0).lineTo(w - 28,0).lineTo(w, h ).lineTo(0,h);
     g.fill();
 
     // top border
     g.beginPath().strokeStyle("rgba(50, 50, 50, 0.3)").lineWidth(1);
-    g.moveTo(0 + 30,0).lineTo(w,0).stroke();
+    g.moveTo(0 + 28,0).lineTo(w - 28,0).stroke();
 
     
     // bottom border
-    g.beginPath().strokeStyle("rgba(200,200,200,.1)").lineWidth(3);
-    g.moveTo(0,h).lineTo(w - 30,h).stroke();
+    g.beginPath().strokeStyle("rgba(200,200,200,.5)").lineWidth(3);
+    g.moveTo(0,h).lineTo(w,h).stroke();
     
     // right border
-    g.beginPath().strokeStyle("rgba(50, 50, 50, 0.6)").lineWidth(3);
-    g.moveTo(w,0).lineTo(w - 30,h).stroke();
+    g.beginPath().strokeStyle("rgba(50, 50, 50, 0.6)").lineWidth(1);
+    g.moveTo(w - 28,0).lineTo(w -1,h -1).stroke();
 
     // left border
     g.beginPath().strokeStyle("rgba(50, 50, 50, 1)").lineWidth(.5);
