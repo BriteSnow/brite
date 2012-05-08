@@ -920,14 +920,7 @@ brite.version = "0.9-snapshot";
 // -------------------------- //
 
 // ------------------------ //
-// ------ brite.util ------ //
-
-/**
- * @namespace
- * 
- * Some utilities
- */
-brite.util = {};
+// ------ brite utils ------ //
 
 (function($) {
 	// Private array of chars to use
@@ -952,8 +945,9 @@ brite.util = {};
 		var chars = CHARS, uuid = [];
 		radix = radix || chars.length;
 		len = len || 10;
-		for ( var i = 0; i < len; i++)
+		for ( var i = 0; i < len; i++){
 			uuid[i] = chars[0 | Math.random() * radix];
+		}
 		return uuid.join('');
 	};
 
@@ -994,6 +988,19 @@ brite.util = {};
 		return iVal;
 	}
 
+  // substract all the values for two object (ignore the not numbers one), and return the new object.
+  brite.substract = function(obj1,obj2){
+    var r = {};
+    $.each(obj1,function(key,val1){
+      var val2 = obj2[key];
+      if (!isNaN(val1) && !isNaN(val2)){
+        r[key] = val1 - val2;
+      }
+    });
+      
+   return r;
+  }
+
 	/**
 	 * @namespace
 	 * 
@@ -1002,8 +1009,7 @@ brite.util = {};
 	brite.array = {
 
 		/**
-		 * Remove item(s) from an array. <br />
-		 * <br />
+		 * Remove item(s) from an array.
 		 * Code from: Array Remove - By John Resig (MIT Licensed)
 		 * 
 		 * @param {Object}
@@ -1077,8 +1083,9 @@ brite.util = {};
 		 * From an array of javascript obect, create a map (js object) where the key is the propName value, and the
 		 * value is the array item. If the propName does not on an item exist, it will ingore the item.
 		 * 
-		 * @example var myVehicules = [{id:"truck",speed:80},{id:"racecar",speed:200}]; var vehiculeById =
-		 *          brite.array.toMap(myVehicules,"id"); // vehiculeById["truck"].speed == 80
+		 * @example var myVehicules = [{id:"truck",speed:80},{id:"racecar",speed:200}]; 
+		 *          var vehiculeById = brite.array.toMap(myVehicules,"id"); // vehiculeById["truck"].speed == 80
+		 *          
 		 * @param {Object}
 		 *            a The array
 		 * @param {Object}
@@ -1122,8 +1129,10 @@ brite.util = {};
 	};
 
 })(jQuery);
-// ------ /brite.util ------ //
+
+// ------ /brite utils ------ //
 // ------------------------ //
+
 
 // ---------------------------------- //
 // ------ brite.ua (User Agent) ------ //
