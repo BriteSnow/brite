@@ -45,7 +45,7 @@ brite.event = brite.event || {};
     }
 })(jQuery);
 
-// ------ /brite event helpers ------ //
+// ------ /brite special events ------ //
 ;(function($){
   var mouseEvents = {
       start: "mousedown",
@@ -226,6 +226,26 @@ brite.event = brite.event || {};
     return extra;
   }
   // --------- /bdrag* --------- //
+  
+  
+  
+  // --------- btransitionend --------- //
+  $.event.special.btransitionend = {
+
+    setup : function(data, namespaces) {
+      var eventListener = "transitionend";
+      if (!$.browser.mozilla){
+        eventListener = brite.ua.cssVarPrefix().toLowerCase() + "TransitionEnd";
+      }
+      this.addEventListener(eventListener,function(event){
+        triggerCustomEvent(this,event,{type:"btransitionend"});
+      });
+     
+
+    }
+
+  };   
+  // --------- /btransitionend --------- //
   
   // --------- Event Utilities --------- //
   

@@ -1136,13 +1136,14 @@ brite.util = {};
 brite.ua = {};
 
 (function($) {
-	var WEBKIT_PREFIX = "-webkit-", MOZ_PREFIX = "-moz-";
-
-	var WEBKIT_VAR_PREFIX = "Webkit", MOZ_VAR_PREFIX = "Moz";
+  var CSS_PREFIXES = {webkit:"-webkit-",mozilla:"-moz-",msie:"-ms-",opera:"-o-"};
+  
+  var VAR_PREFIXES = {webkit:"Webkit",mozilla:"Moz",msie:"ms",opera:"o"};
+  
 
 	// privates
-	var _cssVarPrefix;
-	var _cssPrefix;
+	var _cssVarPrefix = null;
+	var _cssPrefix = null;
 	var _cssHas = null;
 	var _cssHasNo = null;
 	
@@ -1152,23 +1153,35 @@ brite.ua = {};
 	var _transitionPrefix = null; 
 	var _eventsMap = {}; // {eventName:true/false,....}
 
-	// TODO: need to revise this, not really future proof
-	var div = document.createElement("div");
-	_cssPrefix = div.style.WebkitBorderRadius === '' ? WEBKIT_PREFIX : (div.style.MozBorderRadius === '' ? MOZ_PREFIX : (div.style.borderRadius === '' ? '' : ""));
-	delete div;
-
-	var _isMoz = (_cssPrefix === MOZ_PREFIX);
-	var _isWebkit = (_cssPrefix === WEBKIT_PREFIX);
-
-	_cssVarPrefix = (_isMoz) ? MOZ_VAR_PREFIX : (_isWebkit) ? WEBKIT_VAR_PREFIX : "";
+  var _browserType = null; // could be "webkit" "moz" "ms" "o"
+  
+  
+  // --------- Prefix and rendererType ------ //
+  function computeBrowserType(){
+    $.each(CSS_PREFIXES,function(key,val){
+      if ($.browser[key]){
+        _browserType = key;
+        _cssPrefix = CSS_PREFIXES[key];
+        _cssVarPrefix = VAR_PREFIXES[key];
+      }
+    });
+  }
+  
 	brite.ua.cssPrefix = function() {
-		return _cssPrefix;
+	  if (_cssPrefix === null){
+	    computeBrowserType();
+	  }
+	  return _cssPrefix;
 	}
 
 	brite.ua.cssVarPrefix = function() {
-		return _cssVarPrefix;
+    if (_cssVarPrefix === null){
+      computeBrowserType();
+    }
+    return _cssVarPrefix;
 	}
-
+  // --------- /Prefix and rendererType ------ //
+  
 	// ------ jQuery css hooks ------ //
 	// for now, just support transofrm, will add more soon (need to test)
 	var css3PropNames = [ "transform" ];
@@ -1284,27 +1297,17 @@ brite.ua = {};
 	brite.ua.hasTransition = function() {
 		if (_hasTransition === null) {
 			var div = document.createElement('div');
-			div.innerHTML = '<div style="-webkit-transition:color 1s linear;-moz-transition:color 1s linear;"></div>';
-			_transitionPrefix = (div.firstChild.style.webkitTransition !== undefined) ? WEBKIT_PREFIX : _transitionPrefix;
-			_transitionPrefix = (div.firstChild.style.MozTransition !== undefined) ? MOZ_PREFIX : _transitionPrefix;
+			var transitionStr = brite.ua.cssPrefix() + "transition";
+			div.innerHTML = '<div style="' + transitionStr + ': color 1s linear"></div>';
+			
+			if (div.firstChild.style[brite.ua.cssVarPrefix() + "Transition"]){
+			 _hasTransition = true;
+			}else{
+			  _hasTransition = false;
+			}
 			delete div;
-			_hasTransition = (_transitionPrefix != null);
 		}
 		return _hasTransition;
-	}
-
-	/**
-	 * Get the transition prefix for this user agent (for example "-webkit-" or "-moz-"). <br />
-	 * <br />
-	 * TODO: we might want to have a brite.ua.cssPrefix() since it will be the same prefix for other css properties as
-	 * well
-	 */
-	brite.ua.transitionPrefix = function() {
-		if (this.hasTransition()) {
-			return _transitionPrefix;
-		} else {
-			return null;
-		}
 	}
 
 	// ------ Privates ------ //
