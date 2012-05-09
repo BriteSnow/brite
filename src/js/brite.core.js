@@ -1000,6 +1000,20 @@ brite.version = "0.9-snapshot";
       
    return r;
   }
+  
+  // add all the values for two object (ignore the not numbers one), and return the new object.
+  brite.add = function(obj1,obj2){
+    var r = {};
+    $.each(obj1,function(key,val1){
+      var val2 = obj2[key];
+      if (!isNaN(val1) && !isNaN(val2)){
+        r[key] = val1 + val2;
+      }
+    });
+      
+   return r;
+  }
+  
 
 	/**
 	 * @namespace
