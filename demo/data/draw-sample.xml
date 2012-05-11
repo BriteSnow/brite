@@ -38,4 +38,8 @@
     <circle x="364" y="208" r="8"/>
   </layer>
 
+  <layer>
+    <square x="64" y="80" w="400" h="200"/>
+  </layer>
+
 </draw>

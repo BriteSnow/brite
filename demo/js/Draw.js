@@ -39,7 +39,7 @@
         //       done with the component init and "whenInit" for 100% reliability
         setTimeout(function(){
           c.$element.trigger(demo.draw.event.LAYER_SELECT_CHANGE,0);
-          c.$element.trigger(demo.draw.event.SET_TOOL,"pointer");
+          c.$element.trigger(demo.draw.event.SET_TOOL,"select");
         },100);
       });
     });
@@ -123,7 +123,7 @@
     } 
     
     // init the current tool (allow refresh)
-    c.currentTool = newTool || c.currentTool || "pointer";
+    c.currentTool = newTool || c.currentTool || "select";
     toolHandlers[c.currentTool].init.call(c);       
   }
   
@@ -170,9 +170,9 @@
     
     // Note: here we need to namespace it to make sure it get cleaned up by the Draw.prototype.destroy
     $(document).on("keydown." + c.cid,function(event){
-      // 'v' to pointer
+      // 'v' to select
       if (event.which === 86){
-        c.$element.trigger(demo.draw.event.SET_TOOL,"pointer");
+        c.$element.trigger(demo.draw.event.SET_TOOL,"select");
       }
       
       // 'p' to pen
@@ -186,7 +186,9 @@
       }
       
       // 's' to square (83)
-     
+      else if (event.which === 83){
+          c.$element.trigger(demo.draw.event.SET_TOOL,"square");
+      }
     });
   }
   
@@ -244,10 +246,10 @@
    */
   var toolHandlers = {};
   
-  // --------- Pointer ToolHandler --------- //
-  var currentPointerNodeType;
-  // pointer tool logic
-  toolHandlers.pointer = {
+  // --------- Select ToolHandler --------- //
+  var currentSelectNodeType;
+  // select tool logic
+  toolHandlers.select = {
     init: function(){
       var c = this; // this is the Draw component
       
@@ -262,30 +264,35 @@
       var $node = $layer.children(":first");
       var nodeType = $node[0].tagName;
       
-      if (currentPointerNodeType){
-        penHandlers[currentPointerNodeType].destroy();
+      if (currentSelectNodeType){
+        selectHandlers[currentSelectNodeType].destroy();
       }
       
       // init the nodeTypeHandler
-      currentPointerNodeType = nodeType;
-      penHandlers[nodeType].init(c,$selectLayer,$node);
+      currentSelectNodeType = nodeType;
+      
+      if (selectHandlers[nodeType]){
+        selectHandlers[nodeType].init(c,$selectLayer,$node);
+      }else{
+        console.log("error no selectHandlers for nodeType: " + nodeType);  
+      }
       
     },
     
     destroy: function(){
       // destroy the nodeTypehandler
-      if (currentPointerNodeType){
-        penHandlers[currentPointerNodeType].destroy();
+      if (currentSelectNodeType){
+        selectHandlers[currentSelectNodeType].destroy();
       }
       // remove the selectLayer
       c.drawContent.$element.find(".Draw-selectLayer").remove();
-      $(document).off(".tool_pointer");
+      $(document).off(".tool_select");
     }
     
   }
   
   
-  var penHandlers = {
+  var selectHandlers = {
     
     path: {
       init: function(c,$selectLayer, $path){
@@ -328,7 +335,7 @@
         });
         
         // select all with meta key
-        $(document).on("keydown.tool_pointer",function(event){
+        $(document).on("keydown.tool_select",function(event){
           if (event.which === 65 && (event.metaKey)){
             $selectLayer.find(".Draw-selectPoint").addClass("sel");
           }
@@ -337,7 +344,7 @@
         
         
         // --------- Deleting selectPoint --------- //
-        $(document).on("keydown.tool_pointer",function(event){
+        $(document).on("keydown.tool_select",function(event){
           if (event.which === 8){
             $selectLayer.find(".Draw-selectPoint.sel").each(function(){
               var $selectPoint = $(this);
@@ -376,10 +383,10 @@
           refreshContent.call(c);        
         }
         // --------- /Moving selectPoint --------- //        
-      }, // /penHandlers.path.init
+      }, // /selectHandlers.path.init
       
       destroy: function($selectLayer){
-        $(document).off(".tool_pointer");
+        $(document).off(".tool_select");
       }
     },
     
@@ -452,9 +459,19 @@
         
       }
       
+    },
+    
+    square: {
+      init:  function(c,$selectLayer,$circle){
+        // TODO
+      },
+      
+      destroy: function(){
+      }
     }
+    
   }
-  // --------- /Pointer ToolHandler --------- //
+  // --------- /Select ToolHandler --------- //
   
   // --------- Pen ToolHandler --------- //
   // pen tool logic
@@ -564,6 +581,64 @@
     }
     
   }  
-  // --------- /Pen ToolHandler --------- //  
+  // --------- /Circle ToolHandler --------- //
+
+
+  // --------- Square ToolHandler --------- //
+  // square tool logic
+  toolHandlers.square = {
+    init: function(){
+      var c = this;
+
+      var $squareLayer = $("<div class='Draw-squareLayer'></div>");
+      c.drawContent.$element.append($squareLayer);
+
+      var $layers = getSelectedLayer.call(c).parent();
+
+      var square;
+        $squareLayer.on("bdragmove",function(event){
+
+          c._drawing = true;
+          if (!square){
+            square = $(document.createElementNS(null,"square"));
+            var $layer = $(document.createElementNS(null,"layer"));
+            $layer.append(square);
+            $layers.append($layer);
+            // select this layer
+            c.$element.trigger(demo.draw.event.XML_DOC_LAYERS_CHANGE);
+            c.$element.trigger(demo.draw.event.LAYER_SELECT_CHANGE,$layers.find("layer").length - 1 );
+          }
+
+          var contentOffset = $squareLayer.offset();
+          var w = event.pageX - event.bextra.startPageX;
+          var h = event.pageY - event.bextra.startPageY;
+          var x = event.bextra.startPageX - contentOffset.left;
+          var y = event.bextra.startPageY - contentOffset.top;
+          square.attr("x",x).attr("y",y).attr("w",w).attr("h",h);
+          refreshContent.call(c);
+      });
+
+        $squareLayer.on("bdragend", function () {
+            square = null;
+            c._drawing = false;
+        });
+
+      $(document).on("keydown.tool_square",function(event){
+        if (event.which == '8' && !event.metaKey){
+          c.$element.trigger(demo.draw.event.DO_DELETE_LAYER);
+        }
+      });
+
+    },
+
+    destroy: function(){
+      var c = this;
+      c.$element.off(".tool_square");
+      $(document).off(".tool_square");
+      c.drawContent.$element.find(".Draw-squareLayer").remove();
+    }
+
+  };
+  // --------- /Rect ToolHandler --------- //
   
 })();

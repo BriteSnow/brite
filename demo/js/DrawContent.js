@@ -1,3 +1,27 @@
+/**
+ * Component: DrawContent
+ * 
+ * Responsibilities: 
+ *   1) Draw and refresh the layers
+ *   2) Manage the content controls layers for selection, move and such. 
+ * 
+ * Public APIs: 
+ *   
+ * 
+ * Trigger Action Events:
+ *   - DrawContent_DO_DELETE_POINT {layerId,pointIdx}: When the user press delete on a selected point (for the <path/> element)
+ * 
+ * Trigger Status Events: 
+ *   - Draw_LAYER_CHANGE {layerId}: When a layer change 
+ * 
+ * Process Action Events:
+ *   - DrawContent_DO_DELETE_POINT: Will process and consume the delete  
+ * 
+ * Listen Status Events: 
+ *   - Draw_TOOL_CHANGE: will add the necessary control layers when tool change. 
+ *   - Draw_LAYER_SELECT_CHANGE: 
+ *   
+ */
 ;(function(){
   
   // --------- Component Interface Implementation ---------- //
@@ -52,6 +76,8 @@
   // --------- Component Registration --------- //  
   
   
+  
+  // --------- Renderers --------- //
   var renderers = {
     
     path: function(g,node){
@@ -73,10 +99,15 @@
       //g.arc(100,100,50,0,Math.PI*2,true).stroke();
       g.arc($node.attr("x"),$node.attr("y"),$node.attr("r"),0,Math.PI*2,true).stroke();
       //g.moveTo(100,100).lineTo(300,300).stroke();
+    },
+
+    square: function(g,node){
+      g.beginPath().strokeStyle("rgba(200, 50, 50, 0.3)").lineWidth(2);
+      var $node = $(node);
+      g.rect($node.attr("x"),$node.attr("y"),$node.attr("w"),$node.attr("h")).stroke();
     }
-    
-    
   }
+  // --------- /Renderers --------- //
   
   
 })();

@@ -1,6 +1,6 @@
 ;(function() {
 
-  var tools = ["pointer","pen","circle"];//,"square","circle"];
+  var tools = ["select","pen","circle","square"];
   
   // --------- Component Interface Implementation ---------- //
   function DrawToolbar() {
@@ -32,6 +32,7 @@
   }
 
   DrawToolbar.prototype.destroy = function(){
+    var c = this;
     // clean the event we bound to Draw
     c.$draw.off("." + c.cid);
   }
