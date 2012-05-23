@@ -22,15 +22,15 @@
     c.$element.on("btap",".DrawLayersPanel-layer", function(){
       var $layerDiv = $(this);
       var index = $layerDiv.prevAll(".DrawLayersPanel-layer").length;
-      c.$element.trigger(demo.draw.event.LAYER_SELECT_CHANGE,index);
+      c.$element.trigger("Draw_LAYER_SELECT_CHANGE",index);
     });
         
     // respond to layer event
-    c.draw.$element.on(demo.draw.event.LAYER_SELECT_CHANGE + "." + c.cid, function(event,layeridx){
+    c.draw.$element.on("Draw_LAYER_SELECT_CHANGE" + "." + c.cid, function(event,layeridx){
         c.$element.find(".DrawLayersPanel-layer").removeClass("sel").eq(layeridx).addClass("sel");
     });
     
-    c.draw.$element.on(demo.draw.event.XML_DOC_LAYERS_CHANGE + "." + c.cid, function(event){
+    c.draw.$element.on("Draw_XML_DOC_LAYERS_CHANGE" + "." + c.cid, function(event){
       refreshLayers.call(c);
     });  
     
@@ -50,6 +50,9 @@
     
     var draw = c.$element.bComponent("Draw");
     
+    // to preserve the selected index
+    var selectedIdx = c.$element.find(".DrawLayersPanel-layer.sel").prevAll(".DrawLayersPanel-layer").length;
+    
     var $xmlDoc = draw.getXmlDoc();
     var idSeq = 0;
     var layers = [];
@@ -59,7 +62,13 @@
       layers.push(layer);
     });
     var contentHtml = $("#tmpl-DrawLayersPanel-layers").render({layers:layers});
-    c.$element.empty().append(contentHtml);    
+    
+    var $newContent = $(contentHtml);
+    
+    // reset the selected state
+    $newContent.find(".DrawLayersPanel-layer").eq(selectedIdx).addClass("sel");
+    
+    c.$element.empty().append($newContent);    
   }
   // --------- /Component Private Methods --------- //
 

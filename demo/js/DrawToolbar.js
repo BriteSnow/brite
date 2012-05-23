@@ -21,11 +21,11 @@
     c.$element.on("btap",".DrawToolbar-tool",function(){
       var $this = $(this);
       var tool = $this.attr("data-tool");
-      c.$element.trigger(demo.draw.event.SET_TOOL,tool);
+      c.$element.trigger("Draw_DO_SET_TOOL",tool);
     });
     
     c.$draw = c.$element.bComponent("Draw").$element;
-    c.$draw.on(demo.draw.event.SET_TOOL + "." + c.cid, function(event,tool){
+    c.$draw.on("Draw_DO_SET_TOOL" + "." + c.cid, function(event,tool){
        c.$element.find(".DrawToolbar-tool").removeClass("sel");
        c.$element.find("[data-tool='" + tool + "']").addClass("sel");
     });

@@ -1,3 +1,28 @@
+/**
+ * Component: Draw
+ * 
+ * Responsibilities: 
+ *   - Main Component for the Draw application
+ *   - Create all the sub Draw components
+ *   - Process all the action events
+ *   - Maintain the current xmlDoc representing the layers
+ * 
+ * API: 
+ *   - getXmlDoc(): Return the $XmlDoc for the layers
+ *   
+ * Events:
+ *   Owner | Trigger | Process | Name                        | Arguments (for owners only)
+ *     Y   |    Y    |    Y    | Draw_DO_DELETE_LAYER        | (layerId)
+ *     Y   |    Y    |         | Draw_DO_SET_TOOL            | (toolName)
+ *     Y   |    N    |    Y    | Draw_DO_SELECT_LAYER        | (layerId)
+ *     Y   |    Y    |   n/a   | Draw_LAYER_SELECT_CHANGE    | (layerId)
+ *     Y   |    Y    |   n/a   | Draw_XML_DOC_LAYERS_CHANGE  |
+ * 
+ *   - Draw_XML_DOC_LAYERS_CHANGE: is fired when anything in the xmldoc has changed
+ *     TODO: probably need to make it more granular to allow better optimization 
+ *           (e.g., the DrawLayersPanel should not have to refresh all the layers on existing layer modification)
+ * 
+ */
 ;(function(){
   
   // --------- Component Interface Implementation ---------- //
@@ -38,8 +63,8 @@
         // Note: there we do it in a timeout for simplicity (99% reliability), however, it could be 
         //       done with the component init and "whenInit" for 100% reliability
         setTimeout(function(){
-          c.$element.trigger(demo.draw.event.LAYER_SELECT_CHANGE,0);
-          c.$element.trigger(demo.draw.event.SET_TOOL,"select");
+          c.$element.trigger("Draw_LAYER_SELECT_CHANGE",0);
+          c.$element.trigger("Draw_DO_SET_TOOL","select");
         },100);
       });
     });
@@ -48,29 +73,38 @@
     
     initShortcutsHandler.call(c);
     
-    // process SET_TOOL event
-    c.$element.on(demo.draw.event.SET_TOOL,function(event,tool){
+    
+    // --------- Process the Action Events --------- //
+    // process Draw_DO_SET_TOOL event
+    c.$element.on("Draw_DO_SET_TOOL",function(event,tool){
        changeTool.call(c,tool);  
+    });
+    
+    // process the Draw_DO_SELECT_LAYER
+    c.$element.on("Draw_DO_SELECT_LAYER",function(event,layerId){
+      console.log("Draw DO_SELECT_LAYER: " + layerId + " " + c.$xmlDoc.children().eq(layerId).attr("name"));
+      c.$element.trigger("Draw_LAYER_SELECT_CHANGE",layerId);
     });
 
     // process the DO delete layer event
-    c.$element.on(demo.draw.event.DO_DELETE_LAYER, function(event,layeridx){
+    c.$element.on("Draw_DO_DELETE_LAYER", function(event,layeridx){
       if (typeof layeridx === "undefined"){
         layeridx = c.currentLayerIdx;
       }
       console.log("do delete: " + layeridx);
       if (layeridx > -1){
         c.$xmlDoc.find("layer").eq(layeridx).remove();
-        c.$element.trigger(demo.draw.event.XML_DOC_LAYERS_CHANGE);
+        c.$element.trigger("Draw_XML_DOC_LAYERS_CHANGE");
         refreshContent.call(c);
         if (layeridx > 1){
-          c.$element.trigger(demo.draw.event.LAYER_SELECT_CHANGE,layeridx - 1);
+          c.$element.trigger("Draw_LAYER_SELECT_CHANGE",layeridx - 1);
         }
       }
-    }); 
+    });
+    // --------- /Process the Action Events --------- // 
     
     // handle the layer select change
-    c.$element.on(demo.draw.event.LAYER_SELECT_CHANGE,function(event,layerIdx){
+    c.$element.on("Draw_LAYER_SELECT_CHANGE",function(event,layerIdx){
       c.currentLayerIdx = layerIdx;
       if (!c._drawing){
         changeTool.call(c);
@@ -172,59 +206,34 @@
     $(document).on("keydown." + c.cid,function(event){
       // 'v' to select
       if (event.which === 86){
-        c.$element.trigger(demo.draw.event.SET_TOOL,"select");
+        c.$element.trigger("Draw_DO_SET_TOOL","select");
       }
       
       // 'p' to pen
       else if (event.which === 80){
-        c.$element.trigger(demo.draw.event.SET_TOOL,"pen");
+        c.$element.trigger("Draw_DO_SET_TOOL","pen");
       }
       
       // 'c' to circle
       else if (event.which === 67){
-        c.$element.trigger(demo.draw.event.SET_TOOL,"circle");
+        c.$element.trigger("Draw_DO_SET_TOOL","circle");
       }
       
       // 's' to square (83)
       else if (event.which === 83){
-          c.$element.trigger(demo.draw.event.SET_TOOL,"square");
+          c.$element.trigger("Draw_DO_SET_TOOL","square");
       }
     });
   }
   
   function refreshContent(){
     c = this;
-    
-    c.drawContent.draw(c.$xmlDoc);
+    //console.log("refreshContent");
+    //c.drawContent.draw(c.$xmlDoc);
+    c.$element.trigger("Draw_XML_DOC_LAYERS_CHANGE");
   }
   
   // --------- /Component Private Methods --------- //  
-  
-  // --------- Component Events --------- //
-  demo.draw = {event:{}};
-  
-  // Fire when a new tool is selected
-  // arguments: tool (the name-id of the tool)
-  demo.draw.event.SET_TOOL = "DRAW-SET_TOOL"; // to set a tool
-  
-  // Fire when the xmlDoc change
-  // arguments: $node (the jquery xml node that has changed)
-  demo.draw.event.XML_DOC_CHANGE = "DRAW-XML_DOC_CHANGE"; // on XML doc change (param is
-
-  // Fire when the layer list has changed (add or remove)  
-  demo.draw.event.XML_DOC_LAYERS_CHANGE = "DRAW-XML_DOC_LAYERS_CHANGE";
-  
-  // "DO" event to delete a layer
-  // arguments: layeridx
-  demo.draw.event.DO_DELETE_LAYER = "DRAW-DO_DELETE_LAYER"; 
-  
-    
-  // Fire when a layer section change   
-  // arguments: layeridx (the index of the layer that had changed)
-  demo.draw.event.LAYER_SELECT_CHANGE = "DRAW-LAYER_SELECT_CHANGE"; // on XML doc change
-  
-  // --------- /Component Events --------- //  
-  
   
   // --------- Component Registration --------- //
   brite.registerComponent("Draw", null,
@@ -500,7 +509,7 @@
           
           $path.append($p);
           
-          c.drawContent.draw(c.$xmlDoc);
+          refreshContent.call(c);
         }
         
       });    
@@ -548,8 +557,8 @@
             $layer.append($circle);
             $layers.append($layer);
             // select this layer
-            c.$element.trigger(demo.draw.event.XML_DOC_LAYERS_CHANGE);
-            c.$element.trigger(demo.draw.event.LAYER_SELECT_CHANGE,$layers.find("layer").length - 1 );
+            c.$element.trigger("Draw_XML_DOC_LAYERS_CHANGE");
+            c.$element.trigger("Draw_LAYER_SELECT_CHANGE",$layers.find("layer").length - 1 );
           }
           
           var contentOffset = $circleLayer.offset();
@@ -567,7 +576,7 @@
       
       $(document).on("keydown.tool_circle",function(event){
         if (event.which == '8' && !event.metaKey){
-          c.$element.trigger(demo.draw.event.DO_DELETE_LAYER);
+          c.$element.trigger("Draw_DO_DELETE_LAYER");
         }
       });
 
@@ -605,8 +614,8 @@
             $layer.append(square);
             $layers.append($layer);
             // select this layer
-            c.$element.trigger(demo.draw.event.XML_DOC_LAYERS_CHANGE);
-            c.$element.trigger(demo.draw.event.LAYER_SELECT_CHANGE,$layers.find("layer").length - 1 );
+            c.$element.trigger("Draw_XML_DOC_LAYERS_CHANGE");
+            c.$element.trigger("Draw_LAYER_SELECT_CHANGE",$layers.find("layer").length - 1 );
           }
 
           var contentOffset = $squareLayer.offset();
@@ -625,7 +634,7 @@
 
       $(document).on("keydown.tool_square",function(event){
         if (event.which == '8' && !event.metaKey){
-          c.$element.trigger(demo.draw.event.DO_DELETE_LAYER);
+          c.$element.trigger("Draw_DO_DELETE_LAYER");
         }
       });
 

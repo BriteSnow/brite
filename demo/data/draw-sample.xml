@@ -1,6 +1,31 @@
 <draw>
 
-  <layer name="Simple line">
+  <layer name="circle1">
+    <circle x="457" y="211" r="8"/>
+  </layer>  
+  
+  
+  <layer name="circle2">
+    <circle x="408" y="253" r="203"/>
+  </layer>
+  
+  <layer name="circle3">
+    <circle x="344" y="193" r="57"/>
+  </layer>
+  
+  <layer name="circle4">
+    <circle x="472" y="194" r="53"/>
+  </layer>
+
+  <layer name="circle5">
+    <circle x="364" y="208" r="8"/>
+  </layer>
+
+  <layer  name="square">
+    <square x="100" y="100" w="100" h="100"/>
+  </layer>
+  
+  <layer name="mouth">
     <path>
       <p x="321" y="337"/>
       <p x="409" y="383"/>
@@ -9,37 +34,12 @@
   </layer>
 
   
-  <layer>
+  <layer name="nose">
     <path>
       <p x="382" y="269"/>
       <p x="410" y="323"/>
       <p x="437" y="271"/>
     </path>
-  </layer>
-
-  <layer>
-    <circle x="457" y="211" r="8"/>
-  </layer>  
-  
-  
-  <layer>
-    <circle x="408" y="253" r="203"/>
-  </layer>
-  
-  <layer>
-    <circle x="344" y="193" r="57"/>
-  </layer>
-  
-  <layer>
-    <circle x="472" y="194" r="53"/>
-  </layer>
-
-  <layer>
-    <circle x="364" y="208" r="8"/>
-  </layer>
-
-  <layer>
-    <square x="64" y="80" w="400" h="200"/>
   </layer>
 
 </draw>
