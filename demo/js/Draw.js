@@ -82,7 +82,6 @@
     
     // process the Draw_DO_SELECT_LAYER
     c.$element.on("Draw_DO_SELECT_LAYER",function(event,layerId){
-      console.log("Draw DO_SELECT_LAYER: " + layerId + " " + c.$xmlDoc.children().eq(layerId).attr("name"));
       c.$element.trigger("Draw_LAYER_SELECT_CHANGE",layerId);
     });
 
@@ -91,7 +90,6 @@
       if (typeof layeridx === "undefined"){
         layeridx = c.currentLayerIdx;
       }
-      console.log("do delete: " + layeridx);
       if (layeridx > -1){
         c.$xmlDoc.find("layer").eq(layeridx).remove();
         c.$element.trigger("Draw_XML_DOC_LAYERS_CHANGE");

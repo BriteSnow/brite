@@ -43,12 +43,10 @@
     } 
     
     c.$element.on("btap",function(event){
-      
       // compute the position relative to this location
       var pos = brite.substract({top:event.pageY,left:event.pageX},c.$element.offset());
       
       canvasList = getHotzoneCanvasList.call(c);
-      console.log("//");
       var selectedLayerIdx = -1;
       var minDim = 100000; // this will allow to select the smaller click object
       $.each(canvasList,function(idx,item){

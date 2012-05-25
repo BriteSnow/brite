@@ -2166,6 +2166,10 @@ brite.event = brite.event || {};
 
 // ------ /brite special events ------ //
 ;(function($){
+  
+  // to prevent other events (i.e., btap) to trigger when dragging.
+  var _dragging = false;
+  
   var mouseEvents = {
       start: "mousedown",
       move: "mousemove",
@@ -2198,10 +2202,10 @@ brite.event = brite.event || {};
         var $elem = $(elem);
         
         var origTarget = event.target, startEvent = event, timer;
-
+        
         function handleEnd(event){
           clearAll();
-          if (event.target === origTarget){
+          if (event.target === origTarget && !_dragging){
             brite.event.fixTouchEvent(startEvent);
             triggerCustomEvent(elem, startEvent,{type:"btap"});
           }
@@ -2215,8 +2219,10 @@ brite.event = brite.event || {};
         $elem.on(tapEvents.end,handleEnd);
         
         timer = setTimeout(function() {
-          brite.event.fixTouchEvent(startEvent);
-          triggerCustomEvent( elem, startEvent,{type:"btaphold"});
+          if (!_dragging){
+            brite.event.fixTouchEvent(startEvent);
+            triggerCustomEvent( elem, startEvent,{type:"btaphold"});
+          }
         }, 750 );
       });
 
@@ -2267,6 +2273,7 @@ brite.event = brite.event || {};
           if (!dragStarted){
             if(Math.abs(startPagePos.pageX - currentPagePos.pageX) > dragThreshold || Math.abs(startPagePos.pageY - currentPagePos.pageY) > dragThreshold) {
               dragStarted = true;
+              _dragging = true;
               $origTarget.data("bDragCtx", {});
               var bextra = buildDragExtra(event, $origTarget, BDRAGSTART);
               triggerCustomEvent( origTarget, event,{type:BDRAGSTART,target:origTarget,bextra:bextra});  
@@ -2296,6 +2303,7 @@ brite.event = brite.event || {};
             event.preventDefault();            
           }  
           $document.off("." + uid);
+          _dragging = false;
         });
             
       });
