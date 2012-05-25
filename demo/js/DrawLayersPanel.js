@@ -22,7 +22,7 @@
     c.$element.on("btap",".DrawLayersPanel-layer", function(){
       var $layerDiv = $(this);
       var index = $layerDiv.prevAll(".DrawLayersPanel-layer").length;
-      c.$element.trigger("Draw_LAYER_SELECT_CHANGE",index);
+      c.$element.trigger("Draw_DO_SELECT_LAYER",index);
     });
         
     // respond to layer event
