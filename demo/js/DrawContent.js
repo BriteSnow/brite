@@ -50,10 +50,18 @@
       canvasList = getHotzoneCanvasList.call(c);
       console.log("//");
       var selectedLayerIdx = -1;
+      var minDim = 100000; // this will allow to select the smaller click object
       $.each(canvasList,function(idx,item){
         if (item.gtx.context.isPointInPath(pos.left,pos.top)){
-          console.log("x: " + pos.left + " y: " + pos.top + " "  +  item.$layer.attr("name"));
-          selectedLayerIdx = idx;
+          var node = item.$layer.children()[0];
+          
+          var shapeDimFunc = shapeDims[node.nodeName];
+          var shapeDim = shapeDimFunc(node);
+          var dim = shapeDim.width + shapeDim.height;
+          if (dim < minDim){
+            selectedLayerIdx = idx;
+            minDim = dim;
+          }
         }
       });
       
@@ -175,6 +183,53 @@
     }
   }
   // --------- /Renderers --------- //
+  
+  // --------- Shape Dim --------- //
+  // for each xml node, return the .width and .height of the given shape
+  var shapeDims = {
+    
+    // for now, support only the first node
+    path: function(node){
+      var r = {};
+      var $node = $(node);
+      var minX = 10000 , maxX = 0, minY = 10000, maxY = 0;
+      $(node).children().each(function(idx,p){
+        var $p = $(p);
+        var x = $p.attr("x") * 1;
+        var y = $p.attr("y") * 1;
+        minX = Math.min(minX,x);
+        maxX = Math.min(maxX,x);
+        minY = Math.min(minY,y);
+        maxY = Math.min(maxY,y);
+      });
+      
+      return {
+        width: maxX - minX,
+        height: maxY - minY
+      }
+      return r;
+    }, 
+    
+    circle: function(node){
+      var $node = $(node);
+      var r2 = $node.attr("r") * 2;
+      return {
+        width: r2,
+        height: r2
+      }
+    },
+    
+    square: function(node){
+      var $node = $(node);
+      return {
+        width: $node.attr("w") * 1,
+        height: $node.attr("h") * 1
+      }
+    }
+    
+  }
+  // --------- /Shape Dim --------- //
+  
   
   
 })();
