@@ -43,28 +43,32 @@
     } 
     
     c.$element.on("btap",function(event){
-      // compute the position relative to this location
-      var pos = brite.substract({top:event.pageY,left:event.pageX},c.$element.offset());
+      var enable = ($(event.target).closest(".Draw-selectPoint").length === 0); 
       
-      canvasList = getHotzoneCanvasList.call(c);
-      var selectedLayerIdx = -1;
-      var minDim = 100000; // this will allow to select the smaller click object
-      $.each(canvasList,function(idx,item){
-        if (item.gtx.context.isPointInPath(pos.left,pos.top)){
-          var node = item.$layer.children()[0];
-          
-          var shapeDimFunc = shapeDims[node.nodeName];
-          var shapeDim = shapeDimFunc(node);
-          var dim = shapeDim.width + shapeDim.height;
-          if (dim < minDim){
-            selectedLayerIdx = idx;
-            minDim = dim;
+      if (enable){
+        // compute the position relative to this location
+        var pos = brite.substract({top:event.pageY,left:event.pageX},c.$element.offset());
+        
+        canvasList = getHotzoneCanvasList.call(c);
+        var selectedLayerIdx = -1;
+        var minDim = 100000; // this will allow to select the smaller click object
+        $.each(canvasList,function(idx,item){
+          if (item.gtx.context.isPointInPath(pos.left,pos.top)){
+            var node = item.$layer.children()[0];
+            
+            var shapeDimFunc = shapeDims[node.nodeName];
+            var shapeDim = shapeDimFunc(node);
+            var dim = shapeDim.width + shapeDim.height;
+            if (dim < minDim){
+              selectedLayerIdx = idx;
+              minDim = dim;
+            }
           }
+        });
+        
+        if (selectedLayerIdx > -1){
+          c.$element.trigger("Draw_DO_SELECT_LAYER",selectedLayerIdx);
         }
-      });
-      
-      if (selectedLayerIdx > -1){
-        c.$element.trigger("Draw_DO_SELECT_LAYER",selectedLayerIdx);
       }
       
       

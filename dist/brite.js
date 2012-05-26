@@ -2207,7 +2207,7 @@ brite.event = brite.event || {};
           clearAll();
           if (event.target === origTarget && !_dragging){
             brite.event.fixTouchEvent(startEvent);
-            triggerCustomEvent(elem, startEvent,{type:"btap"});
+            triggerCustomEvent(elem, event,{type:"btap"});
           }
         }
         

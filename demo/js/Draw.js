@@ -226,8 +226,6 @@
   
   function refreshContent(){
     c = this;
-    //console.log("refreshContent");
-    //c.drawContent.draw(c.$xmlDoc);
     c.$element.trigger("Draw_XML_DOC_LAYERS_CHANGE");
   }
   
@@ -327,6 +325,7 @@
         // we show the select layers
         $selectLayer.css("opacity",1);
         
+        // remove the selected points
         $selectLayer.on("btap",function(event){
           if (!$(event.target).is(".Draw-selectPoint")){
             $selectLayer.find(".Draw-selectPoint").removeClass("sel");
@@ -338,7 +337,7 @@
         $selectLayer.on("btap",".Draw-selectPoint",function(event){
           var $selectPoint = $(this);
           // if shift or meta key are on, then, we do not remove the other selection
-          $selectPoint.toggleClass("sel");  
+          $selectPoint.toggleClass("sel");
         });
         
         // select all with meta key
@@ -422,6 +421,10 @@
         
         var dontdragmove = false; 
         var orgRadius;
+        $bottomRightPoint.on("bdragstart",function(event){
+          $bottomRightPoint.addClass("sel");  
+        });
+        
         $bottomRightPoint.on("bdragmove",function(event){
           dontdragmove = true;
           orgRadius = orgRadius || 1 * $circle.attr("r");
@@ -440,6 +443,7 @@
         $bottomRightPoint.on("bdragend",function(event){
           orgRadius = null;
           dontdragmove = false;
+          $bottomRightPoint.removeClass("sel");
         });
         
         // we show the select layers
