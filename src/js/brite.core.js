@@ -1141,6 +1141,24 @@ brite.version = "0.9-snapshot";
 		C._super = P.prototype; 
 		C.prototype.constructor = C;
 	};
+	
+	
+	// hack to force the browsers on mobile devices to redraw
+	// basically, it is a visually invisible div, but technically in the display tree
+	// that we change the content and css property (width). This seems to force the browser to refresh
+	var _flushUIVar = 2;
+	var _$flushUI;
+	brite.flushUI = function(){
+	  if (brite.ua.hasTouch()){
+	    if (!_$flushUI){
+	      _$flushUI = $("<div id='b-flushUI' style='position:absolute;opacity:1;z-index:-1000;overflow:hidden;width:2px;color:rgba(0,0,0,0)'>flushUI</div>");
+	      $("body").append(_$flushUI);
+	    }
+	    _flushUIVar = _flushUIVar * -1;
+	    _$flushUI.text("").text(_flushUIVar);
+	    _$flushUI.css("width",_flushUIVar + "px");
+	  };
+  }
 
 })(jQuery);
 

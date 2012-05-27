@@ -30,10 +30,12 @@
   DrawContent.prototype.postDisplay = function(){
     var c = this;
     
+    //console.log("webkitRequestAnimationFrame: " + window.webkitRequestAnimationFrame);
     c.gtx = brite.gtx(c.$element.find("canvas"));
     
     var draw = c.$element.bComponent("Draw");
-     
+    
+    // Refresh on xml layers change
     if (draw){
       draw.$element.on("Draw_XML_DOC_LAYERS_CHANGE." + c.cid,function(){
         drawLayers.call(c);
@@ -41,14 +43,20 @@
     }else{
       throw new "DrawContent cannot find Draw parent";
     } 
+
+    // Refresh on resize of parent
+    c.$element.closest(".trigger-element_resize").on("element_resized." + c.cid,function(){
+      drawLayers.call(c);
+    });
     
+    // tap to select item
     c.$element.on("btap",function(event){
+      
       var enable = ($(event.target).closest(".Draw-selectPoint").length === 0); 
       
       if (enable){
         // compute the position relative to this location
         var pos = brite.substract({top:event.pageY,left:event.pageX},c.$element.offset());
-        
         canvasList = getHotzoneCanvasList.call(c);
         var selectedLayerIdx = -1;
         var minDim = 100000; // this will allow to select the smaller click object
@@ -70,14 +78,14 @@
           c.$element.trigger("Draw_DO_SELECT_LAYER",selectedLayerIdx);
         }
       }
-      
-      
     });
   }
   
   DrawContent.prototype.destroy = function(){
     var c = this;
     c.$element.bComponent("Draw").$element.off("." + c.cid);
+    
+    c.$element.closest(".trigger-element_resize").off("." + c.cid);
   }
   
   // --------- /Component Interface Implementation ---------- //
@@ -109,6 +117,8 @@
         renderer(g,node);
       });
     });
+    
+    brite.flushUI();
   }
   
   // return the $xmlDoc from the parent Draw component

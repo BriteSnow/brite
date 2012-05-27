@@ -2134,7 +2134,6 @@ brite.event = brite.event || {};
     brite.event.fixTouchEvent = function(e){
         if (hasTouch) {
             var oe = e.originalEvent;
-			
             if (oe.touches.length > 0) {
                 e.pageX = oe.touches[0].pageX;
                 e.pageY = oe.touches[0].pageY;
@@ -2206,8 +2205,9 @@ brite.event = brite.event || {};
         function handleEnd(event){
           clearAll();
           if (event.target === origTarget && !_dragging){
+            // we take the pageX and pageY of the start event (because in touch, touchend does not have pageX and pageY)
             brite.event.fixTouchEvent(startEvent);
-            triggerCustomEvent(elem, event,{type:"btap"});
+            triggerCustomEvent(elem, event,{type:"btap",pageX: startEvent.pageX,pageY: startEvent.pageY});
           }
         }
         

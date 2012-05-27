@@ -3,5 +3,10 @@
   top: 10px; right: 100px; bottom: 10px; left: 60px;
   border: solid 1px #333;
   background: #fff;
-    
+  overflow: hidden;  
+}
+
+.DrawContent-canvasCtn{
+  position: absolute; 
+  top: 0; right: 0; bottom: 0; left: 0;
 }

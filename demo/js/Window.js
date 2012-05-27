@@ -1,3 +1,19 @@
+/**
+ * Component: Window
+ * 
+ * Responsibilities: 
+ *   - Display and Manage all aspect of a "Window" component
+ * 
+ * Constructor Data: 
+ *   data.componentName : This specify the component name that need to be included in this window
+ * 
+ * CSS: 
+ *   - trigger-element_resize: to tell children that it fires element_resize event
+ *  
+ * Events: 
+ *   - element_resizing: Fired on c.$element when the window is getting resize (for each drag move)
+ *   - element_resized: Fired when the resizing is done
+ */
 (function(){
   
   // --------- Component Interface Implementation ---------- //
@@ -15,6 +31,9 @@
   Window.prototype.create = function(data){
     var html = $("#tmpl-Window").render(data || {});
     var $e = $(html);
+    
+    $e.addClass("trigger-element_resize");
+    
     // we hide it since we will reposition it on postDisplay (otherwise, it will flicker)
     $e.hide();
     return $e;
@@ -98,7 +117,13 @@
         var h = c.$element.height() + event.bextra.deltaY;
         
         c.$element.width(w);
-        c.$element.height(h);      
+        c.$element.height(h);    
+        
+        c.$element.trigger("element_resizing");  
+    });
+    
+    $e.on("bdragend",".Window-resizeHandle",function(event){
+      c.$element.trigger("element_resized");
     });
     
   }
