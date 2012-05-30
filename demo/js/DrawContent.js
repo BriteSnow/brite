@@ -6,10 +6,13 @@
  *   - Manage the content controls layers for selection, move and such. 
  * 
  * Public APIs: 
+ *   - getCanvas(): TODO: probably need to remove this. Should not be needed. 
+ *  
+ * Events: 
+ *   none
  * 
- * Events:
- * Owner | Trigger | Process | Name                        | Arguments (for owners only)
- *   N   |    Y    |   n/a   | Draw_XML_DOC_LAYERS_CHANGE  | 
+ * Other Events:
+ *  - Draw_XML_DOC_LAYERS_CHANGE: Listen to this event to refresh the content 
  *   
  */
 ;(function(){

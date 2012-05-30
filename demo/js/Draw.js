@@ -11,14 +11,12 @@
  *   - getXmlDoc(): Return the $XmlDoc for the layers
  *   
  * Events:
- *   Owner | Trigger | Process | Name                        | Arguments (for owners only)
- *     Y   |    Y    |    Y    | Draw_DO_DELETE_LAYER        | (layerId)
- *     Y   |    Y    |         | Draw_DO_SET_TOOL            | (toolName)
- *     Y   |    N    |    Y    | Draw_DO_SELECT_LAYER        | (layerId)
- *     Y   |    Y    |   n/a   | Draw_LAYER_SELECT_CHANGE    | (layerId)
- *     Y   |    Y    |   n/a   | Draw_XML_DOC_LAYERS_CHANGE  |
- * 
- *   - Draw_XML_DOC_LAYERS_CHANGE: is fired when anything in the xmldoc has changed
+ *   
+ *  - Draw_DO_DELETE_LAYER(layerId)
+ *  - Draw_DO_SET_TOOL (toolName)
+ *  - Draw_DO_SELECT_LAYER  (layerId)
+ *  - Draw_LAYER_SELECT_CHANGE (layerId)
+ *  - Draw_XML_DOC_LAYERS_CHANGE: is fired when anything in the xmldoc has changed
  *     TODO: probably need to make it more granular to allow better optimization 
  *           (e.g., the DrawLayersPanel should not have to refresh all the layers on existing layer modification)
  * 

@@ -43,6 +43,47 @@ brite.event = brite.event || {};
   		}
     }
 })(jQuery);
+// ------ /brite event helpers ------ //
+
+// ------ transition helper ------ //
+;(function($){
+  
+  /**
+   * simple and convenient methods to perform css3 animations (takes care of the css prefix)
+   * opts.transition: this will be the transition value added as css style (e.g.,: "all 0.3s ease;")
+   * opts.transform: the css transform instruction (e.g.,: "scale(.01)")
+   * opts.onTimeout: (optional, default false). If true or >= 0, then the transformation will be performed on timeout)  
+   */
+  
+  $.fn.bTransition = function(opts) {
+    
+    return this.each(function() {
+      var $this = $(this);
+      var timeout = -1;
+      if (typeof opts.onTimeout === "boolean"){
+        timeout = (opts.onTimeout)?0:-1;
+      }else if (typeof opts.onTimeout === "number"){
+        timeout = opts.onTimeout;
+      }
+      if (timeout > -1){
+        setTimeout(function(){
+          performTransition($this,opts);
+        },timeout);
+      }else{
+        performTransition($this,opts);
+      } 
+      // add the transition
+    });
+  }
+  
+  // helper function
+  function performTransition($this,opts){
+    var cssPrefix = brite.ua.cssPrefix();
+    $this.css(cssPrefix + "transition",opts.transition);
+    $this.css(cssPrefix + "transform",opts.transform);
+  }
+})(jQuery);  
+// ------ /transition helper ------ //
 
 // ------ /brite special events ------ //
 ;(function($){
@@ -278,6 +319,7 @@ brite.event = brite.event || {};
   // --------- /Event Utilities --------- //  
     
 })(jQuery);
+// ------ /brite special events ------ //
 
 
 

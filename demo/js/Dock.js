@@ -25,7 +25,7 @@
       var $dockItem = $(this);
       var appName = $dockItem.attr("data-appname");
       
-      demo.appLauncher.launch(appName);
+      c.$element.trigger("Demo_DO_LAUNCH_APP",appName);
     });
   }
   

@@ -68,22 +68,26 @@
 }
 
 /* --------- Actions Popup --------- */
+
+/* --------- Window Controls --------- */
 .Window-controls{
   position: absolute;
   top: 0px; left: 32px;
   right: 0;
   height: 27px;
   overflow: hidden;
+  
 }  
 
 .Window-controls-inner{
   position: absolute;
   top: 0px;
   left: 0px;
-  
 }
+
 .Window-controls  button{
   display: block;
   float: left;
   margin: 3px 10px 0 0;
 }
+/* --------- /Window Controls --------- */

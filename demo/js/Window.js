@@ -7,18 +7,28 @@
  * Constructor Data: 
  *   data.componentName : This specify the component name that need to be included in this window
  * 
- * CSS: 
- *   - trigger-element_resize: to tell children that it fires element_resize event
+ * Component API:  
+ *   - show(): make the component visible (use
  *  
- * Events: 
+ * Component Events
+ *   - Window_DO_SET_ACTIVE: Triggered on the Window element or children to set a Window active. 
+ *   - Window_DO_MAXIMIZE: Triggered on the Window element children to maximize the Window
+ *   - Window_DO_RESTORE: Triggered on the Window element or children to restore the window  
+ * 
+ * Other Events: 
  *   - element_resizing: Fired on c.$element when the window is getting resize (for each drag move)
  *   - element_resized: Fired when the resizing is done
+ *   - Demo_DO_CLOSE_WINDOW: Fire when the user close the window
+ * 
+ * CSS: 
+ *   - trigger-element_resize: to tell children that it fires element_resize event
  */
 (function(){
   
   // --------- Component Interface Implementation ---------- //
   function Window(){
-    
+    // the app name contain in this window
+    this.appName = null;
   }
   
   /**
@@ -46,6 +56,9 @@
     // if we have a content component to include, then, we include it
     if (data && data.componentName){
         var $windowContent = c.$element.find(".Window-content");
+        
+        this.appName = data.componentName;
+        
         dfd = brite.display(data.componentName,null,{parent:$windowContent}).whenInit;
         dfd.fail(function(){
           console.log("failing");
@@ -129,7 +142,10 @@
   }
   // --------- /Component Interface Implementation ---------- //
   
-  // --------- Private Component Methods ---------- //
+  // --------- Component Public API --------- //
+  // --------- /Component Public API --------- //
+  
+  // --------- Component Private Methods ---------- //
   function maximize(){
     var c = this;
     var $e = c.$element;
@@ -189,11 +205,13 @@
     var startLeft = -$inner.outerWidth();
     $inner.css("left",startLeft);
     $controls.css("opacity","1");
-    $inner.animate({left:0});
+    
+    $inner.bTransition({transition:"all 0.3s ease",transform:"translate(" + (-1 * startLeft) + "px,0px)",onTimeout:true});
+    
     c.$element.find(".Window-header h2").fadeOut();
     
     $controls.on("btap","[data-action='close']",function(){
-      c.$element.bRemove();
+      c.$element.trigger("Demo_DO_CLOSE_WINDOW",c.$element[0]);
     });
     
     $controls.on("btap","[data-action='maximize']",function(){
@@ -216,13 +234,14 @@
     }else{
       var $inner = $controls.find(".Window-controls-inner");
       var endLeft = -$inner.outerWidth();
-      $inner.animate({left:endLeft},function(){
-        $controls.bRemove();
-        c.$element.find(".Window-header h2").fadeIn();
+      $inner.css("-webkit-transform","");
+      $inner.on("btransitionend",function(){
+        $controls.remove();
       });
+      c.$element.find(".Window-header h2").fadeIn();
     }
   }
-  // --------- /Private Component Methods ---------- //
+  // --------- /Component Private Methods ---------- //
   
 
   

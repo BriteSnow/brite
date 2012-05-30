@@ -1141,6 +1141,24 @@ brite.version = "0.9-snapshot";
 		C._super = P.prototype; 
 		C.prototype.constructor = C;
 	};
+	
+	
+	// hack to force the browsers on mobile devices to redraw
+	// basically, it is a visually invisible div, but technically in the display tree
+	// that we change the content and css property (width). This seems to force the browser to refresh
+	var _flushUIVar = 2;
+	var _$flushUI;
+	brite.flushUI = function(){
+	  if (brite.ua.hasTouch()){
+	    if (!_$flushUI){
+	      _$flushUI = $("<div id='b-flushUI' style='position:absolute;opacity:1;z-index:-1000;overflow:hidden;width:2px;color:rgba(0,0,0,0)'>flushUI</div>");
+	      $("body").append(_$flushUI);
+	    }
+	    _flushUIVar = _flushUIVar * -1;
+	    _$flushUI.text("").text(_flushUIVar);
+	    _$flushUI.css("width",_flushUIVar + "px");
+	  };
+  }
 
 })(jQuery);
 
@@ -2162,6 +2180,47 @@ brite.event = brite.event || {};
   		}
     }
 })(jQuery);
+// ------ /brite event helpers ------ //
+
+// ------ transition helper ------ //
+;(function($){
+  
+  /**
+   * simple and convenient methods to perform css3 animations (takes care of the css prefix)
+   * opts.transition: this will be the transition value added as css style (e.g.,: "all 0.3s ease;")
+   * opts.transform: the css transform instruction (e.g.,: "scale(.01)")
+   * opts.onTimeout: (optional, default false). If true or >= 0, then the transformation will be performed on timeout)  
+   */
+  
+  $.fn.bTransition = function(opts) {
+    
+    return this.each(function() {
+      var $this = $(this);
+      var timeout = -1;
+      if (typeof opts.onTimeout === "boolean"){
+        timeout = (opts.onTimeout)?0:-1;
+      }else if (typeof opts.onTimeout === "number"){
+        timeout = opts.onTimeout;
+      }
+      if (timeout > -1){
+        setTimeout(function(){
+          performTransition($this,opts);
+        },timeout);
+      }else{
+        performTransition($this,opts);
+      } 
+      // add the transition
+    });
+  }
+  
+  // helper function
+  function performTransition($this,opts){
+    var cssPrefix = brite.ua.cssPrefix();
+    $this.css(cssPrefix + "transition",opts.transition);
+    $this.css(cssPrefix + "transform",opts.transform);
+  }
+})(jQuery);  
+// ------ /transition helper ------ //
 
 // ------ /brite special events ------ //
 ;(function($){
@@ -2397,6 +2456,7 @@ brite.event = brite.event || {};
   // --------- /Event Utilities --------- //  
     
 })(jQuery);
+// ------ /brite special events ------ //
 
 
 
