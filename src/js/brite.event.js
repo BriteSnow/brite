@@ -283,12 +283,18 @@ brite.event = brite.event || {};
 
     setup : function(data, namespaces) {
       var eventListener = "transitionend";
-      if (!$.browser.mozilla){
-        eventListener = brite.ua.cssVarPrefix().toLowerCase() + "TransitionEnd";
+      if (this.addEventListener){
+        if (!$.browser.mozilla){
+          eventListener = brite.ua.cssVarPrefix().toLowerCase() + "TransitionEnd";
+        }
+        this.addEventListener(eventListener,function(event){
+          triggerCustomEvent(this,event,{type:"btransitionend"});
+        });
+        
+      }else{
+        // old browser, just trigger the event since transition should not be supported anyway
+        triggerCustomEvent(this,jQuery.Event("btransitionend"),{type:"btransitionend"});
       }
-      this.addEventListener(eventListener,function(event){
-        triggerCustomEvent(this,event,{type:"btransitionend"});
-      });
      
 
     }
