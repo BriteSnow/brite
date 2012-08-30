@@ -21,11 +21,9 @@
 	{
 		create : function(data) {
 			helloWorlCount++;
+			data.count = helloWorlCount;
 			// we can assume that the template/HelloComponent.html has been loaded and added to the DOM
-			var $e = $($("#tmpl-HelloComponent").render({
-				name : "John",
-				count : helloWorlCount
-			}));
+			var $e = $($("#tmpl-HelloComponent").render(data));
 			return $e;
 		},
 

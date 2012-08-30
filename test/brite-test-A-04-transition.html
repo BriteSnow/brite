@@ -16,7 +16,7 @@
 		<!-- /Generic Test Includes -->
 
 		<!-- We are using jQuery Render here, but can use any templating engine -->
-		<script type="text/javascript" src="../js-dependencies/jquery.render.js" ></script>
+		<script type="text/javascript" src="../extra/jsrender.js" ></script>
 		
 		<script type="text/javascript" src="../src/js/brite.core.js" ></script>
 		
@@ -25,7 +25,7 @@
     </head>
     <body>
     	<div class="sTestSection">
-	        <h2>brite Transition</h2>
+	        <h2>brite Transition (Experimental API for now)</h2>
 
 			<div class="sTestSrc sTestShowSrc">
 				
@@ -41,9 +41,10 @@
 				<!-- This is a reusable transition for any components that use the transition "wipe" -->
 				<script type="text/javascript">
 					brite.registerTransition("wipe",function(component,data,config){
-						//This is new 
+						//This is new component
 						var $new = component.$element;
 						
+						// get the parent from the config
 						var $parent = $(config.parent);
 						var $old = $parent.children();
 						

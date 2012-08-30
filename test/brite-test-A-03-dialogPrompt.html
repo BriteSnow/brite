@@ -19,7 +19,7 @@
 		<!-- /Generic Test Includes -->
 
 		<!-- Utility Lib -->
-		<script type="text/javascript" src="../js-dependencies/jquery.render.js" ></script>
+		<script type="text/javascript" src="../extra/jsrender.js" ></script>
 		
 		
 		<!-- brite core lib -->
@@ -58,6 +58,7 @@
                 prompt : 'Are you sure you want to continue?'
               });
 
+              // when the display is done, then we register the onAnswer function callback.
               dfd.done(function(dialog) {
                 dialog.onAnswer(function(result) {
                   $("#promptAnswer").text("You answered: " + result);

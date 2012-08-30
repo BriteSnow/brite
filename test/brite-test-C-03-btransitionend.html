@@ -69,16 +69,21 @@
 			
 			<script type="text/javascript">
 				$( function() {
-          var count = 0;
+          var count = 1;
           var $box1 = $("#box1");
           
           $box1.on("btransitionend",function(){
-            $box1.find("p").text("btransitionend: " + count++);
-            $box1.off("btransitionend");
-            $box1.removeClass("moved");
+            if ($box1.hasClass("moved")){
+              $box1.find("p").text("btransitionend: " + count++);
+              $box1.removeClass("moved");
+            }
+          });
+          
+          $box1.on("btap",function(){
+            $box1.addClass("moved");
           });
                     
-          $("#box1").addClass("moved");
+          $box1.addClass("moved");
           				
 				});
 			</script>

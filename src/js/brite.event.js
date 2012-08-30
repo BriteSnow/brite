@@ -279,6 +279,7 @@ brite.event = brite.event || {};
   
   
   // --------- btransitionend --------- //
+  // Note: even if jQuery 1.8 add the prefix, it still does not normalize the transitionend event.
   $.event.special.btransitionend = {
 
     setup : function(data, namespaces) {

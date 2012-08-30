@@ -1177,9 +1177,9 @@ brite.version = "0.9-snapshot";
 brite.ua = {};
 
 (function($) {
-  var CSS_PREFIXES = {webkit:"-webkit-",mozilla:"-moz-",msie:"-ms-",opera:"-o-"};
+  var CSS_PREFIXES = {webkit:"-webkit-",chrome:"-webkit-",mozilla:"-moz-",msie:"-ms-",opera:"-o-"};
   
-  var VAR_PREFIXES = {webkit:"Webkit",mozilla:"Moz",msie:"ms",opera:"o"};
+  var VAR_PREFIXES = {webkit:"Webkit",mozilla:"Moz",chrome:"Webkit",msie:"ms",opera:"o"};
   
 
 	// privates
