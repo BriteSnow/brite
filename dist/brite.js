@@ -1,7 +1,7 @@
 //TODO: needs to make it "reload safe"
 var brite = brite || {};
 
-brite.version = "0.9-snapshot";
+brite.version = "0.9.0-snapshot";
 
 // ---------------------- //
 // ------ brite ------ //
@@ -1177,9 +1177,9 @@ brite.version = "0.9-snapshot";
 brite.ua = {};
 
 (function($) {
-  var CSS_PREFIXES = {webkit:"-webkit-",mozilla:"-moz-",msie:"-ms-",opera:"-o-"};
+  var CSS_PREFIXES = {webkit:"-webkit-",chrome:"-webkit-",mozilla:"-moz-",msie:"-ms-",opera:"-o-"};
   
-  var VAR_PREFIXES = {webkit:"Webkit",mozilla:"Moz",msie:"ms",opera:"o"};
+  var VAR_PREFIXES = {webkit:"Webkit",mozilla:"Moz",chrome:"Webkit",msie:"ms",opera:"o"};
   
 
 	// privates
@@ -2416,6 +2416,7 @@ brite.event = brite.event || {};
   
   
   // --------- btransitionend --------- //
+  // Note: even if jQuery 1.8 add the prefix, it still does not normalize the transitionend event.
   $.event.special.btransitionend = {
 
     setup : function(data, namespaces) {

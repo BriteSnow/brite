@@ -1,7 +1,7 @@
 //TODO: needs to make it "reload safe"
 var brite = brite || {};
 
-brite.version = "0.9-snapshot";
+brite.version = "0.9.0-snapshot";
 
 // ---------------------- //
 // ------ brite ------ //
