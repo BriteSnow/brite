@@ -78,22 +78,21 @@
 				$(function(){
 					var $userList = $("#userList");
 					
-					// Initialize the UI component
-					updateUserListDiv();
+					brite.dao.onDataChange("user",function(event){
+					  updateUserListDiv();
+					}); 
 					
-					// Update the userListDiv on change
-					brite.addDataChangeListener("user",function(daoChangeEvent){
-						updateUserListDiv();
+					brite.dao.onResult("user",function(event){
+					  console.log("dao.onResult " + event.daoEvent.action + " : " + event.daoEvent.result);
 					});
 					
-					// register a dao listener
-					
-					brite.addDaoListener(function(daoEvent){
-						if (daoEvent.objectType === "user" && daoEvent.action === "resetStore"){
-							console.log("Refreshing UI since user store has been reset");
-							updateUserListDiv();				
-						}
+					brite.dao.onDao(function(event){
+					  if (event.daoEvent.action === "resetStore"){
+              console.log("Custom DAO method resetStore called: Refreshing UI since user store has been reset");
+              updateUserListDiv();        
+					  }
 					});
+					
 										
 					// --- Delete User --- //
 					$userList.delegate(".del","click",function(){
@@ -127,6 +126,11 @@
 					$("#removeAll").click(function(){
 						brite.dao.invoke("resetStore","user",true);
 					});
+					
+					
+          // Initialize the UI component
+          updateUserListDiv();
+          					
 					
 					//TODO: support for Edit user
 				});
