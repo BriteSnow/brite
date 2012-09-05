@@ -1,4 +1,3 @@
-//TODO: needs to make it "reload safe"
 var brite = brite || {};
 
 brite.version = "0.9.0-snapshot";
@@ -244,7 +243,7 @@ brite.version = "0.9.0-snapshot";
       // --------- /Load the tmpl if needed --------- //
       
       // --------- Load the css if needed --------- //
-      var loadCss = brite.defaultComponentConfig.loadCss;
+      var loadCss = componentDef.config.loadCss;
       if (loadCss){
         //TODO: need to add the checkCss support
         loadCssDfd = $.Deferred();
