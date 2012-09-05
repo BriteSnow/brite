@@ -1,0 +1,10 @@
+<script id="tmpl-ProjectListNav" type="text/html">
+  <div class="ProjectListNav">
+    <h2>Projects</h2>
+    <ul class="ProjectListNav-projects">
+      {{for projects}}
+      <li class="sel" data-obj_type="Project" data-obj_id="{{: id}}"><i class="icon-folder-open"></i>{{: title}}</li>
+      {{/for}}
+    </ul>
+  </div>
+</script>

@@ -83,7 +83,7 @@ brite.version = "0.9.0-snapshot";
 	 *                                         the element for $.bRemove). It will get called after this component htmlElement will get removed<br />
 	 * 
 	 */
-	brite.registerComponent = function(name, config, componentFactory) {
+	brite.registerView = function(name, config, componentFactory) {
 		var def = {};
 		def.name = name;
 		def.componentFactory = componentFactory;
@@ -98,6 +98,11 @@ brite.version = "0.9.0-snapshot";
 			delete _deferredByComponentName[name];
 		}
 	};
+	
+	// for backgward compatibility
+	brite.registerComponent = brite.registerView;
+	
+	
 
 	/**
 	 * This just instantiate a new component for a given name. This is useful for manipulating the component off
@@ -108,10 +113,12 @@ brite.version = "0.9.0-snapshot";
 	 * @param {string}
 	 *            name
 	 */
+	/* DEPRECATED for now
 	brite.instantiateComponent = function(name) {
 		var loaderDeferred = loadComponent(name);
 		return instantiateComponent(componentDef);
 	}
+	*/
 	// ------ /Public API: Component Management ------ //
 
 	// ------ Public API: Transition Management ------ //
@@ -127,10 +134,10 @@ brite.version = "0.9.0-snapshot";
 	// ------ Public API: Display Management ------ //
 
 	/**
-	 * This will create, init, and display a new component. It will load the component on demand if needed.
+	 * This will create, init, and display a new view. It will load the view on demand if needed.
 	 * 
 	 * @param {String}
-	 *            name (required) the component name
+	 *            name (required) the view name
 	 * @param {Object}
 	 *            data (optional, required if config) the data to be passed to the build and postDisplay.
 	 * @param {Object}
@@ -138,8 +145,8 @@ brite.version = "0.9.0-snapshot";
 	 *            params for description)
 	 * @return {Component} return the component instance.
 	 */
-	brite.display = function(componentName, data, config) {
-		return process(componentName, data, config);
+	brite.display = function(viewName, data, config) {
+		return process(viewName, data, config);
 	};
 
 	/**
@@ -147,8 +154,8 @@ brite.version = "0.9.0-snapshot";
 	 * new component and attach it to the $element and call postDisplay on it.
 	 * 
 	 */
-	brite.attach = function(componentName, $element, data, config) {
-		return process(componentName, data, config, $element);
+	brite.attach = function(viewName, $element, data, config) {
+		return process(viewName, data, config, $element);
 	}
 	// ------ /Public API: Display Management ------ //
 
