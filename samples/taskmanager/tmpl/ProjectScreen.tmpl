@@ -1,0 +1,55 @@
+<script id="tmpl-ProjectScreen" type="text/html">
+  <div class="ProjectScreen">
+    <header>
+      <h2>{{: project.title}}</h2>
+    </header>
+    <section class="table-container">
+    <div class="ProjectScreen-taskTable">
+      
+      <div class="table-header">
+        <table class="table ">
+          <thead>
+            <tr>
+              <th class="check"></th>
+              <th class="title">Title</th>
+            </tr>
+          </thead>
+        </table>
+        <div class="del"><i class="icon-trash"></i></div>
+      </div>
+      <div class="table-content">      
+        {{for #data tmpl="#tmpl-ProjectScreen-taskTable-content" /}}
+      </div>
+    </section>
+  </div>
+</script>
+
+
+<script id="tmpl-ProjectScreen-taskTable-content" type="text/html">
+  <table class="table">
+    <tbody>
+      {{for tasks}}
+      <tr data-obj_type="Task" {{if done}}class="done"{{/if}} data-obj_id="{{:id}}">
+        <td class="check"><input data-prop="done" type="checkbox" {{if done}}checked="checked"{{/if}}/>
+          <i class="icon-ban-circle"></i>
+        </td>
+        <td class="title"><input data-prop="title" value="{{:title}}" /></td>
+      </tr>
+      {{/for}}
+      
+      <tr class="newTask">
+        <td class="check"></td>
+        <td class="title">
+          <input data-prop="title" placeholder="Enter new task" type="input" />
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</script>
+
+<script id="tmpl-ProjectScreen-delControls" type="text/html">
+  <div class="delete-controls">
+    <div class="btn btn-small btn-danger" data-action="delete">Delete (0)</div>
+    <div class="btn btn-small" data-action="cancel">Cancel</div>
+  </div>
+</script>

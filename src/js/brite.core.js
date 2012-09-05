@@ -506,7 +506,8 @@ brite.version = "0.9.0-snapshot";
 
 		if (component) {
 			component.name = componentDef.name;
-			component.cid = cidSeq++;
+			// .cid is a legacy property, .id is the one to use. 
+			component.cid = component.id = "bview_" + cidSeq++;
 		}
 		return component;
 	}

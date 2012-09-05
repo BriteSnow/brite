@@ -25,11 +25,31 @@
 	ProjectListNav.prototype.postDisplay = function(data, config) {
 		var c = this;
 		
+		// On User Click
 		c.$element.on("click","li[data-obj_type='Project']",function(){
 			var $li = $(this);
 			var projectId = $li.attr("data-obj_id");
 			$li.trigger("DO_SELECT_PROJECT",{projectId:projectId});
-		});		
+		});
+		
+		// We bind to the document events
+		$(document).on("DO_SELECT_PROJECT." + c.id,function(event,extra){
+			// deselect any eventual selection
+			c.$element.find("li.sel").removeClass("sel");
+			c.$element.find("i.icon-folder-open").removeClass("icon-folder-open").addClass("icon-folder-close");
+			
+			// select the li
+			var $selectedLi = c.$element.find("li[data-obj_id='" + extra.projectId + "']");
+			$selectedLi.addClass("sel");
+			$selectedLi.find("i.icon-folder-close").removeClass("icon-folder-open").addClass("icon-folder-open");
+			
+		});
+		
+	}
+	
+	ProjectListNav.prototype.destroy = function(){
+		// we cleanup all the document events for this component.
+		$(document).off("." + c.id);
 	}
 
 	// --------- /Component Interface Implementation ---------- //

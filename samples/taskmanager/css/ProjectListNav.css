@@ -30,6 +30,7 @@
 
 .ProjectListNav-projects li.sel{
   opacity: 1;
+  font-weight: bold;
 }
 
 .ProjectListNav-projects li > i{
