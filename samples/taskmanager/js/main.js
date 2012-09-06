@@ -127,13 +127,13 @@ var main = main || {};
 		{id:"202",projectId:"002",done:true,title:"Make sketches with iPad app"},
 		{id:"203",projectId:"002",done:false,title:"Hire architect to review sketches"},
 		{id:"204",projectId:"002",done:false,title:"Hire engineer to finish plan"},
-		{id:"204",projectId:"002",done:false,title:"Hire contractors"},
+		{id:"205",projectId:"002",done:false,title:"Hire contractors"},
 		
 		{id:"301",projectId:"003",done:true,title:"Brush up HTML, JS, and CSS skills"},
 		{id:"302",projectId:"003",done:false,title:"Checkout html5rocks.com for new HTML5 features"},
 		{id:"303",projectId:"003",done:false,title:"Learn Object Oriented with JavaScript"},
 		{id:"304",projectId:"003",done:false,title:"Learn application layout with HTML and CSS"},
-		{id:"304",projectId:"003",done:false,title:"Learn"},
+		{id:"305",projectId:"003",done:false,title:"Learn"},
 		
 		{id:"301",projectId:"004",done:false,title:"Learn HTML5"},
 		{id:"302",projectId:"004",done:false,title:"Learn D-MVC (DOM centric MVC)"},
