@@ -41,7 +41,7 @@
 			// select the li
 			var $selectedLi = c.$element.find("li[data-obj_id='" + extra.projectId + "']");
 			$selectedLi.addClass("sel");
-			$selectedLi.find("i.icon-folder-close").removeClass("icon-folder-open").addClass("icon-folder-open");
+			$selectedLi.find("i.icon-folder-close").removeClass("icon-folder-close").addClass("icon-folder-open");
 			
 		});
 		
