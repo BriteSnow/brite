@@ -8,11 +8,6 @@
 		<link rel="stylesheet" href="css/sTestHelper.css"/>
 		<script type="text/javascript" src="../js-dependencies/jquery.js" ></script>
 		<script type="text/javascript" src="js/sTestHelper.js" ></script>
-		<script type="text/javascript">
-		$(function(){
-			showTestSources();
-		});
-		</script>
 		<!-- /Generic Test Includes -->
 
 		<script type="text/javascript" src="../src/js/brite.core.js" ></script>
@@ -64,7 +59,7 @@
 
 			<div class="sTestSrc sTestShowSrc">
 				
-				<h3>Create new User (<span class='action' id="resetStore">Reset</span>) (<span class='action' id="removeAll">Remove All</span> )</h3>
+				<h3>Create new User (<span class='action' id="removeAll">Remove All</span> )</h3>
 				<div>User Name: <input id="userNameIpt" type="text" /> City: <input id="userCityIpt" type="text" /> <button id="userCreateBut">Create</button></div>
 				
 	
@@ -75,18 +70,48 @@
 				<!-- Simple User CRUD UI Logic -->
 				<script type="text/javascript">
 				
+				// --------- CustomDao extending Brite.InMemoryDao --------- //
+				// extending the brite.InMemoryDao
+				//doing an extension
+        function CustomDao(seed,opts){
+          CustomDao._super.constructor.call(this,seed,opts);
+        };
+        brite.inherit(CustomDao,brite.InMemoryDao);
+        
+        // Custom DAO Method
+        CustomDao.prototype.removeAll = function(){
+          this._dataDic = {};
+        }
+        
+        // tell which custom methods is a datachange
+        CustomDao._dataChangeMethods = {removeAll:true};
+        CustomDao.prototype.isDataChange = function(methodName){
+          if (CustomDao._dataChangeMethods[methodName]){
+            return true;
+          }          
+        }
+        // --------- /CustomDao extending Brite.InMemoryDao --------- //
+				
+				
+        var usersSeed = [{id:"001",name:"Mike Donavan",city:"San Francisco"},
+                         {id:"002",name:"Jennifer Patrick",city:"Los Angeles"}];
+                         
+        var userDao = brite.registerDao("User",new CustomDao(usersSeed));
+				
 				$(function(){
 					var $userList = $("#userList");
 					
-					brite.dao.onDataChange("user",function(event){
+					brite.dao.onDataChange("User",function(event){
+					  console.log("dao.onDataChange " + event.daoEvent.action, event.daoEvent.result);
 					  updateUserListDiv();
 					}); 
 					
-					brite.dao.onResult("user",function(event){
-					  console.log("dao.onResult " + event.daoEvent.action + " : " + event.daoEvent.result);
+					brite.dao.onResult("User",function(event){
+					  console.log("dao.onResult " + event.daoEvent.action, event.daoEvent.result);
 					});
 					
 					brite.dao.onDao(function(event){
+					  console.log("dao.onDao : " + event.daoEvent.action);
 					  if (event.daoEvent.action === "resetStore"){
               console.log("Custom DAO method resetStore called: Refreshing UI since user store has been reset");
               updateUserListDiv();        
@@ -99,16 +124,14 @@
 						// get the user objRef that this html element belong to.
 						var objRef = $(this).bObjRef("user");
 						if (objRef){
-							brite.dao.remove("user",objRef.id).done(function(){
-								// here the remove
-							});
+						  userDao.remove(objRef.id);
 						}
 					});
 					// --- /Delete User --- //
 					
 					// --- Create User --- //
 					$("#userCreateBut").click(function(){
-						brite.dao.create("user",{name: $("#userNameIpt").val(),
+						userDao.create({name: $("#userNameIpt").val(),
 											 city: $("#userCityIpt").val()});
 						
 						//clean the input and focus
@@ -117,14 +140,9 @@
 						
 					});
 					// --- /Create User --- //
-					
-					// reset store
-					$("#resetStore").click(function(){
-						brite.dao.invoke("resetStore","user");
-					});
-					
 					$("#removeAll").click(function(){
-						brite.dao.invoke("resetStore","user",true);
+					  // call the custom DAO method
+					  userDao.removeAll();
 					});
 					
 					
@@ -132,11 +150,10 @@
           updateUserListDiv();
           					
 					
-					//TODO: support for Edit user
 				});
 				
 				function updateUserListDiv(){
-					brite.dao.list("user").done(function(userList){
+					userDao.list().done(function(userList){
 						var user, 
 					    i,
 						$userList = $("#userList");
@@ -162,40 +179,9 @@
 				</script>
 				<!--  /Simple User CRUD UI Logic -->
 				
-				<!-- User Dao -->
-				<script type="text/javascript">		
-					var userStore = [{id:"001",name:"Mike",city:"San Francisco"}];
-					
-					// register the brite simple DAO
-					//brite.registerDao("user",new brite.dao.SimpleDao(userStore));
-					
-					// doing an extension
-					function ExtendedSimpleDao(store){
-						ExtendedSimpleDao._super.constructor.call(this,store);
-					};
-					brite.inherit(ExtendedSimpleDao,brite.dao.SimpleDao);
-					
-					// custom dao
-					ExtendedSimpleDao.prototype.resetStore = function(objectType, empty){
-						
-						if (empty){
-							ExtendedSimpleDao._super.init.call(this,[]);
-						}else{
-							ExtendedSimpleDao._super.init.call(this,userStore.slice(0));	
-						}
-							
-						
-						return "any returned value";
-					}
-					
-					
-					// close the userStore and set it as the store of this DAO
-					brite.registerDao("user",new ExtendedSimpleDao(userStore.slice(0)));
 
-				</script>
-				<!-- /User Dao -->
 				
-			</div> <!-- .sTestShowSrc -->			
-		</div> <!-- .sTestSection -->
+			</div>			
+		</div> 
     </body>
 </html>

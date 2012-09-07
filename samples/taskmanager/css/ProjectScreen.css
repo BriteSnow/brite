@@ -8,6 +8,23 @@
   color: #999;
   letter-spacing: .1em;
   margin: 0;
+  font-size: 23px;
+}
+
+.ProjectScreen header input{
+  border: none;
+  color: #999;
+  font-size: 23px;
+  font-weight: bold;
+  width: 300px;
+  margin-top: 6px;
+  margin-left: -5px;
+  letter-spacing: .1em;
+}
+
+.ProjectScreen header .helper{
+  display: inline;
+  margin-left: 10px;
 }
 
 .ProjectScreen .table{
@@ -33,7 +50,7 @@
 }
 
 .ProjectScreen-taskTable th.check,.ProjectScreen-taskTable td.check{
-  width: 30px;
+  width: 15px;
 }
 
 .ProjectScreen td.check i{

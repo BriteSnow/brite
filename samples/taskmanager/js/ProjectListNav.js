@@ -13,7 +13,7 @@
 
 	ProjectListNav.prototype.create = function(data, config) {
 		
-		return main.getProjectList().pipe(function(projectList){
+		return main.projectDao.list().pipe(function(projectList){
 			var html = $("#tmpl-ProjectListNav").render({projects:projectList});
 			var $e = $(html);
 			return $e;
@@ -25,6 +25,16 @@
 	ProjectListNav.prototype.postDisplay = function(data, config) {
 		var c = this;
 		
+		// on dataChange of a project, just refresh all for now (can be easily optimized)
+		brite.dao.onDataChange("Project",function(){
+			main.projectDao.list().done(function(projectList){
+				var html = $("#tmpl-ProjectListNav").render({projects:projectList});
+				var $e = $(html);
+				c.$element.empty().append($e.children());
+				showProjectSelected.call(c,c.selectedProjectId);
+			});
+		});
+		
 		// On User Click
 		c.$element.on("click","li[data-obj_type='Project']",function(){
 			var $li = $(this);
@@ -34,15 +44,7 @@
 		
 		// We bind to the document events
 		$(document).on("DO_SELECT_PROJECT." + c.id,function(event,extra){
-			// deselect any eventual selection
-			c.$element.find("li.sel").removeClass("sel");
-			c.$element.find("i.icon-folder-open").removeClass("icon-folder-open").addClass("icon-folder-close");
-			
-			// select the li
-			var $selectedLi = c.$element.find("li[data-obj_id='" + extra.projectId + "']");
-			$selectedLi.addClass("sel");
-			$selectedLi.find("i.icon-folder-close").removeClass("icon-folder-close").addClass("icon-folder-open");
-			
+			showProjectSelected.call(c,extra.projectId);
 		});
 		
 	}
@@ -53,6 +55,26 @@
 	}
 
 	// --------- /Component Interface Implementation ---------- //
+	
+	// --------- Private Methods --------- //
+	function showProjectSelected(projectId){
+		var c = this;
+
+		// deselect any eventual selection
+		c.$element.find("li.sel").removeClass("sel");
+		c.$element.find("i.icon-folder-open").removeClass("icon-folder-open").addClass("icon-folder-close");
+		
+		// select the li
+		var $selectedLi = c.$element.find("li[data-obj_id='" + projectId + "']");
+		$selectedLi.addClass("sel");
+		$selectedLi.find("i.icon-folder-close").removeClass("icon-folder-close").addClass("icon-folder-open");
+		
+		// keep that for dataChangeEvent (to keep the item selected)
+		c.selectedProjectId = projectId;
+
+		
+	}
+	// --------- /Private Methods --------- //
 
 	// --------- Component Registration --------- //
 	// Here we register the component

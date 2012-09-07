@@ -1,0 +1,110 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+      <title>briteUITest - brite.dao</title>
+  
+  <!-- Generic Test Includes -->
+  <link rel="stylesheet" href="css/sTestHelper.css"/>
+  <script type="text/javascript" src="js/testunit.js" ></script>
+  <script type="text/javascript" src="../js-dependencies/jquery.js" ></script>
+  <!-- /Generic Test Includes -->
+  
+  <script type="text/javascript" src="../src/js/brite.core.js" ></script>
+  <script type="text/javascript" src="../src/js/brite.dao.js" ></script>
+  
+  <style type="text/css">
+    #testList li{
+      font-family: monospace;
+    }
+  </style>
+  
+  
+  <script type="text/javascript">
+    var usersSeed = [{id:"001",name:"Mike Donavan",city:"San Francisco"},
+                     {id:"002",name:"Jennifer Aniston",city:"Los Angeles"}];
+                     
+    var dao = brite.registerDao("User",new brite.InMemoryDao(usersSeed));
+  </script>
+  
+  
+  </head>
+  <body>
+    <h2>InMemory DAO</h2>
+  
+  	<div class="">
+  		<h3>Test List</h3>
+  		<ul id="testList">
+  		</ul>
+  		
+  		<script type="text/javascript">
+      $(function(){
+        
+        var userDao = brite.dao("User");
+
+        // Test 001
+        userDao.get("001").done(function(user){
+          assertEqual("brite.dao.get","Mike Donavan",user.name);
+        });
+        
+        var newUserId = null;
+        // test create
+        userDao.create({name:"John Doe",city:"New York"}).done(function(newUser){
+           assertEqual("brite.dao.create John Doe","John Doe",newUser.name);
+           assertNotNull("brite.dao.crate John Doe",newUser.id,"user.id");    
+           newUserId = newUser.id;     
+        });
+        
+        // test remove
+        userDao.remove(newUserId).done(function(userIdRemoved){
+          assertEqual("brite.dao.remove John Doe",newUserId,userIdRemoved);
+          
+          userDao.get(newUserId).done(function(johnUser){
+            assertNull("brite.dao.remove John Doe",johnUser,"userId");
+          });
+        });
+        
+        // test removeMany
+        $.when(userDao.create({name:"John Doe",city:"New York"}),userDao.create({name:"Rachel Lake",city:"Tahoe"}))
+        .done(function(newUser1,newUser2){
+          var ids = [newUser1.id,newUser2.id];
+          userDao.removeMany(ids).done(function(){
+            userDao.list().done(function(l){
+              assertEqual("brite.dao.removeAll",2,l.length);
+            });
+          });
+        });
+        
+        // test update (update user 001 city to "Paris")
+        userDao.get("001").done(function(user001){
+          assertEqual("brite.dao.update","San Francisco",user001.city);
+          user001.city = "Paris";
+          // check that it did not change the store (since we just modified the obj reference and did not call .update). 
+          userDao.get("001").done(function(checkUser001){
+            // should still be "San Francisco"
+            assertEqual("brite.dao.update","San Francisco",checkUser001.city);
+            
+            // now, do the real update user001
+            user001.id = "001";
+            userDao.update(user001).done(function(updatedUser001){
+              assertEqual("brite.dao.update","Paris",updatedUser001.city);
+              
+              // double check that the store really changed
+              userDao.get("001").done(function(doubleCheckUser001){
+                assertEqual("brite.dao.update","Paris",doubleCheckUser001.city);
+              });
+            });
+          });          
+        });  
+        
+        // test list
+        userDao.list({match:{city:"Paris"}}).done(function(userList){
+          assertEqual("brite.dao.list",1,userList.length);        
+        });        
+
+
+      });
+      
+  		</script>
+  </body>
+</html>

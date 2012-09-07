@@ -43,7 +43,7 @@
 			parent : c.$element.find(".MainScreen-left")
 		}).done(function(){
 			// Once the ProjectListNav is displayed, we select the first project 
-			main.getProjectList().done(function(projectList){
+			main.projectDao.list().done(function(projectList){
 				c.$element.trigger("DO_SELECT_PROJECT",{projectId:projectList[0].id});
 			});
 
