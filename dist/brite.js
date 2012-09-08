@@ -1758,9 +1758,12 @@ var brite = brite || {};
 			}
 		}
 
+		
 		// create the namespace if not present
 		if ( typeof namespace === "undefined") {
-			namespace = brite.uuid();
+			throw "BRITE DAO BINDING ERROR: any binding with brite.dao.on*** needs to have a namespace after the function. " + 
+			      " Remember to cleanup the event at component close with brite.dao.off(mynamespace)"; 
+			       
 		}
 
 		// complete the event
@@ -1939,6 +1942,12 @@ var brite = brite || {};
 	}
 
 	// --------- /Brite.dao.onDataChange --------- //
+	
+	brite.dao.offAny = function(namespace){
+		brite.dao.offResult(namespace);
+		brite.dao.offDao(namespace);
+		brite.dao.offDataChange(namespace);
+	}
 
 	/**
 	 * Wrap with a deferred object if the obj is not a deferred itself.

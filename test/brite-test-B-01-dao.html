@@ -104,11 +104,11 @@
 					brite.dao.onDataChange("User",function(event){
 					  console.log("dao.onDataChange " + event.daoEvent.action, event.daoEvent.result);
 					  updateUserListDiv();
-					}); 
+					},"namespace1"); 
 					
 					brite.dao.onResult("User",function(event){
 					  console.log("dao.onResult " + event.daoEvent.action, event.daoEvent.result);
-					});
+					},"namespace1");
 					
 					brite.dao.onDao(function(event){
 					  console.log("dao.onDao : " + event.daoEvent.action);
@@ -116,7 +116,7 @@
               console.log("Custom DAO method resetStore called: Refreshing UI since user store has been reset");
               updateUserListDiv();        
 					  }
-					});
+					},"namespace1");
 					
 										
 					// --- Delete User --- //

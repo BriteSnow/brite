@@ -1,5 +1,5 @@
 /**
- * Component: ProjectListNav
+ * View: ProjectListNav
  *
  * Responsibilities:
  *   - Manage the list of project (create, delete, select, rename)
@@ -7,7 +7,7 @@
  */
 (function($) {
 
-	// --------- Component Interface Implementation ---------- //
+	// --------- View Interface Implementation ---------- //
 	function ProjectListNav() {
 	};
 
@@ -20,67 +20,68 @@
 		});
 	}
 
-	// This is optional, it gives a way to add some logic after the component is displayed to the user.
+	// This is optional, it gives a way to add some logic after the View is displayed to the user.
 	// This is a good place to add all the events binding and all
 	ProjectListNav.prototype.postDisplay = function(data, config) {
-		var c = this;
+		var o = this;
 		
 		// on dataChange of a project, just refresh all for now (can be easily optimized)
 		brite.dao.onDataChange("Project",function(){
 			main.projectDao.list().done(function(projectList){
 				var html = $("#tmpl-ProjectListNav").render({projects:projectList});
 				var $e = $(html);
-				c.$element.empty().append($e.children());
-				showProjectSelected.call(c,c.selectedProjectId);
+				o.$element.empty().append($e.children());
+				showProjectSelected.call(v,o.selectedProjectId);
 			});
-		});
+		},o.id);
 		
 		// On User Click
-		c.$element.on("click","li[data-obj_type='Project']",function(){
+		o.$element.on("click","li[data-obj_type='Project']",function(){
 			var $li = $(this);
 			var projectId = $li.attr("data-obj_id");
 			$li.trigger("DO_SELECT_PROJECT",{projectId:projectId});
 		});
 		
 		// We bind to the document events
-		$(document).on("DO_SELECT_PROJECT." + c.id,function(event,extra){
-			showProjectSelected.call(c,extra.projectId);
+		$(document).on("DO_SELECT_PROJECT." + o.id,function(event,extra){
+			showProjectSelected.call(o,extra.projectId);
 		});
 		
 	}
 	
 	ProjectListNav.prototype.destroy = function(){
-		// we cleanup all the document events for this component.
-		$(document).off("." + c.id);
+		// we cleanup all the document events for this View.
+		$(document).off("." + o.id);
+		
+		// cleanup any dao event binding for this view
+		brite.dao.offAny(o.id);
 	}
 
-	// --------- /Component Interface Implementation ---------- //
+	// --------- /View Interface Implementation ---------- //
 	
 	// --------- Private Methods --------- //
 	function showProjectSelected(projectId){
-		var c = this;
+		var o = this;
 
 		// deselect any eventual selection
-		c.$element.find("li.sel").removeClass("sel");
-		c.$element.find("i.icon-folder-open").removeClass("icon-folder-open").addClass("icon-folder-close");
+		o.$element.find("li.sel").removeClass("sel");
+		o.$element.find("i.icon-folder-open").removeClass("icon-folder-open").addClass("icon-folder-close");
 		
 		// select the li
-		var $selectedLi = c.$element.find("li[data-obj_id='" + projectId + "']");
+		var $selectedLi = o.$element.find("li[data-obj_id='" + projectId + "']");
 		$selectedLi.addClass("sel");
 		$selectedLi.find("i.icon-folder-close").removeClass("icon-folder-close").addClass("icon-folder-open");
 		
 		// keep that for dataChangeEvent (to keep the item selected)
-		c.selectedProjectId = projectId;
-
-		
+		o.selectedProjectId = projectId;
 	}
 	// --------- /Private Methods --------- //
 
-	// --------- Component Registration --------- //
-	// Here we register the component
+	// --------- View Registration --------- //
+	// Here we register the View
 	brite.registerView("ProjectListNav", null, function() {
 		return new ProjectListNav();
 	});
-	// --------- Component Registration --------- //
+	// --------- View Registration --------- //
 
 })(jQuery); 

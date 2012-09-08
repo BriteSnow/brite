@@ -13,11 +13,12 @@
 	}
 
 	ProjectScreen.prototype.create = function(data, config) {
-		var c = this;
-		c.projectId = data.projectId;
+		var o = this;
 		
-		return $.when(main.projectDao.get(c.projectId),main.taskDao.list({match:{projectId:c.projectId}})).pipe(function(project,taskList){
-			c.project = project;
+		o.projectId = data.projectId;
+		
+		return $.when(main.projectDao.get(o.projectId),main.taskDao.list({match:{projectId:o.projectId}})).pipe(function(project,taskList){
+			o.project = project;
 			var html = $("#tmpl-ProjectScreen").render({project:project,tasks:taskList});
 			var $e = $(html);
 			return $e;
@@ -27,30 +28,29 @@
 	// This is optional, it gives a way to add some logic after the component is displayed to the user.
 	// This is a good place to add all the events binding and all
 	ProjectScreen.prototype.postDisplay = function(data, config) {
-		var c = this;
+		var o = this;
 		
 		// on any Task dataChange
 		brite.dao.onDataChange("Task",function(event){
 			var daoEvent = event.daoEvent;
 			// Note: right now, aggressive refresh as we can assume 
 			//       that if a Task entity change, it is because of this view 
-			refreshTable.call(c);	
-		});
-		
+			refreshTable.call(o);	
+		},o.id);
 		
 		// on Project dataChange, if it is this project, update the project part of the screen
 		brite.dao.onDataChange("Project",function(event){
 			var daoEvent = event.daoEvent;
-			if (daoEvent.result && daoEvent.result.id === c.projectId){
-				c.project = daoEvent.result;
-				c.$element.find("header h2").text(c.project.title);
+			if (daoEvent.result && daoEvent.result.id === o.projectId){
+				o.project = daoEvent.result;
+				o.$element.find("header h2").text(o.project.title);
 			}
-		});
+		},o.id);
 		
 		
 		// --- Task Done true/false change --- //
 		// handle the change task state (done true/false)
-		c.$element.on("change","input[data-prop='done']",function(){
+		o.$element.on("change","input[data-prop='done']",function(){
 			var $check = $(this);
 			
 			// the object type and id are store in the DOM, so, just look for the parent element for this
@@ -64,15 +64,15 @@
 		
 		// --- Task Delete --- //
 		// Click on the del icon to turn delete mode
-		c.$element.on("click",".table-header .del",function(){
+		o.$element.on("click",".table-header .del",function(){
 			// create the delete-controls element
 			var $controls = $($("#tmpl-ProjectScreen-delControls").render());
-			c.$element.find(".table-header").append($controls);
+			o.$element.find(".table-header").append($controls);
 			
 			// add the deleteMode class and set component flag
-			var $tableContent = c.$element.find(".table-content");
+			var $tableContent = o.$element.find(".table-content");
 			$tableContent.addClass("deleteMode");
-			c.deleteMode = true;
+			o.deleteMode = true;
 			
 			// delete			
 			var $deleteButton = $controls.find("[data-action='delete']");
@@ -108,7 +108,7 @@
 				$controls.remove();
 				$tableContent.removeClass("deleteMode");
 				$tableContent.find("tr.to-delete").removeClass("to-delete");
-				c.deleteMode = false;
+				o.deleteMode = false;
 				
 				// cleanup the event to make sure to not double bind it.
 				$tableContent.off(".seldelete");
@@ -119,11 +119,11 @@
 		// --- /Task Delete --- //
 		
 		// --- Task Rename --- //
-		c.$element.on("focus","[data-obj_type='Task'] input[data-prop='title']",function(){
+		o.$element.on("focus","[data-obj_type='Task'] input[data-prop='title']",function(){
 			var $input = $(this);
 			$input.off();
 			
-			if (c.deleteMode){
+			if (o.deleteMode){
 				$input.trigger("blur");
 				return;
 			}
@@ -153,7 +153,7 @@
 		});
 		
 		// cancel the rename
-		c.$element.on("blur","[data-obj_type='Task'] input[data-prop='title']",function(){
+		o.$element.on("blur","[data-obj_type='Task'] input[data-prop='title']",function(){
 			var $input = $(this);
 			var oldValue = $input.data("oldValue");
 			if (oldValue){
@@ -166,7 +166,7 @@
 		
 		// --- Create New Task --- //
 		// handle the create new task
-		c.$element.on("focus",".newTask input[data-prop='title']",function(){
+		o.$element.on("focus",".newTask input[data-prop='title']",function(){
 			var $input = $(this);
 			$input.off();
 			
@@ -176,14 +176,14 @@
 				// press ENTER
 				if (event.which === 13){
 					var newTask ={
-						projectId: c.projectId,
+						projectId: o.projectId,
 						title: $input.val()
 					}
 					main.taskDao.create(newTask).done(function(){
 						// Note: the DAO event listeners are triggered first, 
 						//       since they are bound before the promise is returned.
 						//       So, this is why, here the table will be refreshed, and we can set the new focus.  
-						c.$element.find(".newTask input").focus();
+						o.$element.find(".newTask input").focus();
 					});
 				}
 				// press ESC
@@ -194,7 +194,7 @@
 		});
 		
 		// cancel the add new task
-		c.$element.on("blur",".newTask input[data-prop='title']",function(){
+		o.$element.on("blur",".newTask input[data-prop='title']",function(){
 			var $input = $(this);
 			$input.val("");
 			$input.parent().find(".helper").remove();
@@ -203,18 +203,18 @@
 	 	
 	 	
 	 	// --- Project Rename --- //
-	 	var $projectTitle = c.$element.find("header h2");
+	 	var $projectTitle = o.$element.find("header h2");
 	 	$projectTitle.on("click",function(){
 	 		$projectTitle.hide();
 	 		var $input = $("<input type='text'></input>").appendTo($projectTitle.parent());
-	 		$input.val(c.project.title).focus();
+	 		$input.val(o.project.title).focus();
 	 		$input.after(updateHelperHtml);
 	 		
 			$input.on("keyup", function(event){
 				// press ENTER
 				if (event.which === 13){
 					var projectData ={
-						id: c.projectId,
+						id: o.projectId,
 						title: $input.val()
 					}
 					
@@ -235,15 +235,22 @@
 	 	// --- /Project Rename --- //
 		
 	}
+	
+	ProjectScreen.prototype.destroy = function(){
+		var o = this;
+		
+		// IMPORTANT: need to remove all the DAO event bound for this component
+		brite.dao.offAny(o.id);
+	}
 	// --------- /Component Interface Implementation ---------- //
 	
 	// --------- Component Private Methods --------- //
 	
 	function refreshTable(){
-		var c = this;
+		var o = this;
 		
-		return main.taskDao.list({match:{projectId:c.projectId}}).done(function(taskList){
-			var $tableContent = c.$element.find(".table-content").empty();
+		return main.taskDao.list({match:{projectId:o.projectId}}).done(function(taskList){
+			var $tableContent = o.$element.find(".table-content").empty();
 			var taskTableHtml = $("#tmpl-ProjectScreen-taskTable-content").render({tasks:taskList});
 			$tableContent.html(taskTableHtml);			
 		});
