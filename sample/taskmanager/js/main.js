@@ -35,9 +35,9 @@ var main = main || {};
 		{id:"304",projectId:"004",done:false,title:"Build an amazing HTML5 application the DOM way and not the desktop way"}
   ]
   
-  main.projectDao = brite.registerDao("Project",new brite.InMemoryDao(seedProjects));
+  main.projectDao = brite.registerDao("Project",new brite.InMemoryDaoHandler(seedProjects));
   
-  main.taskDao = brite.registerDao("Task",new brite.InMemoryDao(seedTasks));	
+  main.taskDao = brite.registerDao("Task",new brite.InMemoryDaoHandler(seedTasks));	
 	
 	
 })();

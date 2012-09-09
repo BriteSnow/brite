@@ -70,13 +70,13 @@
 				<!-- Simple User CRUD UI Logic -->
 				<script type="text/javascript">
 				
-				// --------- CustomDao extending Brite.InMemoryDao --------- //
-				// extending the brite.InMemoryDao
+				// --------- CustomDao extending Brite.InMemoryDaoHandler --------- //
+				// extending the brite.InMemoryDaoHandler
 				//doing an extension
         function CustomDao(seed,opts){
           CustomDao._super.constructor.call(this,seed,opts);
         };
-        brite.inherit(CustomDao,brite.InMemoryDao);
+        brite.inherit(CustomDao,brite.InMemoryDaoHandler);
         
         // Custom DAO Method
         CustomDao.prototype.removeAll = function(){
@@ -90,7 +90,7 @@
             return true;
           }          
         }
-        // --------- /CustomDao extending Brite.InMemoryDao --------- //
+        // --------- /CustomDao extending Brite.InMemoryDaoHandler --------- //
 				
 				
         var usersSeed = [{id:"001",name:"Mike Donavan",city:"San Francisco"},

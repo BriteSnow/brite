@@ -1966,7 +1966,7 @@ var brite = brite || {};
 })(jQuery);
 // --------- /DAO Support --------- //
 
-// --------- InMemoryDao --------- //
+// --------- InMemoryDaoHandler --------- //
 (function($) {
 
 	var defaultOpts = {
@@ -1974,7 +1974,7 @@ var brite = brite || {};
 	}
 
 	/**
-	 * Create a InMemoryDao type
+	 * Create a InMemoryDaoHandler type
 	 *
 	 * Note: since it is a in memory store, all the dao function return entity clone object to make sure to avoid
 	 *       the user to inadvertently change a stored entity.
@@ -1985,7 +1985,7 @@ var brite = brite || {};
 	 *
 	 * @param {Array} seed. Seed the store. Array of object with their id (if not, uuid will be generated)
 	 */
-	function InMemoryDao(seed, opts) {
+	function InMemoryDaoHandler(seed, opts) {
 		init.call(this,seed, opts);
 	}
 
@@ -2022,7 +2022,7 @@ var brite = brite || {};
 	 * @return the id (this is not deferred), default value is "id"
 	 * @throws error if dao cannot be found
 	 */
-	InMemoryDao.prototype.getIdName = function() {
+	InMemoryDaoHandler.prototype.getIdName = function() {
 		return this._idName || "id";
 	}
 
@@ -2032,7 +2032,7 @@ var brite = brite || {};
 	 * @param {Integer} id
 	 * @return the entity
 	 */
-	InMemoryDao.prototype.get = function(id) {
+	InMemoryDaoHandler.prototype.get = function(id) {
 		
 		var entity = this._dataDic[id];
 		if (entity) {
@@ -2048,7 +2048,7 @@ var brite = brite || {};
 	 * @param {String} objectType
 	 * @param {Object} newEntity if null, does nothing (TODO: needs to throw exception)
 	 */
-	InMemoryDao.prototype.create = function(newEntity) {
+	InMemoryDaoHandler.prototype.create = function(newEntity) {
 		if (newEntity) {
 			var newId = brite.uuid();
 			newEntity[this._idName] = newId;
@@ -2067,7 +2067,7 @@ var brite = brite || {};
 	 * @param {Integer} id
 	 *
 	 */
-	InMemoryDao.prototype.remove = function(id) {
+	InMemoryDaoHandler.prototype.remove = function(id) {
 		var entity = this._dataDic[id];
 		if (entity) {
 			delete this._dataDic[id];
@@ -2082,7 +2082,7 @@ var brite = brite || {};
 	 * 
 	 * @return the array of ids that have been removed
 	 */
-	InMemoryDao.prototype.removeMany = function(ids){
+	InMemoryDaoHandler.prototype.removeMany = function(ids){
 		var that = this;
 		
 		// TODO: need to check if the entity exists and 
@@ -2104,10 +2104,10 @@ var brite = brite || {};
 	 *
 	 * Return the new object data
 	 */
-	InMemoryDao.prototype.update = function(data) {
+	InMemoryDaoHandler.prototype.update = function(data) {
 		var id = data[this._idName];
 		if (typeof id === "undefined"){
-			throw "BRITE ERROR: InMemoryDao.update: data does not have an id property. Cannot update.";	
+			throw "BRITE ERROR: InMemoryDaoHandler.update: data does not have an id property. Cannot update.";	
 		}
 		var entity = this._dataDic[id];
 		if (entity) {
@@ -2131,7 +2131,7 @@ var brite = brite || {};
 	 *           opts.orderBy   {String}
 	 *           opts.orderType {String} "asc" or "desc"
 	 */
-	InMemoryDao.prototype.list = function(opts) {
+	InMemoryDaoHandler.prototype.list = function(opts) {
 
 		opts = opts || {};
 
@@ -2188,10 +2188,10 @@ var brite = brite || {};
 
 	// --------- /DAO Interface Implementation --------- //
 
-	brite.InMemoryDao = InMemoryDao;
+	brite.InMemoryDaoHandler = InMemoryDaoHandler;
 
 })(jQuery);
-// --------- /InMemoryDao --------- //
+// --------- /InMemoryDaoHandler --------- //
 
 // ------ jQuery DAO Helper ------ //
 (function($) {
