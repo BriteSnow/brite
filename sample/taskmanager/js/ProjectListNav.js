@@ -31,7 +31,7 @@
 				var html = $("#tmpl-ProjectListNav").render({projects:projectList});
 				var $e = $(html);
 				o.$element.empty().append($e.children());
-				showProjectSelected.call(v,o.selectedProjectId);
+				showProjectSelected.call(o,o.selectedProjectId);
 			});
 		},o.id);
 		
