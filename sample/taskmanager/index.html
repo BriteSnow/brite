@@ -28,15 +28,15 @@
     <!-- Best-Practice: Should be "js/brite.min.js" but for this sample code we reuse the shared lib -->
     <script type="text/javascript" src="../../dist/brite.js" ></script>
     
-    <!-- Set the default component config to load template -->
-    <!-- Best-Practice: Here we are telling brite to load the /tmpl/ComponentName.tmpl and /css/ComponentName.css
+    <!-- Set the default view config to load template -->
+    <!-- Best-Practice: Here we are telling brite to load the /tmpl/ViewName.tmpl and /css/ViewName.css
                         on demand. This is good for development, but on production, the .css might might concatinated and minimized into a single file.
-                        Nevertheless, for scalable development, this is very useful since multiple developers can work on various components without 
+                        Nevertheless, for scalable development, this is very useful since multiple developers can work on various views without 
                         having to all change the same file.
     -->
     <script type="text/javascript">
-    brite.defaultComponentConfig.loadTmpl = true;
-    brite.defaultComponentConfig.loadCss = true;
+    brite.viewDefaultConfig.loadTmpl = true;
+    brite.viewDefaultConfig.loadCss = true;
     </script>
 
     

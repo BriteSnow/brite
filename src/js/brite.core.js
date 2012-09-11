@@ -175,12 +175,14 @@ brite.version = "0.9.0-snapshot";
 		
 	}
 
-	brite.defaultComponentConfig = {
+	brite.viewDefaultConfig = {
 	  loadTmpl: false,
 	  loadCss: false,
 		emptyParent : false,
 		postDisplayDelay : 0
 	}
+	
+	brite.defaultComponentConfig = brite.viewDefaultConfig;
 	// ------ /Public Properties: Config ------ //
 
 	/**

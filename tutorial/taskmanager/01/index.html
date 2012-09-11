@@ -20,28 +20,20 @@
     <!-- Note: In real application, should be src="js/jquery.min.js" -->
     <script type="text/javascript" src="../../../js-dependencies/jquery.js" ></script>
     
+    <!-- Note: In real application, should be src="js/jsrender.min.js" -->
+    <script type="text/javascript" src="../../../extra/jsrender.js" ></script>
+    
     <!-- Note: Should be "js/brite.min.js" but for this sample code we reuse the shared lib -->
     <script type="text/javascript" src="../../../dist/brite.js" ></script>
 
-    <!-- Best-Practice: We like JSRender as it is highly efficient and string based templating engine. 
-                        While binding-aware templating is of use in some cases, decoupling the binding from the 
-                        generation is often the right way to build flexible and efficient HTML UI. -->
-    <!-- Note: In real application, should be src="js/jsrender.min.js" -->
-    <script type="text/javascript" src="../../../extra/jsrender.js" ></script>
-
-    
-    <!-- Set the default component config to load template -->
-    <!-- Best-Practice: Here we are telling brite to load the /tmpl/ComponentName.tmpl and /css/ComponentName.css
-                        on demand. This is good for development, but on production, the .css might might concatinated and minimized into a single file.
-                        Nevertheless, for scalable development, this is very useful since multiple developers can work on various components without 
-                        having to all change the same file.
-    -->
-    <script type="text/javascript">
-    brite.defaultComponentConfig.loadTmpl = true;
-    brite.defaultComponentConfig.loadCss = true;
-    </script>
-        
+    <!-- Include the main application javascript file -->
     <script type="text/javascript" src="js/main.js" ></script>
+    
+    <!-- Set the default view config to load template -->
+    <script type="text/javascript">
+    brite.viewDefaultConfig.loadTmpl = true;
+    brite.viewDefaultConfig.loadCss = true;
+    </script>
     
     <!-- Display the main screen (which will display the sub components) -->
     <script type="text/javascript">

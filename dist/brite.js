@@ -175,12 +175,14 @@ brite.version = "0.9.0-snapshot";
 		
 	}
 
-	brite.defaultComponentConfig = {
+	brite.viewDefaultConfig = {
 	  loadTmpl: false,
 	  loadCss: false,
 		emptyParent : false,
 		postDisplayDelay : 0
 	}
+	
+	brite.defaultComponentConfig = brite.viewDefaultConfig;
 	// ------ /Public Properties: Config ------ //
 
 	/**
@@ -1726,7 +1728,6 @@ var brite = brite || {};
 	 * - (events,objectTypes,func,namespace)
 	 * - (objectTypes,func,namespace)
 	 * - (func,namspace)
-	 * and all the above without the namespace
 	 *
 	 * Return an object with
 	 *   .events (with the namespace)
