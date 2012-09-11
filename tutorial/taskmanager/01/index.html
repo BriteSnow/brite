@@ -3,14 +3,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     
-    <title>Brite - TaskManager Sample</title>
+    <title>Brite - TaskManager Sample - Tutorial 01</title>
 
-    <!-- Best-Practice: In this sample we use bootstrap in a shared folder, but for a single application, 
-                        boostrap files should be under the boostrap/ folder (i.e., href="boostrap/css/boostrap.min.css") 
-                        (this way easy to update with new version of bootstrap)
+    <!-- Note: In real application, should not have the ../../../extra/ (just to avoid duplications across sample apps)
+               it should be href="bootstrap/css/bootstrap.min.css
     -->
-    <link rel="stylesheet" href="../../extra/bootstrap/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="../../extra/bootstrap/css/bootstrap-responsive.min.css" />
+    <link rel="stylesheet" href="../../../extra/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="../../../extra/bootstrap/css/bootstrap-responsive.min.css" />
 
 
     <!-- Best-Practice: this is the main css to be included first. Component css will be included
@@ -18,15 +17,18 @@
     <link rel="stylesheet" href="css/main.css" />
     
     <!-- This is the only hard dependency for Brite -->
-    <script type="text/javascript" src="../../js-dependencies/jquery.min.js" ></script>
+    <!-- Note: In real application, should be src="js/jquery.min.js" -->
+    <script type="text/javascript" src="../../../js-dependencies/jquery.js" ></script>
     
+    <!-- Note: Should be "js/brite.min.js" but for this sample code we reuse the shared lib -->
+    <script type="text/javascript" src="../../../dist/brite.js" ></script>
+
     <!-- Best-Practice: We like JSRender as it is highly efficient and string based templating engine. 
                         While binding-aware templating is of use in some cases, decoupling the binding from the 
                         generation is often the right way to build flexible and efficient HTML UI. -->
-    <script type="text/javascript" src="../../extra/jsrender.js" ></script>
+    <!-- Note: In real application, should be src="js/jsrender.min.js" -->
+    <script type="text/javascript" src="../../../extra/jsrender.js" ></script>
 
-    <!-- Best-Practice: Should be "js/brite.min.js" but for this sample code we reuse the shared lib -->
-    <script type="text/javascript" src="../../dist/brite.js" ></script>
     
     <!-- Set the default component config to load template -->
     <!-- Best-Practice: Here we are telling brite to load the /tmpl/ComponentName.tmpl and /css/ComponentName.css
@@ -38,13 +40,8 @@
     brite.defaultComponentConfig.loadTmpl = true;
     brite.defaultComponentConfig.loadCss = true;
     </script>
-
-    
-    <!-- Best-Practice: Application always should have a main javascript file and a 
-                        default namespace for it's variables and functions. 
-    --> 
-    <script "text/javascript" src="js/main.js" ></script>
-      
+        
+    <script type="text/javascript" src="js/main.js" ></script>
     
     <!-- Display the main screen (which will display the sub components) -->
     <script type="text/javascript">

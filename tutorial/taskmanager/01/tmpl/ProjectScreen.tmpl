@@ -1,0 +1,24 @@
+<script id="tmpl-ProjectScreen" type="text/html">
+  <div class="ProjectScreen">
+    <header>
+      <h2>{{: project.title}}</h2>
+    </header>
+    <section class="table-container">
+        <table class="table ">
+          <thead>
+            <tr>
+              <th class="title">Title</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{for tasks}}
+            <tr {{if done}}class="done"{{/if}}>
+              <td class="title">{{:title}}</td>
+            </tr>
+            {{/for}}
+          </tbody>          
+        </table>
+    </section>
+  </div>
+</script>
+

@@ -54,7 +54,7 @@
 
 	// --------- Component Registration --------- //
 	// Here we register the component
-	brite.registerView("MainScreen", null, function() {
+	brite.registerView("MainScreen", {emptyParent:true}, function() {
 		return new MainScreen();
 	});
 	// --------- Component Registration --------- //

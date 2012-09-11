@@ -1,0 +1,28 @@
+.MainScreen{
+  position: absolute;
+  top: 0; right: 0; bottom: 0; left: 0;
+  border: dashed 1px red; /* for layout debug */
+}
+
+.MainScreen-topNav{
+  height: 36px;
+}
+
+.MainScreen-topNav h2{
+  font-size: 20px; 
+  line-height: normal;
+  letter-spacing: .1em;
+  margin: 0;
+  padding: 5px 0 0px 10px; 
+}
+
+.MainScreen-left{
+  position: absolute;
+  top: 36px; bottom: 0; left: 0;
+  width: 200px;
+}
+
+.MainScreen-content{
+  position: absolute;
+  top: 36px; right: 0px; bottom: 0; left: 200px;
+}

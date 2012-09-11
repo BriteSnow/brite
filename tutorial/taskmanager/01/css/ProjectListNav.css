@@ -1,8 +1,7 @@
 .ProjectListNav{
   position: absolute;
   top: 0; right: 0; bottom: 0; left: 0;
-  background-color: #dce3e9;
-  border-right: solid 1px #b3c5d3;
+  border: dashed 1px blue; /* for layout debug */
 }
 
 .ProjectListNav h2{
@@ -11,16 +10,14 @@
   line-height: normal;
   font-size: 20px; 
   color: rgba(100,100,100,.5);
-  border-bottom: solid 1px #b3c5d3;
 }
 
-.ProjectListNav ul{
+.ProjectListNav > ul{
   margin: 0;
   padding: 0;
-  border-top: solid 1px rgba(255,255,255,.5);
 }
 
-.ProjectListNav ul  li{
+.ProjectListNav > ul >  li{
   list-style: none;
   margin: 0;
   padding: 5px 0 5px 10px;
@@ -28,11 +25,6 @@
   cursor: pointer;
 }
 
-.ProjectListNav ul li.sel{
-  opacity: 1;
-  font-weight: bold;
-}
-
-.ProjectListNav ul li > i{
+.ProjectListNav > ul > li > i{
   margin-right: 10px;
 }
