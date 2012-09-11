@@ -116,7 +116,6 @@ var brite = brite || {};
 	 * - (events,objectTypes,func,namespace)
 	 * - (objectTypes,func,namespace)
 	 * - (func,namspace)
-	 * and all the above without the namespace
 	 *
 	 * Return an object with
 	 *   .events (with the namespace)
