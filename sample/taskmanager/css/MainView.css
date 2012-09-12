@@ -1,14 +1,14 @@
-.MainScreen{
+.MainView{
   position: absolute;
   top: 0; right: 0; bottom: 0; left: 0;
 }
 
-.MainScreen-topNav{
+.MainView-topNav{
   background: #333;
   height: 36px;
 }
 
-.MainScreen-topNav h2{
+.MainView-topNav h2{
   color: #fff;
   font-size: 20px; 
   line-height: normal;
@@ -17,13 +17,13 @@
   padding: 5px 0 0px 10px; 
 }
 
-.MainScreen-left{
+.MainView-left{
   position: absolute;
   top: 36px; bottom: 0; left: 0;
   width: 200px;
 }
 
-.MainScreen-content{
+.MainView-content{
   position: absolute;
   top: 36px; right: 0px; bottom: 0; left: 200px;
 }

@@ -1,5 +1,5 @@
 /**
- * View: ProjectScreen
+ * View: ProjectView
  *
  * Responsibilities:
  *   - Manage a single project screen
@@ -8,14 +8,14 @@
  */
 (function($) {
 	
-	function ProjectScreen() {
+	function ProjectView() {
 	}
 		
 	// --------- View Interface Implementation ---------- //
-	ProjectScreen.prototype.create = function(data, config) {
+	ProjectView.prototype.create = function(data, config) {
 		var o = this;
 
-		var html = $("#tmpl-ProjectScreen").render({project:main.projectListTestData[0],tasks:main.taskListTestData});
+		var html = $("#tmpl-ProjectView").render({project:main.projectListTestData[0],tasks:main.taskListTestData});
 		var $e = $(html);
 		return $e;		
 	}
@@ -23,8 +23,8 @@
 
 	// --------- View Registration --------- //
 	// Here we register the component
-	brite.registerView("ProjectScreen", null, function() {
-		return new ProjectScreen();
+	brite.registerView("ProjectView", null, function() {
+		return new ProjectView();
 	});
 	// --------- View Registration --------- //
 	

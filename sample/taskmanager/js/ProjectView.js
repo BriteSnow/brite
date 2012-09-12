@@ -1,5 +1,5 @@
 /**
- * Component: ProjectScreen
+ * Component: ProjectView
  *
  * Responsibilities:
  *   - Manage a single project screen
@@ -9,17 +9,17 @@
 (function($) {
 	
 	// --------- Component Interface Implementation ---------- //
-	function ProjectScreen() {
+	function ProjectView() {
 	}
 
-	ProjectScreen.prototype.create = function(data, config) {
+	ProjectView.prototype.create = function(data, config) {
 		var o = this;
 		
 		o.projectId = data.projectId;
 		
 		return $.when(main.projectDao.get(o.projectId),main.taskDao.list({match:{projectId:o.projectId}})).pipe(function(project,taskList){
 			o.project = project;
-			var html = $("#tmpl-ProjectScreen").render({project:project,tasks:taskList});
+			var html = $("#tmpl-ProjectView").render({project:project,tasks:taskList});
 			var $e = $(html);
 			return $e;
 		});
@@ -27,7 +27,7 @@
 
 	// This is optional, it gives a way to add some logic after the component is displayed to the user.
 	// This is a good place to add all the events binding and all
-	ProjectScreen.prototype.postDisplay = function(data, config) {
+	ProjectView.prototype.postDisplay = function(data, config) {
 		var o = this;
 		
 		// on any Task dataChange
@@ -66,7 +66,7 @@
 		// Click on the del icon to turn delete mode
 		o.$element.on("click",".table-header .del",function(){
 			// create the delete-controls element
-			var $controls = $($("#tmpl-ProjectScreen-delControls").render());
+			var $controls = $($("#tmpl-ProjectView-delControls").render());
 			o.$element.find(".table-header").append($controls);
 			
 			// add the deleteMode class and set component flag
@@ -236,7 +236,7 @@
 		
 	}
 	
-	ProjectScreen.prototype.destroy = function(){
+	ProjectView.prototype.destroy = function(){
 		var o = this;
 		
 		// IMPORTANT: need to remove all the DAO event bound for this component
@@ -251,7 +251,7 @@
 		
 		return main.taskDao.list({match:{projectId:o.projectId}}).done(function(taskList){
 			var $tableContent = o.$element.find(".table-content").empty();
-			var taskTableHtml = $("#tmpl-ProjectScreen-taskTable-content").render({tasks:taskList});
+			var taskTableHtml = $("#tmpl-ProjectView-taskTable-content").render({tasks:taskList});
 			$tableContent.html(taskTableHtml);			
 		});
 	}
@@ -260,8 +260,8 @@
 	
 	// --------- Component Registration --------- //
 	// Here we register the component
-	brite.registerView("ProjectScreen", null, function() {
-		return new ProjectScreen();
+	brite.registerView("ProjectView", null, function() {
+		return new ProjectView();
 	});
 	// --------- Component Registration --------- //
 

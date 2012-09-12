@@ -1,10 +1,10 @@
-<script id="tmpl-ProjectScreen" type="text/html">
-  <div class="ProjectScreen">
+<script id="tmpl-ProjectView" type="text/html">
+  <div class="ProjectView">
     <header>
       <h2>{{: project.title}}</h2>
     </header>
     <section class="table-container">
-    <div class="ProjectScreen-taskTable">
+    <div class="ProjectView-taskTable">
       
       <div class="table-header">
         <table class="table ">
@@ -18,14 +18,14 @@
         <div class="del"><i class="icon-trash"></i></div>
       </div>
       <div class="table-content">      
-        {{for #data tmpl="#tmpl-ProjectScreen-taskTable-content" /}}
+        {{for #data tmpl="#tmpl-ProjectView-taskTable-content" /}}
       </div>
     </section>
   </div>
 </script>
 
 
-<script id="tmpl-ProjectScreen-taskTable-content" type="text/html">
+<script id="tmpl-ProjectView-taskTable-content" type="text/html">
   <table class="table">
     <tbody>
       {{for tasks}}
@@ -47,7 +47,7 @@
   </table>
 </script>
 
-<script id="tmpl-ProjectScreen-delControls" type="text/html">
+<script id="tmpl-ProjectView-delControls" type="text/html">
   <div class="delete-controls">
     <div class="btn btn-small btn-danger" data-action="delete">Delete (0)</div>
     <div class="btn btn-small" data-action="cancel">Cancel</div>

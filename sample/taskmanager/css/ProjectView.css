@@ -1,17 +1,17 @@
 
-.ProjectScreen header{
+.ProjectView header{
   padding: 5px 20px 5px 20px;
   height: 70px;
 }
 
-.ProjectScreen header h2{
+.ProjectView header h2{
   color: #999;
   letter-spacing: .1em;
   margin: 0;
   font-size: 23px;
 }
 
-.ProjectScreen header input{
+.ProjectView header input{
   border: none;
   color: #999;
   font-size: 23px;
@@ -22,49 +22,49 @@
   letter-spacing: .1em;
 }
 
-.ProjectScreen header .helper{
+.ProjectView header .helper{
   display: inline;
   margin-left: 10px;
 }
 
-.ProjectScreen .table{
+.ProjectView .table{
   margin: 0;
 }
 
-.ProjectScreen .table-container{
+.ProjectView .table-container{
   position: absolute;
   top: 50px; right: 0; bottom: 0; left: 0; 
 }
 
-.ProjectScreen .table-header{
+.ProjectView .table-header{
   position: absolute;
   top: 0px; right: 0; left: 0; 
   margin: 0;
   height: 40px;
 }
 
-.ProjectScreen .table-content{
+.ProjectView .table-content{
   position: absolute;
   top: 37px; right: 0; bottom: 0px; left: 0; 
   overflow: auto;
 }
 
-.ProjectScreen-taskTable th.check,.ProjectScreen-taskTable td.check{
+.ProjectView-taskTable th.check,.ProjectView-taskTable td.check{
   width: 15px;
 }
 
-.ProjectScreen td.check i{
+.ProjectView td.check i{
   display: none;
 }
 
 
-.ProjectScreen .table-header .del{
+.ProjectView .table-header .del{
   position: absolute;
   top: 10px; right: 10px;
   opacity: .5;
 }
 
-.ProjectScreen .table-header .del:hover{
+.ProjectView .table-header .del:hover{
   opacity: 1;
 }
 
@@ -77,35 +77,35 @@
 
 
 /* --- deleteMode --- */
-.ProjectScreen .table-content.deleteMode tr.to-delete{
+.ProjectView .table-content.deleteMode tr.to-delete{
     background-color: #ffdddd;
 }
 
-.ProjectScreen .table-content.deleteMode .newTask{
+.ProjectView .table-content.deleteMode .newTask{
   display: none;
 }
 
-.ProjectScreen .table-content.deleteMode td{
+.ProjectView .table-content.deleteMode td{
   cursor: ponter;
 } 
 
-.ProjectScreen .table-content.deleteMode input{
+.ProjectView .table-content.deleteMode input{
   cursor: pointer;
 }
 
-.ProjectScreen .table-content.deleteMode td.check i{
+.ProjectView .table-content.deleteMode td.check i{
   display: block;
   margin-top: 5px;
   cursor: pointer;
 }
 
-.ProjectScreen .table-content.deleteMode td.check input{
+.ProjectView .table-content.deleteMode td.check input{
   display: none;
 }
 /* --- /deleteMode --- */
 
 
-.ProjectScreen-taskTable thead tr{
+.ProjectView-taskTable thead tr{
   background-color: #fff; 
   background-image: -moz-linear-gradient(bottom, #f1f1f1 0%, #fdfdfd 100%);
   background-image: -o-linear-gradient(bottom, #f1f1f1 0%, #fdfdfd 100%);
@@ -115,7 +115,7 @@
   border-bottom: solid 1px #ddd;
 }
 
-.ProjectScreen input[data-prop="title"]{
+.ProjectView input[data-prop="title"]{
   border: none;
   display: block;
   border: none;
@@ -123,12 +123,12 @@
   background: none;
 }
 
-.ProjectScreen tr.done{
+.ProjectView tr.done{
   background: #99ff99;
   opacity: .2;
 }
 
-.ProjectScreen  .helper{
+.ProjectView  .helper{
   display: block;
   font-size: 11px;
   color: #777;
