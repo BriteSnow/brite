@@ -8,13 +8,6 @@
  */
 (function($) {
 	
-	// --------- View Registration --------- //
-	// Here we register the component
-	brite.registerView("ProjectScreen", null, function() {
-		return new ProjectScreen();
-	});
-	// --------- View Registration --------- //
-	
 	function ProjectScreen() {
 	}
 		
@@ -28,4 +21,11 @@
 	}
 	// --------- /Component Interface Implementation ---------- //
 
+	// --------- View Registration --------- //
+	// Here we register the component
+	brite.registerView("ProjectScreen", null, function() {
+		return new ProjectScreen();
+	});
+	// --------- View Registration --------- //
+	
 })(jQuery); 

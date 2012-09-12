@@ -34,7 +34,7 @@
 				showProjectSelected.call(o,o.selectedProjectId);
 			});
 		},o.id);
-		
+
 		// On User Click
 		o.$element.on("click","li[data-obj_type='Project']",function(){
 			var $li = $(this);

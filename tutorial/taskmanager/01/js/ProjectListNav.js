@@ -7,13 +7,6 @@
  */
 (function($) {
 
-	// --------- View Registration --------- //
-	// Here we register the View
-	brite.registerView("ProjectListNav", null, function() {
-		return new ProjectListNav();
-	});
-	// --------- View Registration --------- //
-
 	function ProjectListNav() {
 	};
 	
@@ -24,6 +17,13 @@
 		return $e;
 	}
 	// --------- /View Interface Implementation ---------- //
+
+	// --------- View Registration --------- //
+	// Here we register the View
+	brite.registerView("ProjectListNav", null, function() {
+		return new ProjectListNav();
+	});
+	// --------- View Registration --------- //
 
 
 })(jQuery); 
