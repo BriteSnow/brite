@@ -1232,30 +1232,6 @@ brite.ua = {};
 	}
   // --------- /Prefix and rendererType ------ //
   
-	// ------ jQuery css hooks ------ //
-	// for now, just support transofrm, will add more soon (need to test)
-	var css3PropNames = [ "transform" ];
-	var propName;
-	for ( var i = 0, l = css3PropNames.length; i < l; i++) {
-		propName = css3PropNames[i];
-		$.cssHooks[propName] = new CSSHook(propName);
-	}
-
-	function CSSHook(propName) {
-		this.propName = propName;
-		this.computedName = _cssVarPrefix + propName.substr(0, 1).toUpperCase() + propName.substr(1);
-	}
-
-	CSSHook.prototype.get = function(elem, computed, extra) {
-		return $.css(elem, this.computedName);
-	}
-
-	CSSHook.prototype.set = function(elem, val) {
-		elem.style[this.computedName] = val;
-	}
-
-	// ------ /jQuery css hooks ------ //
-
 	/**
 	 * return a css friendly string with all the "has-**" that this ua supports
 	 * 

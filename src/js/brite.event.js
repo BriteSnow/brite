@@ -78,9 +78,8 @@ brite.event = brite.event || {};
   
   // helper function
   function performTransition($this,opts){
-    var cssPrefix = brite.ua.cssPrefix();
-    $this.css(cssPrefix + "transition",opts.transition);
-    $this.css(cssPrefix + "transform",opts.transform);
+    $this.css("transition",opts.transition);
+    $this.css("transform",opts.transform);
   }
 })(jQuery);  
 // ------ /transition helper ------ //

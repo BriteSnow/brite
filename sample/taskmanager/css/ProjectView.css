@@ -71,7 +71,19 @@
 /* --- delete controls --- */
 .delete-controls{
   position: absolute;
-  top: 5px; right: 5px;
+  top: 5px; right: 0px;
+  width: 200px;
+}
+.delete-controls-inner{
+  position: absolute;
+  width: 200px;
+  height: 36px;
+  top: 0; left: 200px;
+  -webkit-transition: all .3s ease;
+}
+
+.delete-controls-inner.show{
+  -webkit-transform: translate(-140px,0px);
 }
 /* --- /delete controls --- */
 

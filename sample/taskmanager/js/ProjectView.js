@@ -69,6 +69,13 @@
 			var $controls = $($("#tmpl-ProjectView-delControls").render());
 			o.$element.find(".table-header").append($controls);
 			
+			var $inner = $controls.find(".delete-controls-inner");
+			//$inner.css("transform","scale(2)");
+			
+			setTimeout(function(){
+				$inner.addClass("show");
+			},10);
+			
 			// add the deleteMode class and set component flag
 			var $tableContent = o.$element.find(".table-content");
 			$tableContent.addClass("deleteMode");
@@ -93,7 +100,8 @@
 			
 			// toggle the to-delete state of a row
 			// namespace the event binding for future cleanup
-			$tableContent.on("click.seldelete",".deleteMode tr",function(){
+			$tableContent.on("click.seldelete","tr",function(){
+				
 				var $tr = $(this);
 				$tr.toggleClass("to-delete");
 				var num = $tableContent.find("tr.to-delete").length;
@@ -103,15 +111,17 @@
 			
 			// define function in scope to reuse all context variables
 			function turnDeleteModeOff(){
-				$controls.remove();
 				$tableContent.removeClass("deleteMode");
-				$controls.remove();
 				$tableContent.removeClass("deleteMode");
 				$tableContent.find("tr.to-delete").removeClass("to-delete");
 				o.deleteMode = false;
 				
 				// cleanup the event to make sure to not double bind it.
 				$tableContent.off(".seldelete");
+				
+					$controls.find(".delete-controls-inner").removeClass("show").on("btransitionend",function(){
+						$controls.remove();
+					});
 
 			}
 			
