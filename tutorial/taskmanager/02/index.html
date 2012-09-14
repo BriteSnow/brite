@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <title>Brite - TaskManager Sample - Tutorial 01</title>
+
+    <!-- Note: In real application, should not have the ../../../extra/ (just to avoid duplications across sample apps)
+               it should be href="bootstrap/css/bootstrap.min.css
+    -->
+    <link rel="stylesheet" href="../../../extra/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="../../../extra/bootstrap/css/bootstrap-responsive.min.css" />
+
+
+    <!-- Best-Practice: this is the main css to be included first. Component css will be included
+                        dynamically, and all start with UpperCase to match their component name -->
+    <link rel="stylesheet" href="css/main.css" />
+    
+    <!-- This is the only hard dependency for Brite -->
+    <!-- Note: In real application, should be src="js/jquery.min.js" -->
+    <script type="text/javascript" src="../../../js-dependencies/jquery.js" ></script>
+    
+    <!-- Note: In real application, should be src="js/jsrender.min.js" -->
+    <script type="text/javascript" src="../../../extra/jsrender.js" ></script>
+    
+    <!-- Note: Should be "js/brite.min.js" but for this sample code we reuse the shared lib -->
+    <script type="text/javascript" src="../../../dist/brite.js" ></script>
+
+    <!-- Include the main application javascript file -->
+    <script type="text/javascript" src="js/main.js" ></script>
+    
+    <!-- Set the default view config to load template -->
+    <script type="text/javascript">
+    brite.viewDefaultConfig.loadTmpl = true;
+    brite.viewDefaultConfig.loadCss = true;
+    </script>
+    
+    <!-- Display the main screen (which will display the sub components) -->
+    <script type="text/javascript">
+    $(function(){
+      brite.display("MainView",null,{parent:$("#pageBody")});
+    });
+    </script>
+    
+  </head>
+  
+  <body>
+    <!-- Best-Practice: Here with use a "pageBody" element to get more flexibility on how we want to display 
+                        the application. This pageBody will be position in the main.css. -->
+    <div id="pageBody">
+      
+    </div>
+  </body>
+  
+</html>

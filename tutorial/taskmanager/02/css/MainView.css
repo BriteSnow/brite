@@ -1,7 +1,7 @@
 .MainView{
   position: absolute;
   top: 0; right: 0; bottom: 0; left: 0;
-  border: dashed 2px red; /* for layout debug */
+  border: dashed 1px red; /* for layout debug */
 }
 
 .MainView-topNav{
@@ -14,18 +14,15 @@
   letter-spacing: .1em;
   margin: 0;
   padding: 5px 0 0px 10px; 
-  
 }
 
 .MainView-left{
   position: absolute;
   top: 36px; bottom: 0; left: 0;
   width: 200px;
-  border: dashed 2px blue; /* for layout debug */
 }
 
 .MainView-content{
   position: absolute;
   top: 36px; right: 0px; bottom: 0; left: 200px;
-  border: dashed 2px green; /* for layout debug */
 }
