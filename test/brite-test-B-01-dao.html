@@ -121,8 +121,10 @@
 										
 					// --- Delete User --- //
 					$userList.delegate(".del","click",function(){
+					  
 						// get the user objRef that this html element belong to.
-						var objRef = $(this).bObjRef("user");
+						var objRef = $(this).bEntity("User");
+						console.log("will delete",objRef);
 						if (objRef){
 						  userDao.remove(objRef.id);
 						}
@@ -164,8 +166,8 @@
 						for (i = 0; i < userList.length; i++) {
 							user = userList[i];
 							$li = $("<li></li>");
-							$li.attr("data-obj_type", "user");
-							$li.attr("data-obj_id", user.id);
+							$li.attr("data-entity", "User");
+							$li.attr("data-entity-id", user.id);
 							
 							//Note: The 'name' and 'city' class are just for css layout
 							//      The 'del' class is use for delegate

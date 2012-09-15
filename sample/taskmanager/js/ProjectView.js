@@ -54,7 +54,7 @@
 			var $check = $(this);
 			
 			// the object type and id are store in the DOM, so, just look for the parent element for this
-			var taskId = $check.closest("[data-obj_id]").attr("data-obj_id");
+			var taskId = $check.bEntity("Task").id;
 			
 			var done = $check.prop("checked");
 			
@@ -86,7 +86,7 @@
 			$deleteButton.on("click",function(){
 				var ids = [];
 				$tableContent.find("tr.to-delete").each(function(idx,tr){
-					ids.push($(tr).attr("data-obj_id"));
+					ids.push($(tr).bEntity("Task").id);
 				});
 				main.taskDao.removeMany(ids).done(function(){
 					turnDeleteModeOff();
@@ -129,7 +129,7 @@
 		// --- /Task Delete --- //
 		
 		// --- Task Rename --- //
-		o.$element.on("focus","[data-obj_type='Task'] input[data-prop='title']",function(){
+		o.$element.on("focus","[data-entity='Task'] input[data-prop='title']",function(){
 			var $input = $(this);
 			$input.off();
 			
@@ -138,8 +138,8 @@
 				return;
 			}
 			
+			var taskId = $input.bEntity("Task").id;
 			
-			var taskId = $input.closest("[data-obj_id]").attr("data-obj_id");
 			
 			$input.data("oldValue",$input.val());
 			
@@ -163,7 +163,7 @@
 		});
 		
 		// cancel the rename
-		o.$element.on("blur","[data-obj_type='Task'] input[data-prop='title']",function(){
+		o.$element.on("blur","[data-entity='Task'] input[data-prop='title']",function(){
 			var $input = $(this);
 			var oldValue = $input.data("oldValue");
 			if (oldValue){

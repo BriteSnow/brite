@@ -582,7 +582,64 @@ var brite = brite || {};
 })(jQuery);
 // --------- /InMemoryDaoHandler --------- //
 
-// ------ jQuery DAO Helper ------ //
+// --------- bEntity --------- //
+(function($) {
+
+	/**
+	 * Return the bEntity {id,type,name,$element} (or a list of such) of the closest html element matching entity type in the data-entity.
+	 * 
+	 * The return value is like: 
+	 * 
+	 * .type     will be the value of the attribute data-entity 
+	 * .id       will be the value of the data-entity-id
+	 * .name     (optional) will be the value of the data-entity-name
+	 * .$element will be the $element containing the matching data-entity attribute
+	 *  
+	 * If no entityType, then, return the first entity of the closest html element having a data-b-entity. <br />
+	 * 
+	 * $element.bEntity("User"); // return the closest entity with data-entity="User"
+	 * $element.bEntity(">children","Task"); // return all the data-entity="Task" children from this $element.  
+   * $element.bEntity(">first","Task"); // return the first child entity matching data-entity="Task"
+   * 
+	 * TODO: needs to implement the >children and >first
+	 * 
+	 * @param {String} entity type (optional) the object 
+	 * @return null if not found, the first found entity with {id,type,name,$element}.
+	 */
+	$.fn.bEntity = function(entityType) {
+
+		var i, result = null;
+		// iterate and process each matched element
+		this.each(function() {
+			// ignore if we already found one
+			if (result === null){
+				var $this = $(this);
+				var $sObj;
+				if (entityType) {
+					$sObj = $this.closest("[data-entity='" + entityType + "']");
+				} else {
+					$sObj = $this.closest("[data-entity]");
+				}
+				if ($sObj.length > 0) {
+					result = {
+						type : $sObj.attr("data-entity"),
+						id : $sObj.attr("data-entity-id"),
+						name: $sObj.attr("data-entity-name"),
+						$element : $sObj
+					}
+				}
+			}
+		});
+		
+		return result;
+		
+	};
+
+})(jQuery);
+
+// ------ /bEntity ------ //
+
+// ------ LEGACY jQuery DAO Helper ------ //
 (function($) {
 
 	/**
@@ -627,4 +684,4 @@ var brite = brite || {};
 
 })(jQuery);
 
-// ------ /jQuery DAO Helper ------ //
+// ------ /LEGACY jQuery DAO Helper ------ //

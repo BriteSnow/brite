@@ -29,7 +29,7 @@
   <table class="table">
     <tbody>
       {{for tasks}}
-      <tr data-obj_type="Task" {{if done}}class="done"{{/if}} data-obj_id="{{:id}}">
+      <tr data-entity="Task" data-entity-id="{{:id}}" {{if done}}class="done"{{/if}}>
         <td class="check"><input data-prop="done" type="checkbox" {{if done}}checked="checked"{{/if}}/>
           <i class="icon-ban-circle"></i>
         </td>

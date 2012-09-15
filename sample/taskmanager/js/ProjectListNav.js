@@ -36,9 +36,9 @@
 		},o.id);
 
 		// On User Click
-		o.$element.on("click","li[data-obj_type='Project']",function(){
+		o.$element.on("click","li[data-entity='Project']",function(){
 			var $li = $(this);
-			var projectId = $li.attr("data-obj_id");
+			var projectId = $li.bEntity("Project").id;
 			$li.trigger("DO_SELECT_PROJECT",{projectId:projectId});
 		});
 		
@@ -68,7 +68,7 @@
 		o.$element.find("i.icon-folder-open").removeClass("icon-folder-open").addClass("icon-folder-close");
 		
 		// select the li
-		var $selectedLi = o.$element.find("li[data-obj_id='" + projectId + "']");
+		var $selectedLi = o.$element.find("li[data-entity-id='" + projectId + "']");
 		$selectedLi.addClass("sel");
 		$selectedLi.find("i.icon-folder-close").removeClass("icon-folder-close").addClass("icon-folder-open");
 		
