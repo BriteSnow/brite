@@ -157,7 +157,7 @@ var brite = brite || {};
 
 		// complete the event
 		if (!map.events) {
-			map.events = _ALL_;
+			map.events = _ALL_ + "." + namespace;
 		} else {
 			// build the events, split by ',', add the namespace, and join back
 			var events = map.events.split(",");
