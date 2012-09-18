@@ -119,9 +119,9 @@
 				// cleanup the event to make sure to not double bind it.
 				$tableContent.off(".seldelete");
 				
-					$controls.find(".delete-controls-inner").removeClass("show").on("btransitionend",function(){
-						$controls.remove();
-					});
+				$controls.find(".delete-controls-inner").removeClass("show").on("btransitionend",function(){
+					$controls.remove();
+				});
 
 			}
 			
@@ -212,37 +212,24 @@
 	 	// --- /Create New Task --- //
 	 	
 	 	
-	 	// --- Project Rename --- //
-	 	var $projectTitle = o.$element.find("header h2");
-	 	$projectTitle.on("click",function(){
-	 		$projectTitle.hide();
-	 		var $input = $("<input type='text'></input>").appendTo($projectTitle.parent());
-	 		$input.val(o.project.title).focus();
-	 		$input.after(updateHelperHtml);
-	 		
-			$input.on("keyup", function(event){
-				// press ENTER
-				if (event.which === 13){
-					var projectData ={
-						id: o.projectId,
-						title: $input.val()
-					}
-					
-					main.projectDao.update(projectData).done(function(){
-						$projectTitle.show().nextAll().remove();
-					});
-				}
-				// press ESC
-				else if (event.which === 27) {
-					$input.trigger("blur");
-				}				
-			});	 		
-	 		
-	 		$input.on("blur",function(){
-	 			$projectTitle.show().nextAll().remove();
+	 	// --- Handling the EditMode --- //
+	 	
+	 	var $card = o.$element.find(".card"); 
+	 	var $cardBack = o.$element.find(".card-back");
+	 	var $cardFront = o.$element.find(".card-front");
+	 	
+	 	o.$element.on("btap","[data-action='editMode']",function(){
+	 		brite.display("ProjectEdit",{projectId:o.projectId},{parent:$cardBack}).done(function(){
+	 			$card.addClass("flipped");
 	 		});
-	 	});
-	 	// --- /Project Rename --- //
+	  });
+	  
+	  o.$element.on("ProjectEdit_DONE",function(){
+	  	var $card = o.$element.find(".card");
+	  	$card.removeClass("flipped");
+	  });
+	  // --- Handling the EditMode --- //
+	 	
 		
 	}
 	

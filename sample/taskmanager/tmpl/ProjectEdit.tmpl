@@ -1,0 +1,20 @@
+<script id="tmpl-ProjectEdit" type="text/html">
+<div class="ProjectEdit">
+   <header>
+      <h2>Editing: {{: project.title}}</h2>
+      <div class="controls"><span  data-action="save" class="btn btn-small btn-primary">OK</span> <button data-action="cancel" class="btn btn-small">Cancel</button></div>
+   </header>
+   <section class="content withPadding">
+      <div class="ProjectEdit-form form-horizontal">
+        <legend>Editing Project</legend>
+        <div class="control-group">
+          <label class="control-label">Name</label>
+          <div class="controls">
+            <input type="text" value="{{: project.title}}">
+          </div>
+        </div>
+
+      </div>     
+   </section>
+</div>
+</script>

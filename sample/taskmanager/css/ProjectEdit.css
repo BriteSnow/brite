@@ -1,0 +1,22 @@
+.ProjectEdit{
+  position: absolute;
+  top: 0; right: 0; bottom: 0; left: 0;
+}
+
+.ProjectEdit header{
+  position: relative;
+  background-image: -moz-linear-gradient(bottom, #afafaf 0%, #fff 100%);
+  background-image: -o-linear-gradient(bottom, #afafaf 0%, #fff 100%);
+  background-image: -webkit-linear-gradient(bottom, #aa3333 0%, #dd6666 100%);
+  background-image: linear-gradient(bottom, #afafaf 0%, #fff 100%);
+}
+
+.ProjectEdit header h2{
+  color: #fefefe;
+  text-shadow: #333 0px 1px 0;
+}
+
+.ProjectEdit header .controls{
+  position: absolute;
+  top: 5px; right: 5px;
+}

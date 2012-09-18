@@ -1,26 +1,36 @@
 <script id="tmpl-ProjectView" type="text/html">
   <div class="ProjectView">
-    <header>
-      <h2>{{: project.title}}</h2>
-    </header>
-    <section class="table-container">
-    <div class="ProjectView-taskTable">
+    <div class="card">
+      <div class="card-face card-front">
+        <header>
+          <div class="header-fav"><i class="{{if project.isFav}}icon-star{{else}}icon-star-empty{{/if}}" style="opacity:.5"></i></div>
+          <h2>{{: project.title}}</h2>
+          <div class="header-setting" data-action='editMode'><i class="icon-cog" style="opacity:.5"></i></div>
+        </header>
+        <section class="content">
+          <div class="ProjectView-taskTable">
+            <div class="table-header">
+              <table class="table ">
+                <thead>
+                  <tr>
+                    <th class="check"></th>
+                    <th class="title">Title</th>
+                  </tr>
+                </thead>
+              </table>
+              <div class="del"><i class="icon-trash"></i></div>
+            </div>
+            <div class="table-content">      
+              {{for #data tmpl="#tmpl-ProjectView-taskTable-content" /}}
+            </div>
+          </div>
+        </section>
+      </div> <!-- /.card-front -->
       
-      <div class="table-header">
-        <table class="table ">
-          <thead>
-            <tr>
-              <th class="check"></th>
-              <th class="title">Title</th>
-            </tr>
-          </thead>
-        </table>
-        <div class="del"><i class="icon-trash"></i></div>
+      <div class="card-face card-back">
+        
       </div>
-      <div class="table-content">      
-        {{for #data tmpl="#tmpl-ProjectView-taskTable-content" /}}
-      </div>
-    </section>
+    </div> <!-- /.card -->
   </div>
 </script>
 

@@ -26,6 +26,8 @@
 	MainView.prototype.postDisplay = function(data, config) {
 		var o = this; // convention, set 'o' to be this for the view (to avoid bugs when in closures). 
 
+		var $mainContent = o.$element.find(".MainView-content");
+		
 		// Create a ProjectListNav view and add it to the .MainView-content
 		var projectListNavPromise = brite.display("ProjectListNav", null, {
 			parent : o.$element.find(".MainView-left")
@@ -43,9 +45,11 @@
 		// On "DO_SELECT_PROJECT" application event, swap the ProjectView
 		// Note: brite add the .$element property on the view object (which is the element returned by .create)		
 		o.$element.on("DO_SELECT_PROJECT",function(event,extra){
+			var $projectViewPanel = $("<div class='MainView-projectViewPanel'></div>");
 			brite.display("ProjectView", {projectId:extra.projectId}, {
-				emptyParent: true,
-				parent : o.$element.find(".MainView-content")
+				parent : $projectViewPanel
+			}).done(function(){
+				$mainContent.empty().append($projectViewPanel);
 			});
 		});
 		

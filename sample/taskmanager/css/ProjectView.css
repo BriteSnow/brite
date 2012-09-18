@@ -1,14 +1,89 @@
+.ProjectView{
+  position: absolute;
+  top: 0; right: 0; bottom: 0; left: 0;
+  -webkit-perspective: 10000px;
+}
+.ProjectView .card{
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  -webkit-transform-style: preserve-3d;
+  -webkit-transition: -webkit-transform .5s;
+}
+
+.ProjectView .card-face{
+  opacity: .999; /* hack to allow position: relative or absolute in the card-face */
+  display: block;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  -webkit-backface-visibility: hidden;
+   border: solid 1px #ddd;
+  -moz-border-radius: 10px 10px 10px 10px;
+  -webkit-border-radius: 10px 10px 10px 10px;
+  border-radius: 10px 10px 10px 10px;
+  background-color: #fff;     
+}
+
+.ProjectView .card-front{
+  
+}
+
+.ProjectView .card-back{
+  -webkit-transform: rotateY( -180deg );
+}
+
+.ProjectView .card.flipped {
+  -webkit-transform: rotateY( 180deg );
+}
 
 .ProjectView header{
-  padding: 5px 20px 5px 20px;
-  height: 70px;
+  position: relative;
+  padding: 0;
+  height: 35px;
+  background-image: -moz-linear-gradient(bottom, #afafaf 0%, #fff 100%);
+  background-image: -o-linear-gradient(bottom, #afafaf 0%, #fff 100%);
+  background-image: -webkit-linear-gradient(bottom, #afafaf 0%, #fff 100%);
+  background-image: linear-gradient(bottom, #afafaf 0%, #fff 100%);
+  -moz-border-radius: 10px 10px 0px 0px;
+  -webkit-border-radius: 10px 10px 0px 0px;
+  border-radius: 10px 10px 0px 0px;    
+}
+
+.ProjectView section.content{
+  position: absolute;
+  top: 35px; right: 0; bottom: 0; left: 0;
+}
+
+.ProjectView section.content.withPadding{
+  padding: 10px;
+}
+
+.ProjectView .header-fav, .ProjectView .header-setting{
+  position: absolute;
+  top: 5px; 
+  width: 32px;
+  height: 35px;
+}
+
+.ProjectView .header-fav{
+  left: 5px;
+}
+
+.ProjectView .header-setting{
+  right: 0px;
 }
 
 .ProjectView header h2{
-  color: #999;
-  letter-spacing: .1em;
+  color: #666;
+  letter-spacing: .2em;
+  text-shadow: #fff 0px 1px 0;
+  line-height: normal;
+  font-weight: bold;
   margin: 0;
-  font-size: 23px;
+  padding: 7px 0 0 0;
+  font-size: 18px;
+  text-align: center;
 }
 
 .ProjectView header input{
@@ -31,10 +106,6 @@
   margin: 0;
 }
 
-.ProjectView .table-container{
-  position: absolute;
-  top: 50px; right: 0; bottom: 0; left: 0; 
-}
 
 .ProjectView .table-header{
   position: absolute;
