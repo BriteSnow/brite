@@ -1644,7 +1644,7 @@ var brite = brite || {};
 			$.each(events, function(idx, val) {
 				events[idx] = $.trim(val) + "." + namespace;
 			});
-			map.events = events.join(", ");
+			map.events = events.join(" ");
 		}
 
 		// complete the objectTypes
