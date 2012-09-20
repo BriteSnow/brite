@@ -48,7 +48,7 @@
 		// On "DO_SELECT_PROJECT" application event, swap the ProjectView
 		// Note: brite add the .$element property on the view object (which is the element returned by .create)		
 		o.$element.on("DO_SELECT_PROJECT",function(event,extra){
-			var $projectViewPanel = $("<div class='MainView-projectViewPanel'></div>");
+			var $projectViewPanel = $("<div class='MainView-projectViewPanel current'></div>");
 			
 			var oldIdx = brite.array.getIndex(o.projectList,"id",o.currentProjectId);
 			o.currentProjectId = extra.projectId;
@@ -59,7 +59,7 @@
 			brite.display("ProjectView", {projectId:extra.projectId}, {
 				parent : $projectViewPanel
 			}).done(function(){
-				o.lastChild = $mainPanelsInner.children().filter(":last");
+				o.lastChild = $mainPanelsInner.children().filter(":last").removeClass("current").addClass("old");
 				var w = o.lastChild.width();
 				var newLeft = 0;
 				if (o.lastChild.length > 0){
@@ -71,14 +71,13 @@
 				}
 				$projectViewPanel.css("left",newLeft + "px");
 				$mainPanelsInner.append($projectViewPanel);
-
-				$mainPanelsInner.css("transform","translateX(-" + newLeft + "px)");
+				$mainPanelsInner.css("transform","translateX(" + (-1 * newLeft) + "px)");
 			});
 		});
 		
 		// clean the old child on transitionend
 		$mainPanelsInner.on("btransitionend",function(){
-			o.lastChild.bRemove();
+			$mainPanelsInner.find(".old").bRemove();
 			delete o.lastChild;
 		});
 		
