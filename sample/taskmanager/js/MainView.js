@@ -59,14 +59,14 @@
 			brite.display("ProjectView", {projectId:extra.projectId}, {
 				parent : $projectViewPanel
 			}).done(function(){
-				o.lastChild = $mainPanelsInner.children().filter(":last").removeClass("current").addClass("old");
-				var w = o.lastChild.width();
+				var lastChild = $mainPanelsInner.children().filter(":last").attr("data-state","old");
+				var w = lastChild.width();
 				var newLeft = 0;
-				if (o.lastChild.length > 0){
+				if (lastChild.length > 0){
 					if (forward){
-						newLeft = o.lastChild.position().left + w + 10;
+						newLeft = lastChild.position().left + w + 10;
 					}else{
-						newLeft = o.lastChild.position().left - w - 10;
+						newLeft = lastChild.position().left - w - 10;
 					}
 				}
 				$projectViewPanel.css("left",newLeft + "px");
@@ -77,8 +77,7 @@
 		
 		// clean the old child on transitionend
 		$mainPanelsInner.on("btransitionend",function(){
-			$mainPanelsInner.find(".old").bRemove();
-			delete o.lastChild;
+			$mainPanelsInner.find("[data-state='old']").bRemove();
 		});
 		
 		
