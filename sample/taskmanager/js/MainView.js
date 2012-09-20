@@ -56,9 +56,6 @@
 			
 			var forward = (oldIdx < newIdx);
 			
-			//$projectViewPanel.width($mainPanels.width());
-			$projectViewPanel.css("width","100%");
-			
 			brite.display("ProjectView", {projectId:extra.projectId}, {
 				parent : $projectViewPanel
 			}).done(function(){
