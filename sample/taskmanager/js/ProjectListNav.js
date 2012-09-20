@@ -36,7 +36,7 @@
 		},o.id);
 
 		// On User Click
-		o.$element.on("click","li[data-entity='Project']",function(){
+		o.$element.on("btap","li[data-entity='Project']",function(){
 			var $li = $(this);
 			var projectId = $li.bEntity("Project").id;
 			$li.trigger("DO_SELECT_PROJECT",{projectId:projectId});

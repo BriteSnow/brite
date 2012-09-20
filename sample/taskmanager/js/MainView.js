@@ -27,6 +27,8 @@
 		var o = this; // convention, set 'o' to be this for the view (to avoid bugs when in closures). 
 
 		var $mainContent = o.$element.find(".MainView-content");
+		var $mainPanels = o.$element.find(".MainView-panels");
+		var $mainPanelsInner = o.$element.find(".MainView-panels-inner");
 		
 		// Create a ProjectListNav view and add it to the .MainView-content
 		var projectListNavPromise = brite.display("ProjectListNav", null, {
@@ -38,6 +40,7 @@
 		projectListNavPromise.done(function(){
 			// Once the ProjectListNav is displayed, we select the first project 
 			main.projectDao.list().done(function(projectList){
+				o.projectList = projectList; // keep the list in this object. TODO: needs to keep this list fresh
 				o.$element.trigger("DO_SELECT_PROJECT",{projectId:projectList[0].id});
 			});			
 	 	});
@@ -46,11 +49,61 @@
 		// Note: brite add the .$element property on the view object (which is the element returned by .create)		
 		o.$element.on("DO_SELECT_PROJECT",function(event,extra){
 			var $projectViewPanel = $("<div class='MainView-projectViewPanel'></div>");
+			
+			var oldIdx = brite.array.getIndex(o.projectList,"id",o.currentProjectId);
+			o.currentProjectId = extra.projectId;
+			var newIdx = brite.array.getIndex(o.projectList,"id",o.currentProjectId);
+			
+			var forward = (oldIdx < newIdx);
+			
+			//$projectViewPanel.width($mainPanels.width());
+			$projectViewPanel.css("width","100%");
+			
 			brite.display("ProjectView", {projectId:extra.projectId}, {
 				parent : $projectViewPanel
 			}).done(function(){
-				$mainContent.empty().append($projectViewPanel);
+				o.lastChild = $mainPanelsInner.children().filter(":last");
+				var w = o.lastChild.width();
+				var newLeft = 0;
+				if (o.lastChild.length > 0){
+					if (forward){
+						newLeft = o.lastChild.position().left + w + 10;
+					}else{
+						newLeft = o.lastChild.position().left - w - 10;
+					}
+				}
+				$projectViewPanel.css("left",newLeft + "px");
+				$mainPanelsInner.append($projectViewPanel);
+
+				$mainPanelsInner.css("transform","translateX(-" + newLeft + "px)");
 			});
+		});
+		
+		// clean the old child on transitionend
+		$mainPanelsInner.on("btransitionend",function(){
+			o.lastChild.bRemove();
+			delete o.lastChild;
+		});
+		
+		
+		// When the user click on the MainView-next
+		o.$element.on("btap",".MainView-next",function(){
+			var idx = brite.array.getIndex(o.projectList,"id",o.currentProjectId);
+			if (idx < o.projectList.length - 1){
+				var nextProject = o.projectList[idx + 1];
+				// just trigger the DO_SELECT_PROJECT
+				o.$element.trigger("DO_SELECT_PROJECT",{projectId:nextProject.id});
+			}
+		});
+		
+		// When the user click on the MainView-prev
+		o.$element.on("btap",".MainView-prev",function(){
+			var idx = brite.array.getIndex(o.projectList,"id",o.currentProjectId);
+			if (idx > 0){
+				var nextProject = o.projectList[idx - 1];
+				// just trigger the DO_SELECT_PROJECT
+				o.$element.trigger("DO_SELECT_PROJECT",{projectId:nextProject.id});
+			}
 		});
 		
 	}

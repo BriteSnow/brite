@@ -1,7 +1,7 @@
 .ProjectListNav{
   position: absolute;
   top: 0; right: 0; bottom: 0; left: 0;
-  background-color: #dce3e9;
+  background: url(images/nav-bg.png);
   border-right: solid 1px #b3c5d3;
 }
 

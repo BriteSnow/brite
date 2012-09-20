@@ -26,9 +26,45 @@
 .MainView-content{
   position: absolute;
   top: 36px; right: 0px; bottom: 0; left: 200px;
+  background: url(images/content-bg.png);
+}
+
+.MainView-panels{
+  position: absolute;
+  top: 10px; right: 70px; bottom: 30px; left: 70px;
+  overflow: hidden;
+}
+
+.MainView-panels-inner{
+  position: absolute;
+  top: 0; bottom: 0;
+  left: 0; 
+  right: 0;
+  -webkit-transition: -webkit-transform .5s;
 }
 
 .MainView-projectViewPanel{
   position: absolute;
-  top: 10px; right: 70px; bottom: 30px; left: 70px;
+  top: 0; bottom: 0;
+  left: 0px;
+}
+
+.MainView-prev, .MainView-next{
+  display: block;
+  position: absolute;
+  top: 50%;
+  margin-top: -16px;
+  background-image: url(images/icons.png); 
+  width: 32px; 
+  height: 32px;
+}
+
+.MainView-prev{
+  left: 10px;
+  background-position: 0px -160px;
+}
+
+.MainView-next{
+  right: 10px;
+  background-position: -32px -160px;
 }

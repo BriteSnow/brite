@@ -29,10 +29,10 @@ var main = main || {};
 		{id:"304",projectId:"003",done:false,title:"Learn application layout with HTML and CSS"},
 		{id:"305",projectId:"003",done:false,title:"Learn"},
 		
-		{id:"301",projectId:"004",done:false,title:"Learn HTML5"},
-		{id:"302",projectId:"004",done:false,title:"Learn D-MVC (DOM centric MVC)"},
-		{id:"303",projectId:"004",done:true,title:"Forget Sencha type: $('.sencha').delete()"},
-		{id:"304",projectId:"004",done:false,title:"Build an amazing HTML5 application the DOM way and not the desktop way"}
+		{id:"401",projectId:"004",done:false,title:"Learn HTML5"},
+		{id:"402",projectId:"004",done:false,title:"Learn D-MVC (DOM centric MVC)"},
+		{id:"403",projectId:"004",done:true,title:"Forget Sencha type: $('.sencha').delete()"},
+		{id:"404",projectId:"004",done:false,title:"Build an amazing HTML5 application the DOM way and not the desktop way"}
   ]
   
   main.projectDao = brite.registerDao("Project",new brite.InMemoryDaoHandler(seedProjects));
