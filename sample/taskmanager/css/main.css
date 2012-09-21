@@ -2,6 +2,10 @@
   -webkit-tap-highlight-color: transparent; /* "turn off" link highlight */
 }
 
+i{
+  -webkit-user-select: none;                /* disable text select on icons */
+}
+
 header, section{
   box-sizing: border-box;
 }

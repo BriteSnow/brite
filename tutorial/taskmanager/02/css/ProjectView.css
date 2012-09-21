@@ -1,6 +1,7 @@
 .ProjectView {
   position: absolute;
   top: 0; right: 0; bottom: 0; left: 0;
+  border-radius: 10px 10px 10px 10px;
   border: dashed 1px green; /* for layout debug */
 }
 .ProjectView header{
@@ -12,7 +13,8 @@
   color: #999;
   letter-spacing: .1em;
   margin: 0;
-  font-size: 23px;
+  font-size: 18px;
+  text-align: center;
 }
 
 

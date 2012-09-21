@@ -23,9 +23,8 @@
 	// This is optional, it gives a way to add some logic after the component is displayed to the user.
 	// This is a good place to add all the events binding and all
 	MainView.prototype.postDisplay = function(data, config) {
-		var o = this; // convention, set 'o' to be 'this' for the view (to avoid bugs when in closures). 
+		var o = this; // convention, set 'o' to be 'this' for the view (to avoid confusion when in closures). 
 
-		// this MainView instanced has now 2 added properties: 
 		// o.id : unique id for this view instance (can be used to namespace event binding)
 		// o.$element: the jquery wrap HTML element returned (or resolved) by this view create method 
 			
@@ -33,11 +32,11 @@
 		brite.display("ProjectListNav", null, {
 			parent : o.$element.find(".MainView-left")
 		});
-	
+		
 		// Create a ProjectView view and add it to the .MainView-content
 		brite.display("ProjectView", null, {
 			emptyParent: true,
-			parent : o.$element.find(".MainView-content")
+			parent : o.$element.find(".MainView-projectViewPanel")
 		});
 	}
 	// --------- /View Interface Implementation ---------- //

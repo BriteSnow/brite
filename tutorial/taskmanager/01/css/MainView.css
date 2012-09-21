@@ -1,7 +1,7 @@
 .MainView{
   position: absolute;
   top: 0; right: 0; bottom: 0; left: 0;
-  border: dashed 2px red; /* for layout debug */
+  border: dashed 1px red; /* for layout debug */
 }
 
 .MainView-topNav{
@@ -21,11 +21,18 @@
   position: absolute;
   top: 36px; bottom: 0; left: 0;
   width: 200px;
-  border: dashed 2px blue; /* for layout debug */
+  border: dashed 1px blue; /* for layout debug */
 }
 
 .MainView-content{
   position: absolute;
   top: 36px; right: 0px; bottom: 0; left: 200px;
-  border: dashed 2px green; /* for layout debug */
+  border: dotted 1px #ddd;
+}
+
+.MainView-projectViewPanel{
+  position: absolute;
+  top: 20px; right: 20px; bottom: 20px; left: 20px;
+  border-radius: 10px 10px 10px 10px;
+  border: dashed 1px green; /* for layout debug */
 }

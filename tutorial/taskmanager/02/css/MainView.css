@@ -25,4 +25,11 @@
 .MainView-content{
   position: absolute;
   top: 36px; right: 0px; bottom: 0; left: 200px;
+  border: dotted 1px #ddd;
+}
+
+.MainView-projectViewPanel{
+  position: absolute;
+  top: 20px; right: 20px; bottom: 20px; left: 20px;
+  border-radius: 10px 10px 10px 10px;
 }
