@@ -70,6 +70,7 @@ var brite = brite || {};
 		daoHandler._entityType = entityType;
 		
 		daoObject._entityType = entityType;
+		daoObject._handler = daoHandler;
 
 		$.each(daoHandler, function(k, v) {
 			// if it is a function and not an internalMethods
@@ -103,6 +104,10 @@ var brite = brite || {};
 		
 		
 		daoDic[entityType] = daoObject;
+		
+		if ($.isFunction(daoObject.init)){
+			daoObject.init(entityType);
+		}
 		
 		return daoObject;
 	}

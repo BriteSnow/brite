@@ -30,9 +30,7 @@
 		});
 
 	}
-
-	// --------- /Component Interface Implementation ---------- //
-
+	
 	// --------- Component Public API --------- //
 	// register a callback on answer
 	DialogPrompt.prototype.onAnswer = function(answerCallBack) {

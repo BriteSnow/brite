@@ -824,6 +824,79 @@ brite.version = "0.9.0-snapshot";
 // ------ brite utils ------ //
 
 (function($) {
+	
+	
+	
+	// default options for brite.whenEach
+	var whenEachOpts = {
+		failOnFirst : true
+	}
+	
+	/**
+	 * Convenient function that resolve each items serially with resolver function. 
+	 * 
+	 * @param {Array}    items:    array values to iterate through
+	 * @param {Function} resolver: will be called with resolver(value,index) and can return the result or a promise of the result.
+	 * @param {Object}   opts: (optional) options with the following values
+	 *                     opts.failOnFirst {boolean} (default: true) if true, will reject on first fail with error object
+	 * 
+	 * @return {Promise} promise that will get resolve with an Array of result of each value
+	 * 
+	 * The promise is resolve with an array of result when success
+	 * 
+	 * The promise is rejected with an array of {success:[true/false],value:[result/error]}
+	 *     
+	 */
+	brite.whenEach = function(items,resolver,opts){
+  	var dfd = $.Deferred();
+  	var results = [];
+  	var i = 0;
+  	
+  	opts = $.extends({},whenEachOpts,opts);
+  	
+  	resolveAndNext();
+  	
+  	function resolveAndNext(){
+  		if (i < items.length){
+  			var item = items[i];
+  			var result = resolver(item,i);
+
+  			// if the result is a promise (but not a jquery object, which is also a promise), then, pipe it
+  			if (typeof result !== "undefined" && result !== null && $.isFunction(result.promise) && !result.jquery){
+  				result.done(function(finalResult){
+  					results.push(finalResult);
+    				i++;
+    				resolveAndNext();
+  				});		
+  				
+  				// if it fails, then, reject
+  				// TODO: needs to support the failOnFirst: true
+  				result.fail(function(ex){
+  					var fails = $.map(function(val,idx){
+  						return {success:true,value:val};
+  					});
+  					fails.push({success:false,value:ex});
+  					dfd.reject(fails);
+  				});
+  				// TODO: need to handle the case the promise fail
+  			}
+  			// if it is a normal object or a jqueryObject, then, just push the value and move to the next
+  			else{
+  				results.push(result);
+  				i++;
+  				resolveAndNext();
+  			}
+  		}
+  		// once we run out
+  		else{
+  			dfd.resolve(results);
+  		}
+  	} 
+  	
+  	return dfd.promise();    		
+  }
+	
+	
 	// Private array of chars to use
 	var CHARS = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split('');
 

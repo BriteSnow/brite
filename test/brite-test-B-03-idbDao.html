@@ -12,7 +12,7 @@
   
   <script type="text/javascript" src="../src/js/brite.core.js" ></script>
   <script type="text/javascript" src="../src/js/brite.dao.js" ></script>
-  <script type="text/javascript" src="../src/js/brite.InMemoryDaoHandler.js" ></script>
+  <script type="text/javascript" src="../src/js/brite.IdbDaoHandler.js" ></script>
   
   <style type="text/css">
     #testList li{
@@ -25,13 +25,13 @@
     var usersSeed = [{id:"001",name:"Mike Donavan",city:"San Francisco"},
                      {id:"002",name:"Jennifer Aniston",city:"Los Angeles"}];
                      
-    var dao = brite.registerDao("User",new brite.InMemoryDaoHandler(usersSeed));
+    var dao = brite.registerDao("User",new brite.IdbDaoHandler(usersSeed));
   </script>
   
   
   </head>
   <body>
-    <h2>InMemory DAO</h2>
+    <h2>IdbDaoHandler</h2>
   
   	<div class="">
   		<h3>Test List</h3>
@@ -40,7 +40,7 @@
   		
   		<script type="text/javascript">
       $(function(){
-        
+        /*
         var userDao = brite.dao("User");
 
         // Test 001
@@ -103,7 +103,7 @@
           assertEqual("brite.dao.list",1,userList.length);        
         });        
 
-
+        */
       });
       
   		</script>
