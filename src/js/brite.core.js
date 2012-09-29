@@ -11,6 +11,8 @@ brite.version = "0.9.0-snapshot";
  */
 (function($) {
   
+  var DOC_EVENT_NS_PREFIX = "._docevents_";
+  
   var cidSeq = 0;
 
 	var _componentDefStore = {};
@@ -326,12 +328,12 @@ brite.version = "0.9.0-snapshot";
 
 			// If the config.unique is set, and there is a component with the same name, we resolve the deferred now
 			// NOTE: the whenCreate and whenPostDisplay won't be resolved again
-			// TODO: an optimization point would be to add a "bComponentUnique" in the class for data-brite-component that
+			// TODO: an optimization point would be to add a "bComponentUnique" in the class for data-b-view that
 			// have a confi.unique = true
 			// This way, the query below could be ".bComponentUnique [....]" and should speedup the search significantly
 			// on UserAgents that supports the getElementsByClassName
 			if (config.unique) {
-				var $component = $("[data-brite-component='" + name + "']");
+				var $component = $("[data-b-view='" + name + "']");
 				if ($component.length > 0) {
 					component = $component.bComponent();
 					processDeferred.resolve(component);
@@ -407,7 +409,7 @@ brite.version = "0.9.0-snapshot";
 
 					// if there is a parent component, then need to wait until it display to display this one.
 					if ($element && $element.parent()) {
-						var parentComponent$Element = $element.parent().closest("[data-brite-component]");
+						var parentComponent$Element = $element.parent().closest("[data-b-view]");
 
 						if (parentComponent$Element.length > 0) {
 							parentComponentProcessPromise = parentComponent$Element.data("componentProcessPromise");
@@ -533,15 +535,30 @@ brite.version = "0.9.0-snapshot";
 	}
 	// 
 	function bind$element($element, component, data, config) {
-		component.$element = $element;
+		component.el = $element[0];
+		// component.$element is for deprecated, .$el is te way to access it. 
+		component.$el = component.$element = $element; 
 		$element.data("component", component);
 
-		$element.attr("data-brite-component", config.componentName);
+		$element.attr("data-b-view", config.componentName);
 		$element.attr("data-brite-cid", component.cid);
 	}
 
+	// Note: This will be called even if .postDisplay is not defined (test is inside this method)
+	//       So, we do the view events binding here. 
 	function invokePostDisplay(component, data, config) {
 		var invokeDfd = $.Deferred();
+
+		// bind the view events
+		if (component.events){
+			bindEvents(component.events,component.$el,component);
+		}
+		
+		// bind the doc events (note: need to have a namespace since they will need to be cleaned up)
+		if (component.docEvents){
+			bindEvents(component.docEvents,$(document),component, DOC_EVENT_NS_PREFIX + component.id);
+		}
+		
 
 		// Call the eventual postDisplay
 		// (differing for performance)
@@ -578,6 +595,29 @@ brite.version = "0.9.0-snapshot";
 		}
 
 		return invokeDfd.promise();
+	}
+	
+	
+	function bindEvents(eventMap,$baseElement,component,namespace){
+		$.each(eventMap,function(edef,etarget){
+			var edefs = edef.split(" ");
+			var ename = edefs[0] + ((namespace)?namespace:"");
+			var eselector = edefs.slice(1).join(" ");
+			
+			// 
+			var efn = etarget;
+			if (!$.isFunction(efn)){
+				efn = component[efn];
+			}
+			if (efn){
+				$baseElement.on(ename,eselector,function(){
+					var args = $.makeArray(arguments);
+					efn.apply(component,args);
+				});
+			}else{
+				throw "BRITE ERROR: '" + component.name + "' component event handler function '" + etarget + "' not found."; 
+			}
+		});		
 	}
 	// ------ /Private Helpers ------ //
 
@@ -639,13 +679,76 @@ brite.version = "0.9.0-snapshot";
 // ---------------------- //
 
 (function($) {
-	/**
-	 * @namespace
-	 * 
-	 * briteUI jQuery extensions.
-	 */
-	$.fn = $.fn;
+	// warning: duplicate definition (must be the same a previous block)
+	var DOC_EVENT_NS_PREFIX = "._docevents_";
+	
 
+	/**
+	 * Safely empty a HTMLElement of its children HTMLElement and bComponent by calling the preRemove and postRemove on
+	 * every child components.
+	 * 
+	 * @return the jQuery object
+	 */
+	$.fn.bEmpty = function() {
+		return this.each(function() {
+			var $this = $(this);
+
+			var componentChildren = $this.bFindComponents();
+
+			// call the preRemoves
+			$.each(componentChildren, function(idx, childComponent) {
+				processDestroy(childComponent);
+			});
+
+			// do the empty
+			$this.empty();
+
+		});
+	}
+
+	/**
+	 * Safely remove a HTMLElement and the related bComponent by calling the preRemote and postRemove on every child
+	 * components as well as this component.
+	 * 
+	 * @return what a jquery.remove would return
+	 */
+	$.fn.bRemove = function() {
+
+		return this.each(function() {
+			var $this = $(this);
+			$this.bEmpty();
+
+			if ($this.is("[data-b-view]")) {
+				var component = $this.data("component");
+				processDestroy(component);
+
+				$this.remove();
+			} else {
+				$this.remove();
+			}
+		});
+
+	}
+
+	function processDestroy(component) {
+		// The if(component) is a safeguard in case destroy gets call twice (issue when clicking fast on
+		// test_brite-02-transition....)
+		if (component) {
+			// unbind view events
+			$(document).off(DOC_EVENT_NS_PREFIX + component.id);			
+			var destroyFunc = component.destroy;
+
+			if ($.isFunction(destroyFunc)) {
+				destroyFunc.call(component);
+			}
+		}
+	}
+
+})(jQuery);
+
+// ------------------------------------- //
+// --------- old bComponent APIs ------- //
+(function($) {
 	/**
 	 * 
 	 * Return the component that this html element belong to. Thi traverse the tree backwards (this html element up to
@@ -669,9 +772,9 @@ brite.version = "0.9.0-snapshot";
 		// iterate and process each matched element
 		var $componentElement;
 		if (componentName) {
-			$componentElement = $(this).closest("[data-brite-component='" + componentName + "']");
+			$componentElement = $(this).closest("[data-b-view='" + componentName + "']");
 		} else {
-			$componentElement = $(this).closest("[data-brite-component]");
+			$componentElement = $(this).closest("[data-b-view]");
 		}
 
 		return $componentElement.data("component");
@@ -694,9 +797,9 @@ brite.version = "0.9.0-snapshot";
 			var $componentElements;
 
 			if (componentName) {
-				$componentElements = $(this).find("[data-brite-component='" + componentName + "']");
+				$componentElements = $(this).find("[data-b-view='" + componentName + "']");
 			} else {
-				$componentElements = $(this).find("[data-brite-component]");
+				$componentElements = $(this).find("[data-b-view]");
 			}
 
 			$componentElements.each(function() {
@@ -724,9 +827,9 @@ brite.version = "0.9.0-snapshot";
 			var $componentElements;
 
 			if (componentName) {
-				$componentElements = $(this).find("[data-brite-component='" + componentName + "']:first");
+				$componentElements = $(this).find("[data-b-view='" + componentName + "']:first");
 			} else {
-				$componentElements = $(this).find("[data-brite-component]:first");
+				$componentElements = $(this).find("[data-b-view]:first");
 			}
 
 			$componentElements.each(function() {
@@ -738,86 +841,12 @@ brite.version = "0.9.0-snapshot";
 		return childrenComponents;
 	}
 
-	/**
-	 * Safely empty a HTMLElement of its children HTMLElement and bComponent by calling the preRemove and postRemove on
-	 * every child components.
-	 * 
-	 * @return the jQuery object
-	 */
-	$.fn.bEmpty = function() {
-		return this.each(function() {
-			var $this = $(this);
 
-			var componentChildren = $this.bFindComponents();
-
-			// call the preRemoves
-			$.each(componentChildren, function(idx, childComponent) {
-				processDestroy(childComponent);
-			});
-
-			// do the empty
-			$this.empty();
-
-			// call the postRemoves
-			$.each(componentChildren, function(idx, childComponent) {
-				processPostDestroy(childComponent);
-			});
-		});
-	}
-
-	/**
-	 * Safely remove a HTMLElement and the related bComponent by calling the preRemote and postRemove on every child
-	 * components as well as this component.
-	 * 
-	 * @return what a jquery.remove would return
-	 */
-	$.fn.bRemove = function() {
-
-		return this.each(function() {
-			var $this = $(this);
-			$this.bEmpty();
-
-			if ($this.is("[data-brite-component]")) {
-				var component = $this.data("component");
-				processDestroy(component);
-
-				$this.remove();
-
-				processPostDestroy(component);
-			} else {
-				$this.remove();
-			}
-		});
-
-	}
-
-	function processDestroy(component) {
-		// The if(component) is a safeguard in case destroy gets call twice (issue when clicking fast on
-		// test_brite-02-transition....)
-		if (component) {
-			// TODO: Need to remove the "preRemove" We should support only destroy
-			var destroyFunc = component.destroy || component.preRemove;
-
-			if ($.isFunction(destroyFunc)) {
-				destroyFunc.call(component);
-			}
-		}
-	}
-
-	function processPostDestroy(component) {
-		// The if(component) is a safeguard in case destroy gets call twice (issue when clicking fast on
-		// test_brite-02-transition....)
-		if (component) {
-			// TODO: Need to remove the "preRemove" We should support only postDestroy
-			var postDestoryFunc = component.postDestroy || component.postRemove;
-
-			if ($.isFunction(postDestoryFunc)) {
-				postDestoryFunc.call(component);
-			}
-		}
-	}
 
 })(jQuery);
+
+// -------- /old bComponent APIs ------- //
+// ------------------------------------- //
 
 
 // ------------------------ //
@@ -852,7 +881,7 @@ brite.version = "0.9.0-snapshot";
   	var results = [];
   	var i = 0;
   	
-  	opts = $.extends({},whenEachOpts,opts);
+  	opts = $.extend({},whenEachOpts, opts);
   	
   	resolveAndNext();
   	

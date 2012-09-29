@@ -373,7 +373,7 @@ var brite = brite || {};
 	 * .type     will be the value of the attribute data-entity 
 	 * .id       will be the value of the data-entity-id
 	 * .name     (optional) will be the value of the data-entity-name
-	 * .$element will be the $element containing the matching data-entity attribute
+	 * .$el 		 will be the $element containing the matching data-entity attribute
 	 *  
 	 * If no entityType, then, return the first entity of the closest html element having a data-b-entity. <br />
 	 * 
@@ -405,7 +405,7 @@ var brite = brite || {};
 						type : $sObj.attr("data-entity"),
 						id : $sObj.attr("data-entity-id"),
 						name: $sObj.attr("data-entity-name"),
-						$element : $sObj
+						$el : $sObj
 					}
 				}
 			}
