@@ -49,9 +49,6 @@
 			}
 		
 		</style>
-		
-
-		
 
     </head>
     <body>
@@ -101,12 +98,17 @@
 				
 				$(function(){
 					var $userList = $("#userList");
-					
+
+					// Note: there is not DAO for Task, but just test if multiple binding does not break
 					brite.dao.onDataChange("User",function(event){
-					  console.log("dao.onDataChange " + event.daoEvent.action, event.daoEvent.result);
 					  updateUserListDiv();
 					},"namespace1"); 
 					
+					
+          brite.dao.onDataChange("create, remove","User, Task",function(event){
+            console.log("dao.onDataChange create or remove: " + event.daoEvent.action, event.daoEvent.result);
+          },"namespace1"); 
+          
 					brite.dao.onResult("User",function(event){
 					  console.log("dao.onResult " + event.daoEvent.action, event.daoEvent.result);
 					},"namespace1");
@@ -125,7 +127,6 @@
 					  
 						// get the user objRef that this html element belong to.
 						var objRef = $(this).bEntity("User");
-						console.log("will delete",objRef);
 						if (objRef){
 						  userDao.remove(objRef.id);
 						}

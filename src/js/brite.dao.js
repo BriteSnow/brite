@@ -160,16 +160,14 @@ var brite = brite || {};
 			       
 		}
 
+		
 		// complete the event
 		if (!map.events) {
 			map.events = _ALL_ + "." + namespace;
 		} else {
+			var ns = "." + namespace + " ";
 			// build the events, split by ',', add the namespace, and join back
-			var events = map.events.split(",");
-			$.each(events, function(idx, val) {
-				events[idx] = $.trim(val) + "." + namespace;
-			});
-			map.events = events.join(" ");
+			map.events = map.events.split(",").join(ns) + ns;
 		}
 
 		// complete the objectTypes
@@ -373,7 +371,7 @@ var brite = brite || {};
 	 * .type     will be the value of the attribute data-entity 
 	 * .id       will be the value of the data-entity-id
 	 * .name     (optional) will be the value of the data-entity-name
-	 * .$el 		 will be the $element containing the matching data-entity attribute
+	 * .$el 			will be the $element containing the matching data-entity attribute
 	 *  
 	 * If no entityType, then, return the first entity of the closest html element having a data-b-entity. <br />
 	 * 

@@ -1,0 +1,193 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>briteUITest - brite.dao</title>
+
+		<!-- Generic Test Includes -->
+		<link rel="stylesheet" href="css/sTestHelper.css"/>
+		<link rel="stylesheet" href="../extra/bootstrap/css/bootstrap.css" />
+		<link rel="stylesheet" href="../extra/bootstrap/css/bootstrap-responsive.css" />
+		
+		
+		<script type="text/javascript" src="../js-dependencies/jquery.js" ></script>
+		<!-- /Generic Test Includes -->
+
+		<script type="text/javascript" src="../src/js/brite.core.js" ></script>
+		<script type="text/javascript" src="../src/js/brite.dao.js" ></script>
+		<script type="text/javascript" src="../src/js/brite.event.js" ></script>
+		<script type="text/javascript" src="../src/js/brite.InMemoryDaoHandler.js" ></script>
+		
+		<style type="text/css">
+  		body{
+  		  padding: 20px;
+  		 }
+			.action{
+				color: #5588bb;
+				cursor: pointer;
+			}
+			
+			.userList{
+			  margin: 0;
+				width: 100%;
+			}
+			.userList li{
+				list-style: none;
+				margin-bottom: 3px;
+				border: solid 1px #aaaaaa;
+				padding: 3px 5px;
+				
+			}
+			
+			.userList li .name{
+				display: inline-block;
+				margin-right: 10px;
+			}
+			
+			.userList li .del{
+				font-family: courier;
+				font-size: 14px;
+				float: right;
+				cursor: pointer;
+				color: #555555;
+			}
+		
+		  .UserListView{
+		  }
+		  .UserListView h2{
+		    font-size: 14px;
+		    font-weight: bold;
+		    color: #999;
+		    line-height: normal;
+		    letter-spacing: .2em;
+		    padding: 5px;
+		    margin: 0;
+		    border: none;
+		  }
+		</style>
+
+    <!-- Registering the DAO -->
+    <script type="text/javascript">
+    var usersSeed = [{id:"001",name:"Mike Donavan",city:"San Francisco"},
+                     {id:"002",name:"Jennifer Patrick",city:"Los Angeles"}];
+                     
+    var userDao = brite.registerDao("User",new brite.InMemoryDaoHandler(usersSeed));      
+    </script>
+    
+    <!-- The UserListView Component -->
+    <script type="text/javascript">
+    (function($){
+      brite.registerView("UserListView",{parent:"#userListViewsContainer"},{
+            create: function(){
+              var html = "<div class='UserListView span3'><h2>UserListView</h2><ul class='userList'></ul></div>";
+              return $(html); 
+            },
+            
+            postDisplay: function(){
+              refreshList.call(this);
+            },
+            
+            events: {
+              "btap; .del": onTapDel
+            },
+            
+            daoEvents: {
+
+              "dataChange; create; User" : function(event){
+                var view = this;
+                refreshList.call(view);
+              }, 
+              
+              "dataChange; remove; User" : function(event){
+                 var view = this; 
+                 refreshList.call(view);                
+              }      
+              
+              // Note: could have been just "dataChange; User" or "dataChange" to take care of both case         
+            } 
+      });
+      
+      function onTapDel(event){
+        var view = this;
+        var entity = $(event.currentTarget).bEntity("User");
+        brite.dao("User").remove(entity.id);
+      }
+      
+      // private refresh list
+      function refreshList(){
+        var view = this;
+        userDao.list().done(function(userList){
+          var user, 
+            i,
+           $userList =view.$el.find(".userList");
+        
+          //clean the list
+          $userList.empty();
+          
+          for (i = 0; i < userList.length; i++) {
+            user = userList[i];
+            $li = $("<li></li>");
+            $li.attr("data-entity", "User");
+            $li.attr("data-entity-id", user.id);
+            
+            //Note: The 'name' and 'city' class are just for css layout
+            //      The 'del' class is use for delegate
+            $li.append("<span class='name'>" + user.name + "</span>" +
+                   "<span class='del'>x</span>" );
+            $userList.append($li);
+          }           
+        });        
+      }
+    })(jQuery);
+    
+    $(document).ready(function(){
+      brite.display("UserListView");
+      brite.display("UserListView");
+    });    
+    </script>
+
+    </head>
+    <body>
+    	<div class="sTestSection">
+	    <h2>View events</h2>
+
+			<div>
+				
+				<h3>Create new User (<span class='action' id="removeAll">Remove All</span> )</h3>
+				<div>User Name: <input id="userNameIpt" type="text" /> <button class="btn btn-primary" id="userCreateBut">Create</button></div>
+				
+				<!-- when click on create -->
+				<script type="text/javascript">
+				$(document).ready(function(){
+				  var $but = $("#userCreateBut");
+				  var $inputName = $("#userNameIpt");
+				  
+				  $inputName.on("keyup",function(event){
+				    if (event.which === 13){
+				      $but.trigger("click");
+				    }
+				  });  
+				  
+				  // create the user
+          $but.on("click",function(){
+            userDao.create({name: $("#userNameIpt").val(),
+                       city: $("#userCityIpt").val()});
+            
+            //clean the input and focus
+            $inputName.val("").focus();
+          });
+        });
+        </script>
+        
+        
+				<h3>UserList Views</h3>
+				
+				
+				<div id="userListViewsContainer" class="row-fluid">
+				  
+				</div>
+				
+			</div>			
+		</div> 
+    </body>
+</html>

@@ -14,13 +14,19 @@
 	}
 
 	DialogPrompt.prototype.events = {
-		"click button.ok": onOk,
-		"click button.cancel": onCancel,
+		"click; button.ok": onOk,
+		"click; button.cancel": onCancel,
  	}
  	
  	DialogPrompt.prototype.docEvents = {
  		"click": function(event){
  			console.log("clicking somewhere on the $document");
+ 		}
+ 	}
+ 	
+ 	DialogPrompt.prototype.winEvents = {
+ 		"resize": function(event){
+ 			console.log("window is resizing",event);
  		}
  	}
  	

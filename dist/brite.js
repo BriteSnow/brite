@@ -11,7 +11,9 @@ brite.version = "0.9.0-snapshot";
  */
 (function($) {
   
-  var DOC_EVENT_NS_PREFIX = "._docevents_";
+  // Note: for now, document bound view events are just namespaced with the view_id
+  var DOC_EVENT_NS_PREFIX = ".";
+  var WIN_EVENT_NS_PREFIX = ".";
   
   var cidSeq = 0;
 
@@ -481,7 +483,7 @@ brite.version = "0.9.0-snapshot";
 	}
 	;
 
-	// ------ Private Helpers ------ //
+	// ------ Helpers ------ //
 	// build a config for a componentDef
 	function buildConfig(componentDef, config) {
 		var instanceConfig = $.extend({}, componentDef.config, config);
@@ -554,11 +556,17 @@ brite.version = "0.9.0-snapshot";
 			bindEvents(component.events,component.$el,component);
 		}
 		
-		// bind the doc events (note: need to have a namespace since they will need to be cleaned up)
+		// bind the document events (note: need to have a namespace since they will need to be cleaned up)
 		if (component.docEvents){
 			bindEvents(component.docEvents,$(document),component, DOC_EVENT_NS_PREFIX + component.id);
 		}
 		
+		// bind the window events if present
+		if (component.winEvents){
+			bindEvents(component.winEvents,$(window),component, WIN_EVENT_NS_PREFIX + component.id);
+		}
+		
+		bindDaoEvents(component);
 
 		// Call the eventual postDisplay
 		// (differing for performance)
@@ -597,18 +605,14 @@ brite.version = "0.9.0-snapshot";
 		return invokeDfd.promise();
 	}
 	
-	
 	function bindEvents(eventMap,$baseElement,component,namespace){
 		$.each(eventMap,function(edef,etarget){
-			var edefs = edef.split(" ");
+			var edefs = edef.split(";");
 			var ename = edefs[0] + ((namespace)?namespace:"");
-			var eselector = edefs.slice(1).join(" ");
-			
+			var eselector = edefs[1]; // can be undefined, but in this case it is direct.
+
 			// 
-			var efn = etarget;
-			if (!$.isFunction(efn)){
-				efn = component[efn];
-			}
+			var efn = getFn(component,etarget);
 			if (efn){
 				$baseElement.on(ename,eselector,function(){
 					var args = $.makeArray(arguments);
@@ -619,7 +623,40 @@ brite.version = "0.9.0-snapshot";
 			}
 		});		
 	}
-	// ------ /Private Helpers ------ //
+	
+	function bindDaoEvents(component){
+		var daoEvents = component.daoEvents;
+		
+		if (component.daoEvents){
+			// for now, the namespace is just the component id
+			var ns = component.id;
+			$.each(daoEvents,function(edef,etarget){
+				var efn = getFn(component,etarget);
+				if (efn){
+					var edefs = edef.split(";");
+					var ename = edefs[0];
+					ename = ename.charAt(0).toUpperCase() + ename.slice(1);
+					var eventTypes = edefs[1];
+					var entityTypes = edefs[2];
+					brite.dao["on" + ename](eventTypes,entityTypes,function(event){
+						var args = $.makeArray(arguments);
+						efn.apply(component,args);						
+					},ns);
+				}else{
+					throw "BRITE ERROR: '" + component.name + "' component daoEvent handler function '" + etarget + "' not found.";
+				}
+			});
+		}
+	}
+	
+	function getFn(component,target){
+ 			var fn = target;
+			if (!$.isFunction(fn)){
+				fn = component[target];
+			}
+			return fn;		
+	}
+	// ------ /Helpers ------ //
 
   // --------- File Include (JS & CSS) ------ //
   /*
@@ -680,7 +717,8 @@ brite.version = "0.9.0-snapshot";
 
 (function($) {
 	// warning: duplicate definition (must be the same a previous block)
-	var DOC_EVENT_NS_PREFIX = "._docevents_";
+	var DOC_EVENT_NS_PREFIX = ".";
+	var WIN_EVENT_NS_PREFIX = ".";
 	
 
 	/**
@@ -735,7 +773,9 @@ brite.version = "0.9.0-snapshot";
 		// test_brite-02-transition....)
 		if (component) {
 			// unbind view events
-			$(document).off(DOC_EVENT_NS_PREFIX + component.id);			
+			$(document).off(DOC_EVENT_NS_PREFIX + component.id);
+			$(window).off(WIN_EVENT_NS_PREFIX + component.id);
+									
 			var destroyFunc = component.destroy;
 
 			if ($.isFunction(destroyFunc)) {
@@ -1742,16 +1782,14 @@ var brite = brite || {};
 			       
 		}
 
+		
 		// complete the event
 		if (!map.events) {
 			map.events = _ALL_ + "." + namespace;
 		} else {
+			var ns = "." + namespace + " ";
 			// build the events, split by ',', add the namespace, and join back
-			var events = map.events.split(",");
-			$.each(events, function(idx, val) {
-				events[idx] = $.trim(val) + "." + namespace;
-			});
-			map.events = events.join(" ");
+			map.events = map.events.split(",").join(ns) + ns;
 		}
 
 		// complete the objectTypes
@@ -1955,7 +1993,7 @@ var brite = brite || {};
 	 * .type     will be the value of the attribute data-entity 
 	 * .id       will be the value of the data-entity-id
 	 * .name     (optional) will be the value of the data-entity-name
-	 * .$el 		 will be the $element containing the matching data-entity attribute
+	 * .$el 			will be the $element containing the matching data-entity attribute
 	 *  
 	 * If no entityType, then, return the first entity of the closest html element having a data-b-entity. <br />
 	 * 
