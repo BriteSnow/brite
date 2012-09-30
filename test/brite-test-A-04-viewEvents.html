@@ -44,7 +44,8 @@
 				margin-right: 10px;
 			}
 			
-			.userList li .del{
+			.del{
+			  font-weight: normal;
 				font-family: courier;
 				font-size: 14px;
 				float: right;
@@ -79,7 +80,7 @@
     (function($){
       brite.registerView("UserListView",{parent:"#userListViewsContainer"},{
             create: function(){
-              var html = "<div class='UserListView span3'><h2>UserListView</h2><ul class='userList'></ul></div>";
+              var html = "<div class='UserListView span3'><h2>UserListView<span class='del'>x</span></h2><ul class='userList'></ul></div>";
               return $(html); 
             },
             
@@ -88,7 +89,10 @@
             },
             
             events: {
-              "btap; .del": onTapDel
+              "btap; li .del": onTapUserDel,
+              
+              "btap; h2 .del": onTapViewDel
+              
             },
             
             daoEvents: {
@@ -101,16 +105,31 @@
               "dataChange; remove; User" : function(event){
                  var view = this; 
                  refreshList.call(view);                
-              }      
+              },
+              
+              "result; list; User" : "logOnResultList"      
               
               // Note: could have been just "dataChange; User" or "dataChange" to take care of both case         
-            } 
+            },
+            
+            logOnResultList: function(event){
+              var view = this;
+              console.log("'onResult; list; User' has been triggered " + event.daoEvent.action + " view.id: " + view.id);
+            }
+             
       });
       
-      function onTapDel(event){
+      function onTapUserDel(event){
         var view = this;
         var entity = $(event.currentTarget).bEntity("User");
         brite.dao("User").remove(entity.id);
+      }
+      
+      function onTapViewDel(){
+        var view = this;
+        view.$el.fadeOut(function(){
+          view.$el.bRemove();
+        });
       }
       
       // private refresh list

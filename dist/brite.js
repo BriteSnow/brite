@@ -775,6 +775,10 @@ brite.version = "0.9.0-snapshot";
 			// unbind view events
 			$(document).off(DOC_EVENT_NS_PREFIX + component.id);
 			$(window).off(WIN_EVENT_NS_PREFIX + component.id);
+			
+			if (brite.dao){
+				brite.dao.offAny(component.id);
+			}
 									
 			var destroyFunc = component.destroy;
 
