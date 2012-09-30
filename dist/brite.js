@@ -86,11 +86,12 @@ brite.version = "0.9.0-snapshot";
 	 *                                         the element for $.bRemove). It will get called after this component htmlElement will get removed<br />
 	 * 
 	 */
-	brite.registerView = function(name, config, componentFactory) {
+	brite.registerView = function(name, arg1, arg2) {
 		var def = {};
 		def.name = name;
-		def.componentFactory = componentFactory;
-		def.config = $.extend({}, this.defaultComponentConfig,config);
+		def.componentFactory = (arg2)?arg2:arg1;
+		var config = (arg2)?arg1:null; // no config if only two arguments
+		def.config = $.extend({}, brite.viewDefaultConfig,config);
 		_componentDefStore[name] = def;
 
 		// This resolve the deferred if we had a deferred component loading 
@@ -1744,9 +1745,9 @@ var brite = brite || {};
 	/**
 	 * Build the arguments for all the brite.dao.on*** events from the arguments
 	 * Can be
-	 * - (events,objectTypes,func,namespace)
+	 * - (objectTypes,actions,func,namespace)
 	 * - (objectTypes,func,namespace)
-	 * - (func,namspace)
+	 * - (func,namespace)
 	 *
 	 * Return an object with
 	 *   .events (with the namespace)
@@ -1768,13 +1769,13 @@ var brite = brite || {};
 			else if (!map.func) {
 				namespace = val;
 			}
-			// if we have the func, but not the objectTypes, this is the objectTypes
-			else if (map.func && typeof map.objectTypes === "undefined") {
-				map.objectTypes = val;
+			// if we have the func, and it is the second argument, it si the actions
+			else if (map.func && i === 1) {
+				map.actions = val;
 			}
-			// if we have the func and objectTypes, then this value is the events
-			else if (map.func && typeof map.objectTypes !== "undefined") {
-				map.events = val;
+			// if we have the func, and it is the first argument, it is objectTypes
+			else if (map.func && i === 0) {
+				map.objectTypes = val;
 			}
 		}
 
@@ -1787,13 +1788,13 @@ var brite = brite || {};
 		}
 
 		
-		// complete the event
-		if (!map.events) {
-			map.events = _ALL_ + "." + namespace;
+		// complete the actions
+		if (!map.actions) {
+			map.actions = _ALL_ + "." + namespace;
 		} else {
 			var ns = "." + namespace + " ";
 			// build the events, split by ',', add the namespace, and join back
-			map.events = map.events.split(",").join(ns) + ns;
+			map.actions = map.actions.split(",").join(ns) + ns;
 		}
 
 		// complete the objectTypes
@@ -1848,8 +1849,8 @@ var brite = brite || {};
 	 * This will trigger on any DAO calls before the dao action is completed (for
 	 * 	asynch daos), hence, the resultPromise property of the daoEvent.
 	 *
-	 * @param events            e.g., "create, list, get" (null for any)
 	 * @param objectTypes       e.g., "User, Task" (null for any)
+	 * @param actions            e.g., "create, list, get" (null for any)
 	 * @param listenerFunction  The function to be called with the daoEvent
 	 *            listenerFunction(event) with event.daoEvent as
 	 *            daoEvent.action
@@ -1857,9 +1858,9 @@ var brite = brite || {};
 	 *            daoEvent.resultPromise
 	 *
 	 */
-	brite.dao.onDao = function(events, objectTypes, listenerFunction, namespace) {
+	brite.dao.onDao = function(objectTypes, actions, listenerFunction, namespace) {
 		var map = buildDaoOnEventParamMap(arguments);
-		$daoDao.on(map.events, map.objectTypes, map.func);
+		$daoDao.on(map.actions, map.objectTypes, map.func);
 		return map.namespace;
 	}
 
@@ -1889,8 +1890,8 @@ var brite = brite || {};
 	 * This will trigger when the dao resolve the result of a particular DAO call.
 	 * This will not trigger in case of a dao failure.
 	 *
-	 * @param events            e.g., "create, list, get" (null for any)
 	 * @param objectTypes       e.g., "User, Task" (null for any)
+	 * @param actions           e.g., "create, list, get" 
 	 * @param listenerFunction  The function to be called with the daoEvent
 	 *            listenerFunction(daoEvent)
 	 *            daoEvent.action
@@ -1900,9 +1901,9 @@ var brite = brite || {};
 	 *            daoEvent.opts
 	 *            daoEvent.result
 	 */
-	brite.dao.onResult = function(events, objectTypes, listenerFunction, namespace) {
+	brite.dao.onResult = function(objectTypes, actions, listenerFunction, namespace) {
 		var map = buildDaoOnEventParamMap(arguments);
-		$daoResult.on(map.events, map.objectTypes, map.func);
+		$daoResult.on(map.actions, map.objectTypes, map.func);
 		return map.namespace;
 	}
 
@@ -1934,12 +1935,12 @@ var brite = brite || {};
 	 * use the brite.dao.onResult which will trigger anytime
 	 *
 	 * @param {String} namespace: the namespace for this event.
-	 * @param {String} events: this dao action names e.g., "create, update" (null to listen to all events)
 	 * @param {String} objectTypes: the object types e.g., "User, Task" (null for any object type);
+	 * @param {String} actions: this dao action names e.g., "create, update" 
 	 */
-	brite.dao.onDataChange = function(events, objectTypes, func, namespace) {
+	brite.dao.onDataChange = function(objectTypes, actions, func, namespace) {
 		var map = buildDaoOnEventParamMap(arguments);
-		$daoDataChange.on(map.events, map.objectTypes, map.func);
+		$daoDataChange.on(map.actions, map.objectTypes, map.func);
 		return map.namespace;
 	}
 

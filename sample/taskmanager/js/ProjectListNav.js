@@ -7,7 +7,7 @@
  */
 (function($) {
 	
-	brite.registerView("ProjectListNav",null,{
+	brite.registerView("ProjectListNav",{
 		create: function(){
 			return main.projectDao.list().pipe(function(projectList){
 				var html = $("#tmpl-ProjectListNav").render({projects:projectList});
@@ -22,7 +22,6 @@
 				var projectId = $li.bEntity("Project").id;
 				$li.trigger("DO_SELECT_PROJECT",{projectId:projectId});
 			}
-			
 		},
 		
 		docEvents: {
@@ -32,9 +31,7 @@
 		},
 		
 		daoEvents: {
-			"dataChange; Project": function(){
-				refreshList.call(this);
-			}
+			"dataChange; Project": refreshList
 		} 
 		
 	});

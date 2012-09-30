@@ -96,17 +96,15 @@
             
             daoEvents: {
 
-              "dataChange; create; User" : function(event){
-                var view = this;
-                refreshList.call(view);
+              "dataChange; User; create" : function(event){
+                refreshList.call(this);
               }, 
               
-              "dataChange; remove; User" : function(event){
-                 var view = this; 
-                 refreshList.call(view);                
+              "dataChange; User; remove" : function(event){
+                 refreshList.call(this);                
               },
               
-              "result; list; User" : "logOnResultList"      
+              "result; User; list" : "logOnResultList"      
               
               // Note: could have been just "dataChange; User" or "dataChange" to take care of both case         
             },

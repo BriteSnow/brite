@@ -86,11 +86,12 @@ brite.version = "0.9.0-snapshot";
 	 *                                         the element for $.bRemove). It will get called after this component htmlElement will get removed<br />
 	 * 
 	 */
-	brite.registerView = function(name, config, componentFactory) {
+	brite.registerView = function(name, arg1, arg2) {
 		var def = {};
 		def.name = name;
-		def.componentFactory = componentFactory;
-		def.config = $.extend({}, this.defaultComponentConfig,config);
+		def.componentFactory = (arg2)?arg2:arg1;
+		var config = (arg2)?arg1:null; // no config if only two arguments
+		def.config = $.extend({}, brite.viewDefaultConfig,config);
 		_componentDefStore[name] = def;
 
 		// This resolve the deferred if we had a deferred component loading 

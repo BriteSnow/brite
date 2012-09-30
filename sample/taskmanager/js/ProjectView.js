@@ -8,6 +8,7 @@
  */
 (function($) {
 	
+	
 	// --------- Component Interface Implementation ---------- //
 	function ProjectView() {
 	}
