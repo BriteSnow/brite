@@ -52,8 +52,8 @@
             $("#promptBut").click(function() {
 
               // Note: brite.display always return a jQuery Deferred that will get resolved with the component instance
-
-              var dfd = brite.display('DialogPrompt', {
+              // Note: the "parent" here is null so that we can give the "data" object. Dialog box have usually a fixed parent, which is defined in the registerView config.
+              var dfd = brite.display('DialogPrompt',null, {
                 title : 'Test Dialog',
                 prompt : 'Are you sure you want to continue?'
               });

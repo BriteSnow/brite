@@ -142,6 +142,7 @@ brite.version = "0.9.0-snapshot";
 	 * 
 	 * @param {String}
 	 *            name (required) the view name
+	 * @param {Element} HTML Element, jQuery element, or a jQuery selector, where the element will be added. 
 	 * @param {Object}
 	 *            data (optional, required if config) the data to be passed to the build and postDisplay.
 	 * @param {Object}
@@ -149,9 +150,21 @@ brite.version = "0.9.0-snapshot";
 	 *            params for description)
 	 * @return {Component} return the component instance.
 	 */
-	brite.display = function(viewName, data, config) {
+	brite.display = function(viewName, parent, data, config) {
+		if (parent){
+			config = config || {};
+			config.parent = parent;
+		}
 		return process(viewName, data, config);
 	};
+	
+	// to ease backward compatiblity 
+	brite.legacyDisplay = function(viewName, data, config) {
+		var parent = (config)?config.parent:null;
+		brite.display(viewName,parent,data,config);
+	};
+	
+	
 
 	/**
 	 * Same as brite.display but bypass the build() step (postDisplay() will still be called). So, this will create a
@@ -393,6 +406,7 @@ brite.version = "0.9.0-snapshot";
 						// TODO: implement deferred for the render as well.
 						renderComponent(component, data, config);
 
+						// TODO: this might need to be fore the renderComponent
 						initDeferred.resolve(component);
 
 					});
@@ -402,7 +416,7 @@ brite.version = "0.9.0-snapshot";
 					// nothing but still instantiate the component
 					createDeferred.resolve(component);
 
-					// TODO: probably need to invokeInit in thi scase as well. For now, just resolve the initDeferred
+					// TODO: probably need to invokeInit in this case as well. For now, just resolve the initDeferred
 					initDeferred.resolve(component);
 
 				}
@@ -456,7 +470,7 @@ brite.version = "0.9.0-snapshot";
 	}
 
 	function renderComponent(component, data, config) {
-
+		var $parent;
 		if (config.transition) {
 			var transition = brite.getTransition(config.transition);
 
@@ -472,12 +486,14 @@ brite.version = "0.9.0-snapshot";
 				$(config.replace).bRemove();
 			}
 
-			// note: if there is no parent, then, the sUI.diplay caller is reponsible to add it
+			
+			// note: if there is no parent, then, the sUI.diplay caller is responsible to add it
 			if (config.parent) {
+				$parent = $(config.parent);
 				if (config.emptyParent) {
-					$(config.parent).bEmpty();
+					$parent.bEmpty();
 				}
-				$(config.parent).append(component.$element);
+				$parent.append(component.$el);
 			}
 		}
 

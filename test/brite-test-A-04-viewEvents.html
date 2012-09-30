@@ -78,7 +78,7 @@
     <!-- The UserListView Component -->
     <script type="text/javascript">
     (function($){
-      brite.registerView("UserListView",{parent:"#userListViewsContainer"},{
+      brite.registerView("UserListView",{
             create: function(){
               var html = "<div class='UserListView span3'><h2>UserListView<span class='del'>x</span></h2><ul class='userList'></ul></div>";
               return $(html); 
@@ -157,8 +157,8 @@
     })(jQuery);
     
     $(document).ready(function(){
-      brite.display("UserListView");
-      brite.display("UserListView");
+      brite.display("UserListView","#userListViewsContainer");
+      brite.display("UserListView","#userListViewsContainer");
     });    
     </script>
 

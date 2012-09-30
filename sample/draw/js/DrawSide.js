@@ -13,7 +13,7 @@
   DrawSide.prototype.postDisplay = function(data, config) {
     var c = this; 
     
-    brite.display("DrawLayersPanel",null,{parent:c.$element});
+    brite.display("DrawLayersPanel",c.$el);
   }
 
   // --------- /Component Interface Implementation ---------- //

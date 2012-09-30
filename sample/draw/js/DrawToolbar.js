@@ -16,7 +16,7 @@
 
   DrawToolbar.prototype.postDisplay = function(data, config){
     var c = this;
-    
+    console.log("postDisplay",c);
     // when a user click on the 
     c.$element.on("btap",".DrawToolbar-tool",function(){
       var $this = $(this);

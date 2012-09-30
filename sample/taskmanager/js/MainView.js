@@ -21,15 +21,13 @@
 		postDisplay: function(data,config){
 			var view = this;
 			
-			// caching some jQuery elements that will be used over and over
+			// caching some fixed jQuery elements that will be used later 
 			view.$mainContent = view.$el.find(".MainView-content");
 			view.$mainPanels = view.$el.find(".MainView-panels");
 			view.$mainPanelsInner = view.$el.find(".MainView-panels-inner");
 			
 			// Create and display the ProjectListNav view and add it to the .MainView-content
-			var projectListNavPromise = brite.display("ProjectListNav", null, {
-				parent : view.$el.find(".MainView-left")
-			});
+			var projectListNavPromise = brite.display("ProjectListNav", view.$el.find(".MainView-left"));
 			
 			// When the projectListNav is created, we get the list of project, and select the first one 
 			// by triggering the DO_SELECT_PROJECT application event 		
@@ -72,9 +70,7 @@
 		
 		var forward = (oldIdx < newIdx);
 		
-		brite.display("ProjectView", {projectId:extra.projectId}, {
-			parent : $projectViewPanel
-		}).done(function(){
+		brite.display("ProjectView",$projectViewPanel, {projectId:extra.projectId}).done(function(){
 			var lastChild = view.$mainPanelsInner.children().filter(":last").attr("data-state","old");
 			var w = lastChild.width();
 			var newLeft = 0;

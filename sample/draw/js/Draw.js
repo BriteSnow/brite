@@ -40,14 +40,14 @@
   Draw.prototype.postDisplay = function(){
     var c = this;
     
-    brite.display("DrawToolbar",null,{parent:c.$element});
+    brite.display("DrawToolbar",c.$el);
     
-    brite.display("DrawSide",null,{parent:c.$element}).done(function(drawSide){
+    brite.display("DrawSide",c.$el).done(function(drawSide){
       c.drawSide = drawSide;
     });
     
     // temporary for development
-    brite.display("DrawContent",null,{parent:c.$element}).done(function(drawContent){
+    brite.display("DrawContent",c.$el).done(function(drawContent){
       c.drawContent = drawContent;
       
       $.ajax({url:"data/draw-sample.xml",

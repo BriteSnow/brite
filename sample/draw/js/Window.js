@@ -59,7 +59,7 @@
         
         this.appName = data.componentName;
         
-        dfd = brite.display(data.componentName,null,{parent:$windowContent}).whenInit;
+        dfd = brite.display(data.componentName,$windowContent).whenInit;
         dfd.fail(function(){
           console.log("failing");
         });

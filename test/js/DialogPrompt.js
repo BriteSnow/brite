@@ -1,7 +1,10 @@
 // BEST-PRACTICE: enclose all the component code in a immediate JS function (and make it $ safe by passing the jQuery as param)
 
+// Note: For testing purposes, the DialogPrompt component is a prototype based object with the appropriate properties. 
+//       This could be usefull for advanced Views that might need some sort of inheritance. 
+ 
 (function($) {
-
+	
 	// --------- View Interface Implementation ---------- //
 	function DialogPrompt() {
 	};

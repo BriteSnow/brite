@@ -9,8 +9,6 @@
 	// Note 1: in this example, we inline the component definition in the HTML, 
 	//       but look at the DialogPrompt.html/.js to see the recommended way (Object Oriented).
 	brite.registerComponent("HelloComponent", {
-		// Tell where to add the output of build element 
-		parent : "#HelloWorld-Container",
 		// Tell to empty the parent before adding this one
 		emptyParent: true,
 		// Tell to load the template (by default template/[ComponentName].html so, here it will be template/HelloComponent).

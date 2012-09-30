@@ -220,7 +220,7 @@
 	 	var $cardFront = o.$element.find(".card-front");
 	 	
 	 	o.$element.on("btap","[data-action='editMode']",function(){
-	 		brite.display("ProjectEdit",{projectId:o.projectId},{parent:$cardBack}).done(function(){
+	 		brite.display("ProjectEdit",$cardBack,{projectId:o.projectId}).done(function(){
 	 			$card.addClass("flipped");
 	 		});
 	  });

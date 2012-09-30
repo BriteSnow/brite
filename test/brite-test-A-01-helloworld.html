@@ -41,7 +41,7 @@
 				
 				$(document).ready(function(){
           $("#helloButton").click(function(){
-            brite.display("helloWorld",{name:"Mike"});
+            brite.display("helloWorld","#HelloWorld-Container",{name:"Mike"});
           });
 				});
 				</script>
@@ -51,13 +51,10 @@
 					var helloWorlCount = 0;
 					
 					brite.registerComponent("helloWorld",
-						
-						 {
-							  // Tell where to add the output of build element
-							  parent: "#HelloWorld-Container",
-							  // Tell to empty the parent before adding the output of built element
-							  emptyParent: true
-						 },
+					 {
+						  // Tell to empty the parent before adding the output of built element
+						  emptyParent: true
+					 },
 						
 						{// Build the component $element
 							create: function(data){
