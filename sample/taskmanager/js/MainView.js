@@ -9,106 +9,109 @@
  */
 (function($) {
 
-	// --------- Component Interface Implementation ---------- //
-	function MainView() {
-	};
-
-	// This is the MUST-HAVE component function that must return the new html element for this component instances
-	MainView.prototype.create = function(data, config) {
-		var html = $("#tmpl-MainView").render(data);
-		var $e = $(html);
-		return $e;
-		// always return the newly created HTML element (here wrapped in a jQuery object)
-	}
-
-	// This is optional, it gives a way to add some logic after the component is displayed to the user.
-	// This is a good place to add all the events binding and all
-	MainView.prototype.postDisplay = function(data, config) {
-		var o = this; // convention, set 'o' to be this for the view (to avoid bugs when in closures). 
-
-		var $mainContent = o.$element.find(".MainView-content");
-		var $mainPanels = o.$element.find(".MainView-panels");
-		var $mainPanelsInner = o.$element.find(".MainView-panels-inner");
+	brite.registerView("MainView", {emptyParent:true}, {
 		
-		// Create a ProjectListNav view and add it to the .MainView-content
-		var projectListNavPromise = brite.display("ProjectListNav", null, {
-			parent : o.$element.find(".MainView-left")
-		});
-	
-		// When the projectListNav is created, we get the list of project, and select the first one 
-		// by triggering the DO_SELECT_PROJECT application event 		
-		projectListNavPromise.done(function(){
-			// Once the ProjectListNav is displayed, we select the first project 
-			main.projectDao.list().done(function(projectList){
-				o.projectList = projectList; // keep the list in this object. TODO: needs to keep this list fresh
-				o.$element.trigger("DO_SELECT_PROJECT",{projectId:projectList[0].id});
-			});			
-	 	});
+		create: function(data, config) {
+			var html = $("#tmpl-MainView").render(data);
+			var $e = $(html);
+			// always return the newly created HTML element (here wrapped in a jQuery object)
+			return $e;
+		},
 		
-		// On "DO_SELECT_PROJECT" application event, swap the ProjectView
-		// Note: brite add the .$element property on the view object (which is the element returned by .create)		
-		o.$element.on("DO_SELECT_PROJECT",function(event,extra){
-			var $projectViewPanel = $("<div class='MainView-projectViewPanel current'></div>");
+		postDisplay: function(data,config){
+			var view = this;
 			
-			var oldIdx = brite.array.getIndex(o.projectList,"id",o.currentProjectId);
-			o.currentProjectId = extra.projectId;
-			var newIdx = brite.array.getIndex(o.projectList,"id",o.currentProjectId);
+			// caching some jQuery elements that will be used over and over
+			view.$mainContent = view.$el.find(".MainView-content");
+			view.$mainPanels = view.$el.find(".MainView-panels");
+			view.$mainPanelsInner = view.$el.find(".MainView-panels-inner");
 			
-			var forward = (oldIdx < newIdx);
-			
-			brite.display("ProjectView", {projectId:extra.projectId}, {
-				parent : $projectViewPanel
-			}).done(function(){
-				var lastChild = $mainPanelsInner.children().filter(":last").attr("data-state","old");
-				var w = lastChild.width();
-				var newLeft = 0;
-				if (lastChild.length > 0){
-					if (forward){
-						newLeft = lastChild.position().left + w + 10;
-					}else{
-						newLeft = lastChild.position().left - w - 10;
-					}
-				}
-				$projectViewPanel.css("left",newLeft + "px");
-				$mainPanelsInner.append($projectViewPanel);
-				$mainPanelsInner.css("transform","translateX(" + (-1 * newLeft) + "px)");
+			// Create and display the ProjectListNav view and add it to the .MainView-content
+			var projectListNavPromise = brite.display("ProjectListNav", null, {
+				parent : view.$el.find(".MainView-left")
 			});
-		});
+			
+			// When the projectListNav is created, we get the list of project, and select the first one 
+			// by triggering the DO_SELECT_PROJECT application event 		
+			projectListNavPromise.done(function(){
+				// Once the ProjectListNav is displayed, we select the first project 
+				main.projectDao.list().done(function(projectList){
+					view.projectList = projectList; // keep the list in this object. TODO: needs to keep this list fresh
+					view.$el.trigger("DO_SELECT_PROJECT",{projectId:projectList[0].id});
+				});			
+		 	});			
+		 	
+		 	// clean the old child on transitionend
+			view.$mainPanelsInner.on("btransitionend",function(){
+				view.$mainPanelsInner.find("[data-state='old']").bRemove();
+			});
+	 	},
+	 	
+	 	events: {
+	 		"DO_SELECT_PROJECT": doSelectProject,
+	 		
+	 		"btap; .MainView-next": goNext, 
+	 		
+	 		"btap; .MainView-prev": goPrev
+	 	} 
 		
-		// clean the old child on transitionend
-		$mainPanelsInner.on("btransitionend",function(){
-			$mainPanelsInner.find("[data-state='old']").bRemove();
-		});
+	});
+	
+	
+	// --------- events --------- //
+	// This is optional, it gives a way to add some logic after the component is displayed to the user.
+	// This is a good place to add all the events binding and all	
+	function doSelectProject(event,extra){
+		var view = this;
 		
+		var $projectViewPanel = $("<div class='MainView-projectViewPanel current'></div>");
 		
-		// When the user click on the MainView-next
-		o.$element.on("btap",".MainView-next",function(){
-			var idx = brite.array.getIndex(o.projectList,"id",o.currentProjectId);
-			if (idx < o.projectList.length - 1){
-				var nextProject = o.projectList[idx + 1];
-				// just trigger the DO_SELECT_PROJECT
-				o.$element.trigger("DO_SELECT_PROJECT",{projectId:nextProject.id});
+		var oldIdx = brite.array.getIndex(view.projectList,"id",view.currentProjectId);
+		view.currentProjectId = extra.projectId;
+		var newIdx = brite.array.getIndex(view.projectList,"id",view.currentProjectId);
+		
+		var forward = (oldIdx < newIdx);
+		
+		brite.display("ProjectView", {projectId:extra.projectId}, {
+			parent : $projectViewPanel
+		}).done(function(){
+			var lastChild = view.$mainPanelsInner.children().filter(":last").attr("data-state","old");
+			var w = lastChild.width();
+			var newLeft = 0;
+			if (lastChild.length > 0){
+				if (forward){
+					newLeft = lastChild.position().left + w + 10;
+				}else{
+					newLeft = lastChild.position().left - w - 10;
+				}
 			}
-		});
-		
-		// When the user click on the MainView-prev
-		o.$element.on("btap",".MainView-prev",function(){
-			var idx = brite.array.getIndex(o.projectList,"id",o.currentProjectId);
-			if (idx > 0){
-				var nextProject = o.projectList[idx - 1];
-				// just trigger the DO_SELECT_PROJECT
-				o.$element.trigger("DO_SELECT_PROJECT",{projectId:nextProject.id});
-			}
-		});
+			$projectViewPanel.css("left",newLeft + "px");
+			view.$mainPanelsInner.append($projectViewPanel);
+			view.$mainPanelsInner.css("transform","translateX(" + (-1 * newLeft) + "px)");
+		});		
+	}
+	
+	function goNext(){
+		var view = this;
+		var idx = brite.array.getIndex(view.projectList,"id",view.currentProjectId);
+		if (idx < view.projectList.length - 1){
+			var nextProject = view.projectList[idx + 1];
+			// just trigger the DO_SELECT_PROJECT
+			view.$el.trigger("DO_SELECT_PROJECT",{projectId:nextProject.id});
+		}	 				
+	}
+	
+	function goPrev(){
+		var view = this;
+		var idx = brite.array.getIndex(view.projectList,"id",view.currentProjectId);
+		if (idx > 0){
+			var nextProject = view.projectList[idx - 1];
+			// just trigger the DO_SELECT_PROJECT
+			view.$el.trigger("DO_SELECT_PROJECT",{projectId:nextProject.id});
+		}	 			
 		
 	}
-	// --------- /Component Interface Implementation ---------- //
+	// --------- /events --------- //
 
-	// --------- Component Registration --------- //
-	// Here we register the component
-	brite.registerView("MainView", {emptyParent:true}, function() {
-		return new MainView();
-	});
-	// --------- Component Registration --------- //
 
 })(jQuery); 
