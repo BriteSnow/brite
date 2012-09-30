@@ -88,6 +88,7 @@
 			$projectViewPanel.css("left",newLeft + "px");
 			view.$mainPanelsInner.append($projectViewPanel);
 			view.$mainPanelsInner.css("transform","translateX(" + (-1 * newLeft) + "px)");
+			view.$el.trigger("PROJECT_SELECTION_CHANGE",{projectId:view.currentProjectId});
 		});		
 	}
 	

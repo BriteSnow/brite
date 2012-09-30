@@ -297,7 +297,7 @@ brite.version = "0.9.0-snapshot";
           dfd.resolve(componentDef);
         }else{ 
           dfd.reject("Component js file [" + resourceFile + 
-                     "] loaded, but it did not seem to have registered the component - it needs to call brite.registerComponent('" + name + 
+                     "] loaded, but it did not seem to have registered the view - it needs to call brite.registerView('" + name + 
                      "',...config...) - see documentation");        
         }
       }).fail(function(){
