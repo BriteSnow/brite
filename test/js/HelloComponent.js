@@ -21,8 +21,10 @@
 			helloWorlCount++;
 			data.count = helloWorlCount;
 			// we can assume that the template/HelloComponent.html has been loaded and added to the DOM
-			var $e = $($("#tmpl-HelloComponent").render(data));
-			return $e;
+			// since we have set loadTmpl = true
+			
+			// this will return a HTML string, which is valid also
+			return $("#tmpl-HelloComponent").render(data);
 		},
 
 		// The postDisplay will be called after the display
