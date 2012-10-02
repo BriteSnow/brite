@@ -37,8 +37,8 @@
     
     <!-- Display the main screen (which will display the sub components) -->
     <script type="text/javascript">
-    $(function(){
-      brite.display("MainView",null,{parent:$("#pageBody")});
+    $(document).ready(function(){
+      brite.display("MainView","#pageBody");
     });
     </script>
     

@@ -7,37 +7,64 @@
  */
 (function($) {
 
-	// --------- View Interface Implementation ---------- //
-	function ProjectEdit() {
-	};
-
-	ProjectEdit.prototype.create = function(data, config) {
+	brite.registerView("ProjectEdit",{emptyParent:true},{
 		
-		return main.projectDao.get(data.projectId).pipe(function(project){
-			var html = $("#tmpl-ProjectEdit").render({project:project});
-			var $e = $(html);
-			return $e;
-		});
-	}
-
-	// This is optional, it gives a way to add some logic after the View is displayed to the user.
-	// This is a good place to add all the events binding and all
-	ProjectEdit.prototype.postDisplay = function(data, config) {
-		var o = this;
+		create: function(data){
+			var view = this;
+			return main.projectDao.get(data.projectId).pipe(function(project){
+				view.project = project;
+				return $("#tmpl-ProjectEdit").render({project:project});
+			});			
+		}, 
 		
-		var $cancel = o.$element.find("header [data-action='cancel']");
-		$cancel.on("btap",function(){
-			o.$element.trigger("ProjectEdit_DONE");
-		});		
-	}
-	
-	// --------- /View Interface Implementation ---------- //
-	
-	// --------- View Registration --------- //
-	// Here we register the View
-	brite.registerView("ProjectEdit", {emptyParent:true}, function() {
-		return new ProjectEdit();
+		events: {
+			
+			// on CANCEL
+			"btap; header [data-action='cancel']" : function(){
+				this.$el.trigger("ProjectEdit_DONE");
+			},
+			
+			// on OK
+			"btap; header [data-action='ok']" : function(){
+				var view = this;
+				var $input = view.$el.find("input[data-prop='title']");
+				// save only if different value. 
+				if (hasDifferentValue.call(view,$input,"title")){
+					main.projectDao.update({id:view.project.id,title:$input.val()});
+				}
+				view.$el.trigger("ProjectEdit_DONE");
+			}, 
+			
+			// on edit title
+			"keyup; input[data-prop='title']" : function(event){
+				var view = this;
+				var $input = $(event.currentTarget);
+				if (hasDifferentValue.call(view,$input,"title")){
+					$input.addClass("changed");
+				}else{
+					$input.removeClass("changed");
+			 	}
+			}, 
+			
+			// when press Enter on an input, commit (click on ok)
+			"keyup; input" : function(event){
+				var view = this;
+				if (event.which === 13){
+					view.$el.find("header [data-action='ok']").trigger("btap");
+				}
+			} 
+			
+		}
+		
 	});
-	// --------- View Registration --------- //
+		
+	// return true if the value of the input is different and the view.project property
+	function hasDifferentValue($input,propName){
+		var view = this;
+		var inputVal = $input.val();
+		var projectVal = view.project[propName];
+		return (inputVal !== projectVal);
+	}
+
 
 })(jQuery); 

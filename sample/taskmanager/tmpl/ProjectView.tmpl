@@ -3,7 +3,6 @@
     <div class="card">
       <div class="card-face card-front">
         <header>
-          <div class="header-fav"><i class="{{if project.isFav}}icon-star{{else}}icon-star-empty{{/if}}" style="opacity:.5"></i></div>
           <h2>{{: project.title}}</h2>
           <div class="header-setting" data-action='editMode'><i class="icon-cog" style="opacity:.5"></i></div>
         </header>
@@ -14,7 +13,7 @@
                 <thead>
                   <tr>
                     <th class="check"></th>
-                    <th class="title">Title</th>
+                    <th class="title">Tasks</th>
                   </tr>
                 </thead>
               </table>
@@ -41,9 +40,11 @@
       {{for tasks}}
       <tr data-entity="Task" data-entity-id="{{:id}}" {{if done}}class="done"{{/if}}>
         <td class="check"><input data-prop="done" type="checkbox" {{if done}}checked="checked"{{/if}}/>
-          <i class="icon-ban-circle"></i>
+          
         </td>
-        <td class="title"><input data-prop="title" value="{{:title}}" /></td>
+        <td class="title"><input data-prop="title" value="{{:title}}" />
+          <i class="del-ico icon-ban-circle"></i>
+        </td>
       </tr>
       {{/for}}
       

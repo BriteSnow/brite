@@ -1,29 +1,18 @@
 /**
  * View: ProjectListNav
  *
- * Responsibilities:
- *   - Manage the list of project (create, delete, select, rename)
+ * Projects navigation view
  *
  */
 (function($) {
-
-	function ProjectListNav() {
-	};
 	
-	// --------- View Interface Implementation ---------- //
-	ProjectListNav.prototype.create = function(data, config) {
-		var html = $("#tmpl-ProjectListNav").render({projects:main.projectListTestData});
-		var $e = $(html);
-		return $e;
-	}
-	// --------- /View Interface Implementation ---------- //
+	brite.registerView("ProjectListNav",{
 
-	// --------- View Registration --------- //
-	// Here we register the View
-	brite.registerView("ProjectListNav", null, function() {
-		return new ProjectListNav();
+		create: function(){
+			return $("#tmpl-ProjectListNav").render({projects:main.projectListTestData});
+		}
+		
 	});
-	// --------- View Registration --------- //
 
 
 })(jQuery); 

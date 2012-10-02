@@ -128,7 +128,16 @@
   width: 15px;
 }
 
-.ProjectView td.check i{
+.ProjectView td.title{
+  position: relative;
+}
+
+.ProjectView td.title i{
+  position: absolute;
+  top: 8px; 
+  right: 10px; 
+  width: 16px; 
+  height: 16px;
   display: none;
 }
 
@@ -148,6 +157,8 @@
   position: absolute;
   top: 5px; right: 0px;
   width: 200px;
+  height: 36px;
+  overflow: hidden;
 }
 .delete-controls-inner{
   position: absolute;
@@ -180,15 +191,13 @@
   cursor: pointer;
 }
 
-.ProjectView .table-content.deleteMode td.check i{
+.ProjectView .table-content.deleteMode td.title i.del-ico{
   display: block;
+  float: right;
   margin-top: 5px;
   cursor: pointer;
 }
 
-.ProjectView .table-content.deleteMode td.check input{
-  display: none;
-}
 /* --- /deleteMode --- */
 
 
@@ -202,7 +211,7 @@
   border-bottom: solid 1px #ddd;
 }
 
-.ProjectView input[data-prop="title"]{
+.ProjectView tr input[data-prop="title"]{
   border: none;
   display: block;
   border: none;
@@ -211,8 +220,7 @@
 }
 
 .ProjectView tr.done{
-  background: #99ff99;
-  opacity: .2;
+  background: #ddffdd;
 }
 
 .ProjectView  .helper{

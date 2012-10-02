@@ -20,3 +20,7 @@
   position: absolute;
   top: 5px; right: 5px;
 }
+
+.ProjectEdit input.changed{
+  background-color: #FCF8E3;
+}

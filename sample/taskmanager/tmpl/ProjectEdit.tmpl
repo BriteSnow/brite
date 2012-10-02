@@ -2,7 +2,7 @@
 <div class="ProjectEdit">
    <header>
       <h2>Editing</h2>
-      <div class="controls"><span  data-action="save" class="btn btn-small btn-primary">OK</span> <button data-action="cancel" class="btn btn-small">Cancel</button></div>
+      <div class="controls"><span  data-action="ok" class="btn btn-small btn-primary">OK</span> <button data-action="cancel" class="btn btn-small">Cancel</button></div>
    </header>
    <section class="content withPadding">
       <div class="ProjectEdit-form form">
@@ -10,7 +10,7 @@
         <div class="control-group">
           <label class="control-label">Name</label>
           <div class="controls">
-            <input type="text" value="{{: project.title}}">
+            <input type="text" data-prop="title" value="{{: project.title}}">
           </div>
         </div>
         

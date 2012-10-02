@@ -8,11 +8,10 @@
 (function($) {
 	
 	brite.registerView("ProjectListNav",{
+		
 		create: function(){
 			return main.projectDao.list().pipe(function(projectList){
-				var html = $("#tmpl-ProjectListNav").render({projects:projectList});
-				var $e = $(html);
-				return $e;
+				return $("#tmpl-ProjectListNav").render({projects:projectList});
 			});
 		},
 		

@@ -12,10 +12,7 @@
 	brite.registerView("MainView", {emptyParent:true}, {
 		
 		create: function(data, config) {
-			var html = $("#tmpl-MainView").render(data);
-			var $e = $(html);
-			// always return the newly created HTML element (here wrapped in a jQuery object)
-			return $e;
+			return $("#tmpl-MainView").render(data);
 		},
 		
 		postDisplay: function(data,config){
