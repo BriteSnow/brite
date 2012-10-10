@@ -40,21 +40,32 @@
         <h2>Single btap bind</h2>
 		<div class="sTestSrc sTestShowSrc">
 		
-		
-		<div id="tapButton" class="button">Tap me</div>
-		
-		<div id="tapholdButton" class="button">Tap and Hold</div>
-		
-		<div id="touchButtonResult"></div>
-		
+		<div id="container">
+  		<div id="tapButton" class="button">Tap me</div>
+  		
+  		<div class="button tapme">Tapme 1</div>
+  		
+  		<div class="button tapme">Tapme 2</div>
+  		
+  		<div id="tapholdButton" class="button">Tap and Hold</div>
+  		
+  		<div id="touchButtonResult"></div>
+		</div>
 		
 		<script type="text/javascript">
 			$(function(){
 				var count = 0;
+				
+				var $container = $("#container");
+				
 				$("#tapButton").on("btap",function(){
 					$(this).toggleClass("on");
 				});
 				
+				$container.on("btap",".tapme",function(){
+				  $(this).toggleClass("on");
+				});
+
         $("#tapholdButton").on("btaphold",function(){
           $(this).toggleClass("on");
         });				
