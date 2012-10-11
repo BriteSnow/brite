@@ -1683,8 +1683,8 @@ var brite = brite || {};
 	}
 
 	var internalMethods = {
-		idName : true,
-		isDataChange : true
+		isDataChange : true, 
+		entityType: true
 	};
 	
 	var dataChangeMethodRegEx = /remove|delete|create|update/i;
