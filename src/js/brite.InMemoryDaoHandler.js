@@ -11,18 +11,18 @@
 	 * Note: since it is a in memory store, all the dao function return entity clone object to make sure to avoid
 	 *       the user to inadvertently change a stored entity.
 	 *
-	 * @param {String} objectType. create a table for dao with the Entity type (e.g., "User", "Task", or "Project").
+	 * @param {String} entityType. create a table for dao with the Entity type (e.g., "User", "Task", or "Project").
+	 * @param {Array} seed. Seed the store. Array of object with their id (if not, uuid will be generated)
 	 * @param {Object} opts. Options for this
 	 *                   opts.idName {String} the property name of the id value (default "id")
-	 *
-	 * @param {Array} seed. Seed the store. Array of object with their id (if not, uuid will be generated)
 	 */
-	function InMemoryDaoHandler(seed, opts) {
-		init.call(this,seed, opts);
+	function InMemoryDaoHandler(entityType,seed, opts) {
+		init.call(this,entityType,seed, opts);
 	}
 
 
-	function init(seed,opts) {
+	function init(entityType,seed,opts) {
+		this._entityType = entityType;
 		this._opts = $.extend({}, defaultOpts, opts);
 		this._idName = this._opts.idName;
 
@@ -46,18 +46,14 @@
 		}
 
 	}
+	
+	// --------- DAO Info Methods --------- //
+	InMemoryDaoHandler.prototype.entityType = function() {
+		return this._entityType;
+	}	
+	// --------- DAO Info Methods --------- //
 
 	// --------- DAO Interface Implementation --------- //
-	/**
-	 * DAO Interface: Return the property idName property
-	 * @param {string} the objectType
-	 * @return the id (this is not deferred), default value is "id"
-	 * @throws error if dao cannot be found
-	 */
-	InMemoryDaoHandler.prototype.getIdName = function() {
-		return this._idName || "id";
-	}
-
 	/**
 	 * DAO Interface. Return value directly since it is in memory.
 	 * @param {String} objectType

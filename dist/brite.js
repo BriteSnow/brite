@@ -1645,7 +1645,7 @@ var brite = brite || {};
 
 /**
  * @namespace brite.dao data manager layers to register, access DAOs.
- * DAOs are javascript objects that must implement the following CRUD methods get, list, create, update, remove, and the getIdName method.<br />
+ * DAOs are javascript objects that must implement the following CRUD methods get, list, create, update, remove methods.<br />
  * Signatures of these methods should match the corresponding brite.dao.** methods.<br />
  * <br />
  * Note that DAO CRUD methods can return directly the result or a deferred object. Also, it is important to note that brite.dao.*** CRUD access methods
@@ -1682,35 +1682,31 @@ var brite = brite || {};
 		return getDao(entityType);
 	}
 
+	var internalMethods = {
+		idName : true,
+		isDataChange : true
+	};
+	
+	var dataChangeMethodRegEx = /remove|delete|create|update/i;
+
+
 	/**
 	 * Register a DAO for a given object type. A DAO must implements the "CRUD" method, get, list, create, update, remove and must return (directly
 	 * or via deferred) the appropriate result value.
 	 *
-	 * @param {String} objectType the object type that this dao will represent
 	 * @param {DAO Oject} a Dao instance that implement the crud methods: get, find, create, update, remove.
 	 */
-	brite.registerDao = function(objectType, dao) {
-		
-		return this;
-	};
-
-	var internalMethods = {
-		getIdName : true,
-		isDataChange : true
-	};
-	var dataChangeMethods = {
-		create : true,
-		remove : true,
-		removeMany: true,
-		update : true, 
-		updateMany: true
-	};
-
-	brite.registerDao = function(entityType, daoHandler) {
+	brite.registerDao = function(daoHandler) {
 
 		var daoObject = {};
 		
-		daoHandler._entityType = entityType;
+		// support function or property
+		var entityType = ($.isFunction(daoHandler.entityType))?daoHandler.entityType():daoHandler.entityType;
+		
+		if (!entityType || typeof entityType !== "string"){
+			throw "Cannot register daoHandler because entityType '" + entityType + "' is not valid." + 
+			      " Make sure the daoHandler emplement .entityType() method which must return a string of the entity type"; 
+		}
 		
 		daoObject._entityType = entityType;
 		daoObject._handler = daoHandler;
@@ -1719,23 +1715,23 @@ var brite = brite || {};
 			// if it is a function and not an internalMethods
 			if ($.isFunction(daoHandler[k]) && !internalMethods[k]) {
 				var methodName = k;
-				var isDataChange = dataChangeMethods[methodName];
+				var isDataChange = dataChangeMethodRegEx.test(methodName);
 				
 				if (daoHandler.isDataChange){
 					isDataChange = isDataChange || daoHandler.isDataChange(methodName); 
 				}
 
-				daoObject[methodName] = (function(objectType, methodName, isDataChange) {
+				daoObject[methodName] = (function(entityType, methodName, isDataChange) {
 					return function() {
 						var resultObj = daoHandler[methodName].apply(daoHandler, arguments);
 						var resultPromise = wrapWithDeferred(resultObj);
 
-						_triggerOnDao(objectType, methodName, resultPromise);
+						_triggerOnDao(entityType, methodName, resultPromise);
 
 						resultPromise.done(function(result) {
-							_triggerOnResult(objectType, methodName, result);
+							_triggerOnResult(entityType, methodName, result);
 							if (isDataChange) {
-								brite.triggerDataChange(objectType, methodName, result);
+								brite.triggerDataChange(entityType, methodName, result);
 							}
 						});
 
@@ -1761,8 +1757,8 @@ var brite = brite || {};
 	/**
 	 * Build the arguments for all the brite.dao.on*** events from the arguments
 	 * Can be
-	 * - (objectTypes,actions,func,namespace)
-	 * - (objectTypes,func,namespace)
+	 * - (entityTypes,actions,func,namespace)
+	 * - (entityTypes,func,namespace)
 	 * - (func,namespace)
 	 *
 	 * Return an object with
@@ -2119,18 +2115,18 @@ var brite = brite || {};
 	 * Note: since it is a in memory store, all the dao function return entity clone object to make sure to avoid
 	 *       the user to inadvertently change a stored entity.
 	 *
-	 * @param {String} objectType. create a table for dao with the Entity type (e.g., "User", "Task", or "Project").
+	 * @param {String} entityType. create a table for dao with the Entity type (e.g., "User", "Task", or "Project").
+	 * @param {Array} seed. Seed the store. Array of object with their id (if not, uuid will be generated)
 	 * @param {Object} opts. Options for this
 	 *                   opts.idName {String} the property name of the id value (default "id")
-	 *
-	 * @param {Array} seed. Seed the store. Array of object with their id (if not, uuid will be generated)
 	 */
-	function InMemoryDaoHandler(seed, opts) {
-		init.call(this,seed, opts);
+	function InMemoryDaoHandler(entityType,seed, opts) {
+		init.call(this,entityType,seed, opts);
 	}
 
 
-	function init(seed,opts) {
+	function init(entityType,seed,opts) {
+		this._entityType = entityType;
 		this._opts = $.extend({}, defaultOpts, opts);
 		this._idName = this._opts.idName;
 
@@ -2154,18 +2150,14 @@ var brite = brite || {};
 		}
 
 	}
+	
+	// --------- DAO Info Methods --------- //
+	InMemoryDaoHandler.prototype.entityType = function() {
+		return this._entityType;
+	}	
+	// --------- DAO Info Methods --------- //
 
 	// --------- DAO Interface Implementation --------- //
-	/**
-	 * DAO Interface: Return the property idName property
-	 * @param {string} the objectType
-	 * @return the id (this is not deferred), default value is "id"
-	 * @throws error if dao cannot be found
-	 */
-	InMemoryDaoHandler.prototype.getIdName = function() {
-		return this._idName || "id";
-	}
-
 	/**
 	 * DAO Interface. Return value directly since it is in memory.
 	 * @param {String} objectType

@@ -82,19 +82,21 @@
         }
         
         // tell which custom methods is a datachange
+        /*
         CustomDao._dataChangeMethods = {removeAll:true};
         CustomDao.prototype.isDataChange = function(methodName){
           if (CustomDao._dataChangeMethods[methodName]){
             return true;
           }          
         }
+        */
         // --------- /CustomDao extending Brite.InMemoryDaoHandler --------- //
 				
 				
         var usersSeed = [{id:"001",name:"Mike Donavan",city:"San Francisco"},
                          {id:"002",name:"Jennifer Patrick",city:"Los Angeles"}];
                          
-        var userDao = brite.registerDao("User",new CustomDao(usersSeed));
+        var userDao = brite.registerDao(new CustomDao("User",usersSeed));
 				
 				$(function(){
 					var $userList = $("#userList");
@@ -105,8 +107,8 @@
 					},"namespace1"); 
 					
 					
-          brite.dao.onDataChange("User, Task","create, remove",function(event){
-            console.log("dao.onDataChange create or remove: " + event.daoEvent.action, event.daoEvent.result);
+          brite.dao.onDataChange("User, Task","create, remove, removeAll",function(event){
+            console.log("dao.onDataChange: " + event.daoEvent.action, event.daoEvent.result);
           },"namespace1"); 
           
 					brite.dao.onResult("User",function(event){

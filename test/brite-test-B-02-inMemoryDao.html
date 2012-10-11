@@ -25,7 +25,7 @@
     var usersSeed = [{id:"001",name:"Mike Donavan",city:"San Francisco"},
                      {id:"002",name:"Jennifer Aniston",city:"Los Angeles"}];
                      
-    var dao = brite.registerDao("User",new brite.InMemoryDaoHandler(usersSeed));
+    var dao = brite.registerDao(new brite.InMemoryDaoHandler("User",usersSeed));
   </script>
   
   
