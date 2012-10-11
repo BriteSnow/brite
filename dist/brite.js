@@ -2439,11 +2439,11 @@ brite.event = brite.event || {};
   // --------- btap & btaphold --------- //
   $.event.special.btap = {
 
-    setup : function(data, namespaces) {
+    add : function(handleObj) {
 
       var tapEvents = getTapEvents();
 
-      $(this).on(tapEvents.start, function(event) {
+      $(this).on(tapEvents.start, handleObj.selector, function(event) {
         var elem = this;
         var $elem = $(elem);
         

@@ -93,6 +93,31 @@
 		</div>
 		
 		
+		<h2>Deleguate btap two triggers</h2>
+		<div class="sTestSrc sTestShowSrc">
+			<div id="touchButtonsTwoTrigger">
+				<div class="wrap">
+					<div class="button button1">Click me</div>
+				</div>
+			</div>
+
+			<script type="text/javascript">
+			$(function(){
+				
+				var count = 0;
+				$("#touchButtonsTwoTrigger").on("btap",".button1",function(){
+				  $(this).toggleClass("on");
+					console.log("trigger event if twice");
+				});
+				
+				//just keep it here to test if the event trigger twice
+				$("#touchButtonsTwoTrigger .wrap").on("btap",".whateverElements",function(){
+				});
+				
+			});
+		</script>			
+		</div>
+		
 		
     </body>
 </html>
