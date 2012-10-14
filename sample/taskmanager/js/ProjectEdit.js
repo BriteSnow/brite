@@ -20,12 +20,12 @@
 		events: {
 			
 			// on CANCEL
-			"btap; header [data-action='cancel']" : function(){
+			"btap; [data-action='cancel']" : function(){
 				this.$el.trigger("ProjectEdit_DONE");
 			},
 			
 			// on OK
-			"btap; header [data-action='ok']" : function(){
+			"btap; [data-action='ok']" : function(){
 				var view = this;
 				var $input = view.$el.find("input[data-prop='title']");
 				// save only if different value. 

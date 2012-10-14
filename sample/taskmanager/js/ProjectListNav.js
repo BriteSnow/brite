@@ -10,9 +10,14 @@
 	brite.registerView("ProjectListNav",{
 		
 		create: function(){
-			return main.projectDao.list().pipe(function(projectList){
-				return $("#tmpl-ProjectListNav").render({projects:projectList});
-			});
+			return $("#tmpl-ProjectListNav").html();
+		},
+		
+		postDisplay: function(){
+			var view = this;
+			view.$listContainer = view.$el.find(".list-container");
+			
+			refreshList.call(view);
 		},
 		
 		events: {
@@ -39,11 +44,8 @@
 	function refreshList(){
 		var view = this;
 		main.projectDao.list().done(function(projectList){
-			var html = $("#tmpl-ProjectListNav").render({projects:projectList});
-			var $e = $(html);
-			view.$element.empty().append($e.children());
-			showProjectSelected.call(view,view.selectedProjectId);
-		});				
+			view.$listContainer.html($("#tmpl-ProjectListNav-list").render({projects:projectList}));
+		});		
 	}
 
 	function showProjectSelected(projectId){

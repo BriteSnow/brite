@@ -14,7 +14,7 @@
 		// Tell to load the template (by default template/[ComponentName].html so, here it will be template/HelloComponent).
 		loadTmpl: true
 	},
-	//Component factory build the component $element.
+	//Component factory build the component $el.
 	//Note: since this is just a JS Structure it will be clone when brite create an instance of this component (on brite.display...)
 	{
 		create : function(data) {
@@ -29,7 +29,7 @@
 
 		// The postDisplay will be called after the display
 		postDisplay : function(data) {
-			this.$element.click(function() {
+			this.$el.click(function() {
 				alert("You clicked on " + $(this).html());
 			});
 

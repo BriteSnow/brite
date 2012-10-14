@@ -4,25 +4,14 @@
       <div class="card-face card-front">
         <header>
           <h2>{{: project.title}}</h2>
-          <div class="header-setting" data-action='editMode'><i class="icon-cog" style="opacity:.5"></i></div>
+          <div class="header-setting" data-action='editMode'><i class="icon-edit" style="opacity:.5"></i></div>
         </header>
-        <section class="content">
-          <div class="ProjectView-taskTable">
-            <div class="table-header">
-              <table class="table ">
-                <thead>
-                  <tr>
-                    <th class="check"></th>
-                    <th class="title">Tasks</th>
-                  </tr>
-                </thead>
-              </table>
-              <div class="del"><i class="icon-trash"></i></div>
-            </div>
-            <div class="table-content">      
-              {{for #data tmpl="#tmpl-ProjectView-taskTable-content" /}}
-            </div>
-          </div>
+        <section class="heading">
+          <label>Tasks</label>
+          <div class="del"><i class="icon-trash"></i></div>
+        </section>
+        <section class="content">      
+          {{for #data tmpl="#tmpl-ProjectView-taskTable-content" /}}
         </section>
       </div> <!-- /.card-front -->
       

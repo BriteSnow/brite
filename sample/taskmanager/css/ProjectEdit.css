@@ -16,11 +16,21 @@
   text-shadow: #333 0px 1px 0;
 }
 
-.ProjectEdit header .controls{
-  position: absolute;
-  top: 5px; right: 5px;
+.ProjectEdit input{
+  width: 90%;
+  max-width: 400px;
 }
-
 .ProjectEdit input.changed{
   background-color: #FCF8E3;
+}
+
+.ProjectEdit .footer{
+  border-top: solid 1px #ddd;
+  position: absolute;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  height: 48px;
+  padding-top: 10px;
+  background: #f0f0f0;
 }

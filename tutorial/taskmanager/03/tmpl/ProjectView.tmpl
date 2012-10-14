@@ -7,14 +7,18 @@
       <label>Tasks</label>
     </section>
     <section class="content">      
-      <table class="table">
-          {{for tasks}}
-          <tr {{if done}}class="done"{{/if}}>
-            <td class="title">{{:title}}</td>
-          </tr>
-          {{/for}}        
-      </table>
+
     </section>    
   </div>
+</script>
+
+<script id="tmpl-ProjectView-taskTable-content" type="text/html">
+  <table class="table">
+      {{for tasks}}
+      <tr {{if done}}class="done"{{/if}}>
+        <td class="title">{{:title}}</td>
+      </tr>
+      {{/for}}        
+  </table>  
 </script>
 

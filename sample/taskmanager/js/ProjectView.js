@@ -39,7 +39,7 @@
 			},
 			
 			// User click on the delete icon
-			"click; .table-header .del" : startDeleteMode,
+			"click; section.header .del" : startDeleteMode,
 			
 			// Handle the task rename
 			"focus; [data-entity='Task'] input[data-prop='title']": startTaskRename,
@@ -64,14 +64,13 @@
 				// if it is the same Project, then, update it
 				if (daoEvent.result && daoEvent.result.id === view.projectId){
 					view.project = daoEvent.result;
-					view.$element.find("header h2").text(view.project.title);
+					view.$el.find("header h2").text(view.project.title);
 				}				
 			}
 		}
 	});
 	
-	// --------- Events --------- //
-	
+	// --------- Event Handlers for Project Edit --------- //
 	function startProjectEdit(){
 		var view = this;
 		console.log("projectId: " + view.projectId);
@@ -84,7 +83,10 @@
 		var view = this;
 	  view.$card.removeClass("flipped");		
 	}
+	// --------- /Event Handlers for Project Edit --------- //
 	
+	
+	// --------- Event Handlers for Task Creation --------- //
 	// start the task creation logic 
 	// @param event.currentTarget must be the new task input element
 	function startTaskCreate(event){
@@ -105,7 +107,7 @@
 					// Note: the DAO event listeners are triggered first, 
 					//       since they are bound before the promise is returned.
 					//       So, this is why, here the table will be refreshed, and we can set the new focus.  
-					view.$element.find(".newTask input").focus();
+					view.$el.find(".newTask input").focus();
 				});
 			}
 			// press ESC
@@ -122,7 +124,10 @@
 		$input.val("");
 		$input.parent().find(".helper").remove();
 	}
+	// --------- /Event Handlers for Task Creation --------- //	
 	
+	
+	// --------- Event Handlers for Task Rename --------- //	
 	// Starting the rename logic
 	// @param event.currentTarget must be the task input element
 	function startTaskRename(event){
@@ -168,13 +173,15 @@
 		$input.data("oldValue",null);
 		$input.parent().find(".helper").remove();		
 	}
-	
+	// --------- /Event Handlers for Task Rename --------- //
+		
+	// --------- Event Handlers for Tasks Remove --------- //	
 	function startDeleteMode(event){
 		var view = this;
 		// create the delete-controls element
 		var $controls = $($("#tmpl-ProjectView-delControls").render());
 		
-		view.$el.find(".table-header").append($controls);
+		view.$el.find("section.header").append($controls);
 		
 		var $inner = $controls.find(".delete-controls-inner");
 		
@@ -183,7 +190,7 @@
 		},10);
 		
 		// add the deleteMode class and set component flag
-		var $tableContent = view.$el.find(".table-content");
+		var $tableContent = view.$el.find("section.content");
 		$tableContent.addClass("deleteMode");
 		view.deleteMode = true;
 		
@@ -236,17 +243,19 @@
 		}		
 	}
 	
-	// --------- /Events --------- //
+	// --------- Event Handlers for Tasks Remove --------- //
 	
+	// --------- Private Methods --------- //
 	function refreshTable(){
 		var view = this;
 		
 		return main.taskDao.list({match:{projectId:view.projectId}}).done(function(taskList){
-			var $tableContent = view.$element.find(".table-content").empty();
+			var $tableContent = view.$el.find("section.content").empty();
 			var taskTableHtml = $("#tmpl-ProjectView-taskTable-content").render({tasks:taskList});
 			$tableContent.html(taskTableHtml);			
 		});
 	}
+	// --------- /Private Methods --------- //
 	
 	var createHelperHtml = '<small class="helper">Press [ENTER] to create, or [ESC] to cancel.</small>';
 	var updateHelperHtml = '<small class="helper">Press [ENTER] to update, or [ESC] to cancel.</small>';
