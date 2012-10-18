@@ -3,7 +3,7 @@
  * 
  * Main view of the application. Create and manage the sub views. 
  */
-(function($) {
+(function() {
 	
 	brite.registerView("MainView",{emptyParent:true},{
 		
@@ -15,11 +15,13 @@
     postDisplay: function(){
       var view = this;
       
-      // Display the two sub-views
-      brite.display("ProjectListNav",view.$el.find(".MainView-left"));
-      brite.display("ProjectView",view.$el.find(".MainView-projectViewPanel"));
+			// Create and display the ProjectListNav view and add it to the .MainView-content
+			brite.display("ProjectListNav", view.$el.find(".MainView-left"));
+			
+			// for now, just hardcode the first project to display
+			brite.display("ProjectView",view.$el.find(".MainView-projectViewPanel"),{projectId:"001"});
     }
 			
 	});
 
-})(jQuery); 
+})(); 

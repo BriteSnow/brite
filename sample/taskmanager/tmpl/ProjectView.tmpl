@@ -11,7 +11,7 @@
           <div class="del"><i class="icon-trash"></i></div>
         </section>
         <section class="content">      
-          {{for #data tmpl="#tmpl-ProjectView-taskTable-content" /}}
+          {{for #data tmpl="#tmpl-ProjectView-taskList" /}}
         </section>
       </div> <!-- /.card-front -->
       
@@ -23,7 +23,7 @@
 </script>
 
 
-<script id="tmpl-ProjectView-taskTable-content" type="text/html">
+<script id="tmpl-ProjectView-taskList" type="text/html">
   <table class="table">
     <tbody>
       {{for tasks}}

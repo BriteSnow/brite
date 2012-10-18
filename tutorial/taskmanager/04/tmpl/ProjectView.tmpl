@@ -16,7 +16,7 @@
   <table class="table">
       {{for tasks}}
       <tr data-entity="Task" data-entity-id="{{:id}}" {{if done}}class="done"{{/if}}>
-        <td class="title">{{:title}}</td>
+        <td class="title">{{:title}} <i class="icon-trash"></i></td>
       </tr>
       {{/for}}        
   </table>  

@@ -12,12 +12,12 @@
   color: rgba(100,100,100,.5);
 }
 
-.ProjectListNav > ul{
+.ProjectListNav ul{
   margin: 0;
   padding: 0;
 }
 
-.ProjectListNav > ul >  li{
+.ProjectListNav ul li{
   list-style: none;
   margin: 0;
   padding: 5px 0 5px 10px;
@@ -25,6 +25,6 @@
   cursor: pointer;
 }
 
-.ProjectListNav > ul > li > i{
-  margin-right: 10px;
+.ProjectListNav ul li.sel{
+  font-weight: bold;
 }

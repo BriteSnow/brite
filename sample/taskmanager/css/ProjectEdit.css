@@ -24,6 +24,10 @@
   background-color: #FCF8E3;
 }
 
+.ProjectEdit section.content{
+  top: 30px;
+}
+
 .ProjectEdit .footer{
   border-top: solid 1px #ddd;
   position: absolute;

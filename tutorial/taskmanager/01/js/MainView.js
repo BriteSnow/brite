@@ -6,7 +6,7 @@
  *   - Will create all the necessary sub views
  *   - Manage all the application wide events
  */
-(function($) {
+(function() {
 	
 	brite.registerView("MainView",{emptyParent:true},{
 		
@@ -17,4 +17,4 @@
 			
 	});
 
-})(jQuery); 
+})(); 

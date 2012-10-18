@@ -24,7 +24,8 @@
 		 	// cache some fixed elements
 		 	view.$card = view.$el.find(".card"); 
 		 	view.$cardBack = view.$el.find(".card-back");
-		 	view.$cardFront = view.$el.find(".card-front");			
+		 	view.$cardFront = view.$el.find(".card-front");		
+		 	view.$sectionContent = view.$el.find("section.content"); 	
 		},
 		
 		events: {
@@ -250,9 +251,8 @@
 		var view = this;
 		
 		return main.taskDao.list({match:{projectId:view.projectId}}).done(function(taskList){
-			var $tableContent = view.$el.find("section.content").empty();
-			var taskTableHtml = $("#tmpl-ProjectView-taskTable-content").render({tasks:taskList});
-			$tableContent.html(taskTableHtml);			
+			var taskTableHtml = $("#tmpl-ProjectView-taskList").render({tasks:taskList});
+			view.$sectionContent.html(taskTableHtml);			
 		});
 	}
 	// --------- /Private Methods --------- //

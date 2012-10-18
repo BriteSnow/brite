@@ -4,7 +4,7 @@
  * Projects navigation view
  *
  */
-(function($) {
+(function() {
 	
 	brite.registerView("ProjectListNav",{
 
@@ -14,5 +14,4 @@
 		
 	});
 
-
-})(jQuery); 
+})(); 

@@ -4,7 +4,7 @@
  * View showing the project panel and manage all the edits related to a project and its tasks.
  *
  */
-(function($) {
+(function() {
 	
 	brite.registerView("ProjectView",{
 		create: function(){
@@ -12,4 +12,4 @@
 		}
 	});
 	
-})(jQuery); 
+})(); 

@@ -19,6 +19,7 @@
 
 .ProjectListNav ul li{
   list-style: none;
+  color: #555;
   margin: 0;
   padding: 5px 0 5px 10px;
   opacity: .8;
@@ -27,4 +28,5 @@
 
 .ProjectListNav ul li.sel{
   font-weight: bold;
+  color: #000;
 }

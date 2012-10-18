@@ -3,7 +3,7 @@
  * 
  * Main view of the application. Create and manage the sub views. 
  */
-(function($) {
+(function() {
 	
 	brite.registerView("MainView",{emptyParent:true},{
 		
@@ -22,4 +22,4 @@
 			
 	});
 
-})(jQuery); 
+})(); 

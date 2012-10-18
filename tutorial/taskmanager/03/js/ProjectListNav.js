@@ -5,7 +5,7 @@
  *   - Manage the list of project (create, delete, select, rename)
  *
  */
-(function($) {
+(function() {
 	
 	brite.registerView("ProjectListNav",{
 		
@@ -19,7 +19,7 @@
 			// caching for future use
 			view.$listContainer = view.$el.find(".list-container");
 
-			// all the view private method to refresh the project list. 			
+			// call the view's private method to refresh the project list. 			
 			refreshList.call(view);
 		}
 	});
@@ -36,5 +36,4 @@
 		});		
 	}	
 
-
-})(jQuery); 
+})(); 
