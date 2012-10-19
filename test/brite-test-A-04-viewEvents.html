@@ -6,8 +6,8 @@
 
 		<!-- Generic Test Includes -->
 		<link rel="stylesheet" href="css/sTestHelper.css"/>
-		<link rel="stylesheet" href="../extra/bootstrap/css/bootstrap.css" />
-		<link rel="stylesheet" href="../extra/bootstrap/css/bootstrap-responsive.css" />
+		<link rel="stylesheet" href="../others/bootstrap/css/bootstrap.css" />
+		<link rel="stylesheet" href="../others/bootstrap/css/bootstrap-responsive.css" />
 		
 		
 		<script type="text/javascript" src="../js-dependencies/jquery.js" ></script>
@@ -72,7 +72,7 @@
     var usersSeed = [{id:"001",name:"Mike Donavan",city:"San Francisco"},
                      {id:"002",name:"Jennifer Patrick",city:"Los Angeles"}];
                      
-    var userDao = brite.registerDao("User",new brite.InMemoryDaoHandler(usersSeed));      
+    var userDao = brite.registerDao(new brite.InMemoryDaoHandler("User",usersSeed));      
     </script>
     
     <!-- The UserListView Component -->
@@ -169,7 +169,7 @@
 
 			<div>
 				
-				<h3>Create new User (<span class='action' id="removeAll">Remove All</span> )</h3>
+				<h3>Create new User</h3>
 				<div>User Name: <input id="userNameIpt" type="text" /> <button class="btn btn-primary" id="userCreateBut">Create</button></div>
 				
 				<!-- when click on create -->
