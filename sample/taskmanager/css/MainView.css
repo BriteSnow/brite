@@ -53,6 +53,7 @@
   left: 0; 
   right: 0;
   -webkit-transition: -webkit-transform .5s;
+  -moz-transition: -moz-transform .5s;
 }
 
 .MainView-projectViewPanel{
