@@ -40,7 +40,7 @@
 			},
 			
 			// User click on the delete icon
-			"click; section.header .del" : startDeleteMode,
+			"click; section.heading .del" : startDeleteMode,
 			
 			// Handle the task rename
 			"focus; [data-entity='Task'] input[data-prop='title']": startTaskRename,
@@ -77,12 +77,22 @@
 		console.log("projectId: " + view.projectId);
  		brite.display("ProjectEdit",view.$cardBack,{projectId:view.projectId}).done(function(){
  			view.$card.addClass("flipped");
+ 			
+ 			/* --------- for opera --------- */
+ 			$("body.is-opera .card-front").hide();
+ 			$("body.is-opera .card-back").show();
+ 			/* --------- /for opera --------- */
  		});		
 	}
 	
 	function endProjectEdit(){
 		var view = this;
-	  view.$card.removeClass("flipped");		
+	  	view.$card.removeClass("flipped");	
+	  	
+	  	/* --------- for opera --------- */
+	  	$("body.is-opera .card-front").show();
+		$("body.is-opera .card-back").hide();	
+		/* --------- /for opera --------- */
 	}
 	// --------- /Event Handlers for Project Edit --------- //
 	
@@ -182,7 +192,7 @@
 		// create the delete-controls element
 		var $controls = $($("#tmpl-ProjectView-delControls").render());
 		
-		view.$el.find("section.header").append($controls);
+		view.$el.find("section.heading").append($controls);
 		
 		var $inner = $controls.find(".delete-controls-inner");
 		
@@ -241,6 +251,13 @@
 			$controls.find(".delete-controls-inner").removeClass("show").on("btransitionend",function(){
 				$controls.remove();
 			});
+			
+			/* --------- for opera and mozilla--------- */
+			if($.browser.opera || $.browser.mozilla){
+	  			$controls.find(".delete-controls-inner").removeClass("show")
+				$controls.remove();
+			}
+			/* --------- /for opera and mozilla--------- */
 		}		
 	}
 	

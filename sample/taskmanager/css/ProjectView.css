@@ -9,8 +9,10 @@
   height: 100%;
   -webkit-transform-style: preserve-3d;
   -moz-transform-style: preserve-3d;
+  -o-transform-style: preserve-3d;
   -webkit-transition: -webkit-transform .5s;
   -moz-transition: -moz-transform .5s;
+  -o-transition: -o-transform .5s;
 }
 
 .ProjectView .card-face{
@@ -40,12 +42,14 @@
 .ProjectView .card-back{
   -webkit-transform: rotateY( -180deg );
   -moz-transform: rotateY( -180deg );
+  -o-transform:rotateY(-180deg); /* Opera */
   transform: rotateY( -180deg );
 }
 
 .ProjectView .card.flipped {
   -webkit-transform: rotateY( 180deg );
   -moz-transform: rotateY( 180deg );
+  -o-transform:rotateY(-180deg); /* Opera */
   transform: rotateY( 180deg );
 }
 
@@ -211,6 +215,9 @@
 
 .delete-controls-inner.show{
   -webkit-transform: translate(-140px,0px);
+  -moz-transform: translate(-140px,0px);
+  -o-transform:translate(-140px,0px); /* Opera */
+  transform: translate(-140px,0px);
 }
 /* --- /delete controls --- */
 
@@ -242,5 +249,9 @@
 /* --- /deleteMode --- */
 
 
-
+/* --------- for opera --------- */
+.is-opera .card-back{
+	display:none;
+}
+/* --------- /for opera --------- */
 

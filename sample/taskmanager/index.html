@@ -49,7 +49,11 @@
     <!-- Display the main screen (which will display the sub components) -->
     <script type="text/javascript">
     $(function(){
-      brite.display("MainView","#pageBody");
+    	if($.browser.opera){
+			$("body").addClass("is-opera");
+		}	
+    	
+      	brite.display("MainView","#pageBody");
     });
     </script>
     
