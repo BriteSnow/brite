@@ -112,44 +112,48 @@ brite.event = brite.event || {};
   
   // --------- btap & btaphold --------- //
   $.event.special.btap = {
-
-    add : function(handleObj) {
-
-      var tapEvents = getTapEvents();
-
-      $(this).on(tapEvents.start, handleObj.selector, function(event) {
-        var elem = this;
-        var $elem = $(elem);
-        
-        var origTarget = event.target, startEvent = event, timer;
-        
-        function handleEnd(event){
-          clearAll();
-          if (event.target === origTarget && !_dragging){
-            // we take the pageX and pageY of the start event (because in touch, touchend does not have pageX and pageY)
-            brite.event.fixTouchEvent(startEvent);
-            triggerCustomEvent(elem, event,{type:"btap",pageX: startEvent.pageX,pageY: startEvent.pageY});
-          }
-        }
-        
-        function clearAll(){
-          clearTimeout(timer);
-          $elem.off(tapEvents.end,handleEnd);
-        }  
-        
-        $elem.on(tapEvents.end,handleEnd);
-        
-        timer = setTimeout(function() {
-          if (!_dragging){
-            brite.event.fixTouchEvent(startEvent);
-            triggerCustomEvent( elem, startEvent,{type:"btaphold"});
-          }
-        }, 750 );
-      });
-
-    }
-
+    add: btabAddHandler
   }; 
+  
+  $.event.special.btaphold = {
+    add: btabAddHandler
+  }; 
+  
+	function btabAddHandler(handleObj) {
+
+    var tapEvents = getTapEvents();
+
+    $(this).on(tapEvents.start, handleObj.selector, function(event) {
+      var elem = this;
+      var $elem = $(elem);
+      
+      var origTarget = event.target, startEvent = event, timer;
+      
+      function handleEnd(event){
+        clearAll();
+        if (event.target === origTarget && !_dragging){
+          // we take the pageX and pageY of the start event (because in touch, touchend does not have pageX and pageY)
+          brite.event.fixTouchEvent(startEvent);
+          triggerCustomEvent(elem, event,{type:"btap",pageX: startEvent.pageX,pageY: startEvent.pageY});
+        }
+      }
+      
+      function clearAll(){
+        clearTimeout(timer);
+        $elem.off(tapEvents.end,handleEnd);
+      }  
+      
+      $elem.on(tapEvents.end,handleEnd);
+      
+      timer = setTimeout(function() {
+        if (!_dragging){
+          brite.event.fixTouchEvent(startEvent);
+          triggerCustomEvent( elem, startEvent,{type:"btaphold"});
+        }
+      }, 750 );
+    });
+
+  }  
 
 
   linkSpecialEventsTo(["btaphold"],"btap");
@@ -159,79 +163,86 @@ brite.event = brite.event || {};
   
   // --------- bdrag* --------- //
   var BDRAGSTART="bdragstart",BDRAGMOVE="bdragmove",BDRAGEND="bdragend";
+  
+  // Note: those below are part of the drop events, but are not supported yet.
+  //       Need to think some more.
   var BDRAGENTER="bdragenter",BDRAGOVER="bdragover",BDRAGLEAVE="bdragleave",BDROP="bdrop";
   
   var dragThreshold = 5;
   
-  $(function(){
-    //$("body").css("-webkit-user-select","none");
-  });
-  $.event.special[BDRAGMOVE] = {
 
-    setup : function(data, namespaces) {
-      
-      var tapEvents = getTapEvents();
-      
-      $(this).on(tapEvents.start, function(event) {
-        var elem = this;
-        var $elem = $(this);
-        var dragStarted = false;
-        var startEvent = event;
-        var startPagePos = brite.event.eventPagePosition(startEvent);
-        var origTarget = event.target;
-        var $origTarget = $(origTarget);
-        
-        var $document = $(document);
-        var uid = "_" + brite.uuid(7);
-        
-        // drag move (and start)
-        $document.on(tapEvents.move + "." + uid,function(event){
-          
-          var currentPagePos = brite.event.eventPagePosition(event);
-          // fix a bug on Chrome that always change the cursor to text
-          $("body").css("-webkit-user-select","none");
-          
-          if (!dragStarted){
-            if(Math.abs(startPagePos.pageX - currentPagePos.pageX) > dragThreshold || Math.abs(startPagePos.pageY - currentPagePos.pageY) > dragThreshold) {
-              dragStarted = true;
-              _dragging = true;
-              $origTarget.data("bDragCtx", {});
-              var bextra = buildDragExtra(event, $origTarget, BDRAGSTART);
-              triggerCustomEvent( origTarget, event,{type:BDRAGSTART,target:origTarget,bextra:bextra});  
-              
-              event.stopPropagation();
-              event.preventDefault();
-              
-            }
-          }
-          
-          if(dragStarted) {
-            var bextra = buildDragExtra(event, $origTarget, BDRAGMOVE);
-            triggerCustomEvent( origTarget, event,{type:BDRAGMOVE,target:origTarget,bextra:bextra});
-            event.stopPropagation();
-            event.preventDefault();
-          }
-        });
-        
-        // drag end
-        $document.on(tapEvents.end + "." + uid, function(event){
-          // chrome fix cleanup (remove the hack)
-          $("body").css("-webkit-user-select","");
-          if (dragStarted){
-            var bextra = buildDragExtra(event, $origTarget, BDRAGEND);
-            triggerCustomEvent( origTarget, event,{type:BDRAGEND,target:origTarget,bextra:bextra});
-            event.stopPropagation();
-            event.preventDefault();            
-          }  
-          $document.off("." + uid);
-          _dragging = false;
-        });
-            
-      });
-    }
+  $.event.special[BDRAGSTART] = {
+    add : bdragAddHandler
+  };
+
+  $.event.special[BDRAGMOVE] = {
+    add : bdragAddHandler
+  };
+
+  $.event.special[BDRAGEND] = {
+    add : bdragAddHandler
   };
   
-  linkSpecialEventsTo([BDRAGSTART,BDRAGEND],BDRAGMOVE);
+  function bdragAddHandler(handleObj) {
+    var tapEvents = getTapEvents();
+    $(this).on(tapEvents.start, handleObj.selector, function(event) {
+      var elem = this;
+      var $elem = $(this);
+      var dragStarted = false;
+      var startEvent = event;
+      var startPagePos = brite.event.eventPagePosition(startEvent);
+      var origTarget = event.target;
+      var $origTarget = $(origTarget);
+      
+      var $document = $(document);
+      var uid = "_" + brite.uuid(7);
+      
+      // drag move (and start)
+      $document.on(tapEvents.move + "." + uid,function(event){
+        
+        var currentPagePos = brite.event.eventPagePosition(event);
+        // fix a bug on Chrome that always change the cursor to text
+        $("body").css("-webkit-user-select","none");
+        
+        if (!dragStarted){
+          if(Math.abs(startPagePos.pageX - currentPagePos.pageX) > dragThreshold || Math.abs(startPagePos.pageY - currentPagePos.pageY) > dragThreshold) {
+            dragStarted = true;
+            _dragging = true;
+            $origTarget.data("bDragCtx", {});
+            var bextra = buildDragExtra(event, $origTarget, BDRAGSTART);
+            triggerCustomEvent( origTarget, event,{type:BDRAGSTART,target:origTarget,bextra:bextra});  
+            
+            event.stopPropagation();
+            event.preventDefault();
+            
+          }
+        }
+        
+        if(dragStarted) {
+          var bextra = buildDragExtra(event, $origTarget, BDRAGMOVE);
+          triggerCustomEvent( origTarget, event,{type:BDRAGMOVE,target:origTarget,bextra:bextra});
+          event.stopPropagation();
+          event.preventDefault();
+        }
+      });
+      
+      // drag end
+      $document.on(tapEvents.end + "." + uid, function(event){
+        // chrome fix cleanup (remove the hack)
+        $("body").css("-webkit-user-select","");
+        if (dragStarted){
+          var bextra = buildDragExtra(event, $origTarget, BDRAGEND);
+          triggerCustomEvent( origTarget, event,{type:BDRAGEND,target:origTarget,bextra:bextra});
+          event.stopPropagation();
+          event.preventDefault();            
+        }  
+        $document.off("." + uid);
+        _dragging = false;
+      });
+          
+    });
+  }
+  
   
    /**
    * Build the extra event info for the drag event. 

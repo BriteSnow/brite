@@ -1641,3 +1641,1030 @@ brite.ua = {};
 
 // ------ /brite.gtx ------- //
 // ----------------------- //
+var brite = brite || {};
+
+/**
+ * @namespace brite.dao data manager layers to register, access DAOs.
+ * DAOs are javascript objects that must implement the following CRUD methods get, list, create, update, remove methods.<br />
+ * Signatures of these methods should match the corresponding brite.dao.** methods.<br />
+ * <br />
+ * Note that DAO CRUD methods can return directly the result or a deferred object. Also, it is important to note that brite.dao.*** CRUD access methods
+ * will always return deferred object (either the DAO return deferred, or a wrapped deferred if the DAO method did not return a deferred)<br />
+ * <br />
+ * The deferred pattern for daos allows the application to be agnostic about the call mode, synchronous or asynchronous (e.g. Ajax, Workers, and other callback based called),
+ * and consequently offer the maximum flexibility during development and production. It also enforce a good practice on how to build the UI components.<br />
+ * <br />
+ * If there is a need to access the daos result directly, the brite.sdm ("straight dm") can be used.
+ */
+// --------- DAO Support --------- //
+(function($) {
+
+	var daoDic = {};
+
+	//data change listeners
+	var daoChangeEventListeners = {};
+
+	//daoListeners
+	var daoListeners = {};
+
+	function getDao(objectType) {
+		var dao = daoDic[objectType];
+		if (dao) {
+			return dao;
+		} else {
+			var er = "Cannot find the DAO for objectType: " + objectType;
+			brite.log.error(er);
+			throw er;
+		}
+	};
+
+	brite.dao = function(entityType) {
+		return getDao(entityType);
+	}
+
+	var internalMethods = {
+		isDataChange : true, 
+		entityType: true
+	};
+	
+	var dataChangeMethodRegEx = /remove|delete|create|update/i;
+
+
+	/**
+	 * Register a DAO for a given object type. A DAO must implements the "CRUD" method, get, list, create, update, remove and must return (directly
+	 * or via deferred) the appropriate result value.
+	 *
+	 * @param {DAO Oject} a Dao instance that implement the crud methods: get, find, create, update, remove.
+	 */
+	brite.registerDao = function(daoHandler) {
+
+		var daoObject = {};
+		
+		// support function or property
+		var entityType = ($.isFunction(daoHandler.entityType))?daoHandler.entityType():daoHandler.entityType;
+		
+		if (!entityType || typeof entityType !== "string"){
+			throw "Cannot register daoHandler because entityType '" + entityType + "' is not valid." + 
+			      " Make sure the daoHandler emplement .entityType() method which must return a string of the entity type"; 
+		}
+		
+		daoObject._entityType = entityType;
+		daoObject._handler = daoHandler;
+
+		$.each(daoHandler, function(k, v) {
+			// if it is a function and not an internalMethods
+			if ($.isFunction(daoHandler[k]) && !internalMethods[k]) {
+				var methodName = k;
+				var isDataChange = dataChangeMethodRegEx.test(methodName);
+				
+				if (daoHandler.isDataChange){
+					isDataChange = isDataChange || daoHandler.isDataChange(methodName); 
+				}
+
+				daoObject[methodName] = (function(entityType, methodName, isDataChange) {
+					return function() {
+						var resultObj = daoHandler[methodName].apply(daoHandler, arguments);
+						var resultPromise = wrapWithDeferred(resultObj);
+
+						_triggerOnDao(entityType, methodName, resultPromise);
+
+						resultPromise.done(function(result) {
+							_triggerOnResult(entityType, methodName, result);
+							if (isDataChange) {
+								brite.triggerDataChange(entityType, methodName, result);
+							}
+						});
+
+						return resultPromise;
+					};
+				})(entityType, methodName, isDataChange);
+			}
+		});
+		
+		
+		daoDic[entityType] = daoObject;
+		
+		if ($.isFunction(daoObject.init)){
+			daoObject.init(entityType);
+		}
+		
+		return daoObject;
+	}
+
+	// --------- Internal Utilities For Dao Events --------- //
+	var _ALL_ = "_ALL_";
+
+	/**
+	 * Build the arguments for all the brite.dao.on*** events from the arguments
+	 * Can be
+	 * - (entityTypes,actions,func,namespace)
+	 * - (entityTypes,func,namespace)
+	 * - (func,namespace)
+	 *
+	 * Return an object with
+	 *   .events (with the namespace)
+	 *   .objectTypes (as class css selector, ".User, .Task"
+	 *   .func the function to register
+	 *   .namespace
+	 */
+	function buildDaoOnEventParamMap(args) {
+		var i, val, namespace, map = {};
+
+		// build the map
+		for ( i = args.length - 1; i > -1; i--) {
+			val = args[i];
+			// if it is a function, set it.
+			if ($.isFunction(val)) {
+				map.func = val;
+			}
+			// if we did not get the function yet, this is the name space
+			else if (!map.func) {
+				namespace = val;
+			}
+			// if we have the func, and it is the second argument, it si the actions
+			else if (map.func && i === 1) {
+				map.actions = val;
+			}
+			// if we have the func, and it is the first argument, it is objectTypes
+			else if (map.func && i === 0) {
+				map.objectTypes = val;
+			}
+		}
+
+		
+		// create the namespace if not present
+		if ( typeof namespace === "undefined") {
+			throw "BRITE DAO BINDING ERROR: any binding with brite.dao.on*** needs to have a namespace after the function. " + 
+			      " Remember to cleanup the event at component close with brite.dao.off(mynamespace)"; 
+			       
+		}
+
+		
+		// complete the actions
+		if (!map.actions) {
+			map.actions = _ALL_ + "." + namespace;
+		} else {
+			var ns = "." + namespace + " ";
+			// build the events, split by ',', add the namespace, and join back
+			map.actions = map.actions.split(",").join(ns) + ns;
+		}
+
+		// complete the objectTypes
+		// build the objectTypes, split by ',', add the "." prefix, and join back
+		if (map.objectTypes) {
+			var objectTypes = map.objectTypes.split(",");
+			$.each(objectTypes, function(idx, val) {
+				objectTypes[idx] = "." + $.trim(val);
+			});
+			map.objectTypes = objectTypes.join(",");
+		}
+
+		map.namespace = namespace;
+
+		return map;
+	}
+
+	/**
+	 * Utility method that will construct a jQuery event with the daoEvent
+	 * and trigger it to the appropriate $receiver given the dictionary and objectType
+	 *
+	 */
+	function _triggerDaoEvent(dic, $receiversRoot, objectType, daoEvent) {
+
+		var evt = $.extend(jQuery.Event(daoEvent.action), {
+			daoEvent : daoEvent
+		});
+
+		var $receiver = dic[objectType];
+
+		// if the $receiver does not exist, create it.
+		if (!$receiver) {
+			dic[objectType] = $receiver = $("<div class='" + objectType + "'></div>");
+			$receiversRoot.append($receiver);
+		}
+		// trigger with the event.type == action
+		$receiver.trigger(evt);
+
+		// trigger _ALL_ action in case there are some events registered for all event
+		evt.type = _ALL_;
+		$receiver.trigger(evt);
+	}
+
+	// --------- /Internal Utilities For Dao Events --------- //
+
+	// --------- brite.dao.onDao --------- //
+	var $daoDao = $("<div></div>");
+	// dictionary of {objectType:$dataEventReceiver}
+
+	var onDaoReceiverDic = {};
+	/**
+	 * This will trigger on any DAO calls before the dao action is completed (for
+	 * 	asynch daos), hence, the resultPromise property of the daoEvent.
+	 *
+	 * @param objectTypes       e.g., "User, Task" (null for any)
+	 * @param actions            e.g., "create, list, get" (null for any)
+	 * @param listenerFunction  The function to be called with the daoEvent
+	 *            listenerFunction(event) with event.daoEvent as
+	 *            daoEvent.action
+	 *            daoEvent.entityType
+	 *            daoEvent.resultPromise
+	 *
+	 */
+	brite.dao.onDao = function(objectTypes, actions, listenerFunction, namespace) {
+		var map = buildDaoOnEventParamMap(arguments);
+		$daoDao.on(map.actions, map.objectTypes, map.func);
+		return map.namespace;
+	}
+
+
+	brite.dao.offDao = function(namespace) {
+		$daoDao.off("." + namespace);
+	}
+
+	function _triggerOnDao(entityType, action, resultPromise) {
+		var daoEvent = {
+			entityType : entityType,
+			action : action,
+			resultPromise : resultPromise
+		}
+
+		_triggerDaoEvent(onDaoReceiverDic, $daoDao, entityType, daoEvent);
+	}
+
+	// --------- /brite.dao.onDao --------- //
+
+	// --------- brite.dao.onResult --------- //
+	var $daoResult = $("<div></div>");
+	// dictionary of {objectType:$dataEventReceiver}
+	var onResultReceiverDic = {};
+
+	/**
+	 * This will trigger when the dao resolve the result of a particular DAO call.
+	 * This will not trigger in case of a dao failure.
+	 *
+	 * @param objectTypes       e.g., "User, Task" (null for any)
+	 * @param actions           e.g., "create, list, get" 
+	 * @param listenerFunction  The function to be called with the daoEvent
+	 *            listenerFunction(daoEvent)
+	 *            daoEvent.action
+	 *            daoEvent.objectType
+	 *            daoEvent.objectId
+	 *            daoEvent.data
+	 *            daoEvent.opts
+	 *            daoEvent.result
+	 */
+	brite.dao.onResult = function(objectTypes, actions, listenerFunction, namespace) {
+		var map = buildDaoOnEventParamMap(arguments);
+		$daoResult.on(map.actions, map.objectTypes, map.func);
+		return map.namespace;
+	}
+
+
+	brite.dao.offResult = function(namespace) {
+		$daoResult.off("." + namespace);
+	}
+
+	function _triggerOnResult(entityType, action, result) {
+		var daoEvent = {
+			entityType: entityType,
+			action : action,
+			result : result
+		};
+
+		_triggerDaoEvent(onResultReceiverDic, $daoResult, entityType, daoEvent);
+	}
+
+	// --------- /brite.dao.onResult --------- //
+
+	// --------- Brite.dao.onDataChange --------- //
+	var $daoDataChange = $("<div></div>");
+
+	// dictionary of {objectType:$dataEventReceiver}
+	var dataChangeReceiverDic = {};
+
+	/**
+	 * This trigger on data change event only (like "create, update, remove") and not on others. For other binding,
+	 * use the brite.dao.onResult which will trigger anytime
+	 *
+	 * @param {String} namespace: the namespace for this event.
+	 * @param {String} objectTypes: the object types e.g., "User, Task" (null for any object type);
+	 * @param {String} actions: this dao action names e.g., "create, update" 
+	 */
+	brite.dao.onDataChange = function(objectTypes, actions, func, namespace) {
+		var map = buildDaoOnEventParamMap(arguments);
+		$daoDataChange.on(map.actions, map.objectTypes, map.func);
+		return map.namespace;
+	}
+
+
+	brite.dao.offDataChange = function(namespace) {
+		$daoDataChange.off("." + namespace);
+	}
+
+
+	brite.triggerDataChange = function(entityType, action, result) {
+		var daoEvent = {
+			entityType : entityType,
+			action : action,
+			result : result
+		};
+
+		_triggerDaoEvent(dataChangeReceiverDic, $daoDataChange, entityType, daoEvent);
+	}
+
+	// --------- /Brite.dao.onDataChange --------- //
+	
+	brite.dao.offAny = function(namespace){
+		brite.dao.offResult(namespace);
+		brite.dao.offDao(namespace);
+		brite.dao.offDataChange(namespace);
+	}
+
+	/**
+	 * Wrap with a deferred object if the obj is not a deferred itself.
+	 */
+	function wrapWithDeferred(obj) {
+		//if it is a deferred, then, trust it, return it.
+		if (obj && $.isFunction(obj.promise)) {
+			return obj;
+		} else {
+			var dfd = $.Deferred();
+			dfd.resolve(obj);
+			return dfd;
+		}
+	}
+
+})(jQuery);
+// --------- /DAO Support --------- //
+
+
+
+// --------- bEntity --------- //
+(function($) {
+
+	/**
+	 * Return the bEntity {id,type,name,$element} (or a list of such) of the closest html element matching entity type in the data-entity.
+	 * 
+	 * The return value is like: 
+	 * 
+	 * .type     will be the value of the attribute data-entity 
+	 * .id       will be the value of the data-entity-id
+	 * .name     (optional) will be the value of the data-entity-name
+	 * .$el 			will be the $element containing the matching data-entity attribute
+	 *  
+	 * If no entityType, then, return the first entity of the closest html element having a data-b-entity. <br />
+	 * 
+	 * $element.bEntity("User"); // return the closest entity with data-entity="User"
+	 * $element.bEntity(">children","Task"); // return all the data-entity="Task" children from this $element.  
+   * $element.bEntity(">first","Task"); // return the first child entity matching data-entity="Task"
+   * 
+	 * TODO: needs to implement the >children and >first
+	 * 
+	 * @param {String} entity type (optional) the object 
+	 * @return null if not found, the first found entity with {id,type,name,$element}.
+	 */
+	$.fn.bEntity = function(entityType) {
+
+		var i, result = null;
+		// iterate and process each matched element
+		this.each(function() {
+			// ignore if we already found one
+			if (result === null){
+				var $this = $(this);
+				var $sObj;
+				if (entityType) {
+					$sObj = $this.closest("[data-entity='" + entityType + "']");
+				} else {
+					$sObj = $this.closest("[data-entity]");
+				}
+				if ($sObj.length > 0) {
+					result = {
+						type : $sObj.attr("data-entity"),
+						id : $sObj.attr("data-entity-id"),
+						name: $sObj.attr("data-entity-name"),
+						$el : $sObj
+					}
+				}
+			}
+		});
+		
+		return result;
+		
+	};
+
+})(jQuery);
+
+// ------ /bEntity ------ //
+
+// ------ LEGACY jQuery DAO Helper ------ //
+(function($) {
+
+	/**
+	 * Return the objRef {id,type,$element} (or a list of such) of the closest html element matching the objType match the data-obj_type.<br />
+	 * If no objType, then, return the first objRef of the closest html element having a data-obj_type. <br />
+	 *
+	 * @param {String} objType (optional) the object table
+	 * @return null if not found, single object with {id,type,$element} if only one jQuery object, a list of such if this jQuery contain multiple elements.
+	 */
+	$.fn.bObjRef = function(objType) {
+		var resultList = [];
+
+		var obj = null;
+		// iterate and process each matched element
+		this.each(function() {
+			var $this = $(this);
+			var $sObj;
+			if (objType) {
+				$sObj = $this.closest("[data-obj_type='" + objType + "']");
+			} else {
+				$sObj = $this.closest("[data-obj_type]");
+			}
+			if ($sObj.length > 0) {
+				var objRef = {
+					type : $sObj.attr("data-obj_type"),
+					id : $sObj.attr("data-obj_id"),
+					$element : $sObj
+				}
+				resultList.push(objRef);
+			}
+		});
+
+		if (resultList.length === 0) {
+			return null;
+		} else if (resultList.length === 1) {
+			return resultList[0];
+		} else {
+			return resultList;
+		}
+
+	};
+
+})(jQuery);
+
+// ------ /LEGACY jQuery DAO Helper ------ //
+// --------- InMemoryDaoHandler --------- //
+(function($) {
+
+	var defaultOpts = {
+		idName : "id"
+	}
+
+	/**
+	 * Create a InMemoryDaoHandler type
+	 *
+	 * Note: since it is a in memory store, all the dao function return entity clone object to make sure to avoid
+	 *       the user to inadvertently change a stored entity.
+	 *
+	 * @param {String} entityType. create a table for dao with the Entity type (e.g., "User", "Task", or "Project").
+	 * @param {Array} seed. Seed the store. Array of object with their id (if not, uuid will be generated)
+	 * @param {Object} opts. Options for this
+	 *                   opts.idName {String} the property name of the id value (default "id")
+	 */
+	function InMemoryDaoHandler(entityType,seed, opts) {
+		init.call(this,entityType,seed, opts);
+	}
+
+
+	function init(entityType,seed,opts) {
+		this._entityType = entityType;
+		this._opts = $.extend({}, defaultOpts, opts);
+		this._idName = this._opts.idName;
+
+		initData.call(this, seed);
+	}
+
+	function initData(seed) {
+		// ._dataDic is the dictionary for all the data as {id:obj} (not that the obj also has the obj[id] value
+		var dic = this._dataDic = {};
+		var idName = this._idName;
+
+		if ($.isArray(seed)) {
+			$.each(seed, function(idx, val) {
+				var id = val[idName];
+				if ( typeof id === "undefined") {
+					id = brite.uuid();
+					val[idName] = id;
+				}
+				dic[id] = val;
+			});
+		}
+
+	}
+	
+	// --------- DAO Info Methods --------- //
+	InMemoryDaoHandler.prototype.entityType = function() {
+		return this._entityType;
+	}	
+	// --------- DAO Info Methods --------- //
+
+	// --------- DAO Interface Implementation --------- //
+	/**
+	 * DAO Interface. Return value directly since it is in memory.
+	 * @param {String} objectType
+	 * @param {Integer} id
+	 * @return the entity
+	 */
+	InMemoryDaoHandler.prototype.get = function(id) {
+		
+		var entity = this._dataDic[id];
+		if (entity) {
+			return $.extend({}, entity);
+		} else {
+			return entity;
+		}
+	}
+
+	/**
+	 * DAO Interface: Create new object, set new id, and add it.
+	 *
+	 * @param {String} objectType
+	 * @param {Object} newEntity if null, does nothing (TODO: needs to throw exception)
+	 */
+	InMemoryDaoHandler.prototype.create = function(newEntity) {
+		if (newEntity) {
+			var newId = brite.uuid();
+			newEntity[this._idName] = newId;
+			this._dataDic[newId] = newEntity;
+		}
+
+		return $.extend({}, newEntity);
+	}
+
+	/**
+	 * DAO Interface: remove an instance of objectType for a given type and id.
+	 *
+	 * Return the id deleted
+	 *
+	 * @param {String} objectType
+	 * @param {Integer} id
+	 *
+	 */
+	InMemoryDaoHandler.prototype.remove = function(id) {
+		var entity = this._dataDic[id];
+		if (entity) {
+			delete this._dataDic[id];
+		}
+		return id;
+	}
+
+	/**
+	 * Additional methods to remove multiple items
+	 * 
+	 * @param {Array} ids. Array of entities id that needs to be removed 
+	 * 
+	 * @return the array of ids that have been removed
+	 */
+	InMemoryDaoHandler.prototype.removeMany = function(ids){
+		var that = this;
+		
+		// TODO: need to check if the entity exists and 
+		//       return only the list of ids that have been removed
+		$.each(ids,function(idx,val){
+			delete that._dataDic[val];
+		});
+		
+		return ids;
+	}
+
+	/**
+	 * DAO Interface: update a existing id with a set of property/value data.
+	 *
+	 * The DAO resolve with the updated data.
+	 *
+	 * @param {String} objectType
+	 * @param {Object} data Object containing the id and the properties to be updated
+	 *
+	 * Return the new object data
+	 */
+	InMemoryDaoHandler.prototype.update = function(data) {
+		var id = data[this._idName];
+		if (typeof id === "undefined"){
+			throw "BRITE ERROR: InMemoryDaoHandler.update: data does not have an id property. Cannot update.";	
+		}
+		var entity = this._dataDic[id];
+		if (entity) {
+			// make sure to remove the idName value TODO: need to check and throw error if not match
+			delete data[this._idName];
+			$.extend(entity, data);
+			return $.extend({}, entity);
+		} else {
+			return null;
+		}
+	}
+
+	/**
+	 * DAO Interface: Return a deferred object for this objectType and options
+	 * @param {String} objectType
+	 * @param {Object} opts
+	 *           opts.pageIndex {Number} Index of the page, starting at 0.
+	 *           opts.pageSize  {Number} Size of the page
+	 *           opts.match     {Object} Object of matching items. If item is a single value, then, it is a ===, otherwise, it does an operation
+	 *                                        {prop:"name",op:"contains",val:"nana"} (will match an result like {name:"banana"})
+	 *           opts.orderBy   {String}
+	 *           opts.orderType {String} "asc" or "desc"
+	 */
+	InMemoryDaoHandler.prototype.list = function(opts) {
+
+		opts = opts || {};
+
+		var rawResultSet = [];
+
+		$.each(this._dataDic, function(key, entity) {
+			var k, needPush = true;
+
+			if (opts.match) {
+				var filters = opts.match;
+				for (k in filters) {
+					if (entity[k] !== filters[k]) {
+						needPush = false;
+						break;
+					}
+				}
+			}
+
+			// TODO: needs to do the match. Probably regex of some sort
+			if (needPush) {
+				rawResultSet.push(entity);
+			}
+		});
+
+		if (opts.orderBy) {
+			rawResultSet.sort(function(a, b) {
+				var type = true;
+				if (opts.orderType && opts.orderType.toLowerCase() == "desc") {
+					type = false;
+				}
+				var value = a[opts.orderBy] >= b[opts.orderBy] ? 1 : -1;
+				if (!type) {
+					value = value * -1;
+				}
+				return value;
+			});
+		}
+
+		if (opts.pageIndex || opts.pageIndex == 0) {
+			if (opts.pageSize) {
+				newResults = rawResultSet.slice(opts.pageIndex * opts.pageSize, (opts.pageIndex + 1) * opts.pageSize);
+			} else if (opts.pageSize != 0) {
+				newResults = rawResultSet.slice(opts.pageIndex * opts.pageSize);
+			}
+		}
+
+		// recreate the new list but with clone object to protect raw entities
+		var resultSet = $.map(rawResultSet, function(val) {
+			return $.extend({}, val);
+		});
+
+		return resultSet;
+	}
+
+	// --------- /DAO Interface Implementation --------- //
+
+	brite.InMemoryDaoHandler = InMemoryDaoHandler;
+
+})(jQuery);
+// --------- /InMemoryDaoHandler --------- //
+var brite = brite || {};
+
+/**
+ * @namespace brite.event convenient touch/mouse event helpers.
+ */
+brite.event = brite.event || {};
+
+// ------ brite event helpers ------ //
+(function($){
+	var hasTouch = brite.ua.hasTouch();
+	/**
+     * if it is a touch device, populate the event.pageX and event.page& from the event.touches[0].pageX/Y
+     * @param {jQuery Event} e the jquery event object 
+     */
+    brite.event.fixTouchEvent = function(e){
+        if (hasTouch) {
+            var oe = e.originalEvent;
+            if (oe.touches.length > 0) {
+                e.pageX = oe.touches[0].pageX;
+                e.pageY = oe.touches[0].pageY;
+            }
+        }
+        
+        return e;
+    }
+    
+    /**
+     * Return the event {pageX,pageY} object for a jquery event object (will take the touches[0] if it is a touch event)
+     * @param {jQuery Event} e the jquery event object
+     */
+    brite.event.eventPagePosition = function(e){
+      var pageX, pageY;
+  		if (e.originalEvent && e.originalEvent.touches){
+  			pageX = e.originalEvent.touches[0].pageX;
+  			pageY = e.originalEvent.touches[0].pageY;
+  		}else{
+  			pageX = e.pageX;
+  			pageY = e.pageY;
+  		}
+  		return {
+  			pageX: pageX,
+  			pageY: pageY
+  		}
+    }
+})(jQuery);
+// ------ /brite event helpers ------ //
+
+// ------ transition helper ------ //
+;(function($){
+  
+  /**
+   * simple and convenient methods to perform css3 animations (takes care of the css prefix)
+   * opts.transition: this will be the transition value added as css style (e.g.,: "all 0.3s ease;")
+   * opts.transform: the css transform instruction (e.g.,: "scale(.01)")
+   * opts.onTimeout: (optional, default false). If true or >= 0, then the transformation will be performed on timeout)  
+   */
+  
+  $.fn.bTransition = function(opts) {
+    
+    return this.each(function() {
+      var $this = $(this);
+      var timeout = -1;
+      if (typeof opts.onTimeout === "boolean"){
+        timeout = (opts.onTimeout)?0:-1;
+      }else if (typeof opts.onTimeout === "number"){
+        timeout = opts.onTimeout;
+      }
+      if (timeout > -1){
+        setTimeout(function(){
+          performTransition($this,opts);
+        },timeout);
+      }else{
+        performTransition($this,opts);
+      } 
+      // add the transition
+    });
+  }
+  
+  // helper function
+  function performTransition($this,opts){
+    $this.css("transition",opts.transition);
+    $this.css("transform",opts.transform);
+  }
+})(jQuery);  
+// ------ /transition helper ------ //
+
+// ------ /brite special events ------ //
+;(function($){
+  
+  // to prevent other events (i.e., btap) to trigger when dragging.
+  var _dragging = false;
+  
+  var mouseEvents = {
+      start: "mousedown",
+      move: "mousemove",
+      end: "mouseup"
+  }
+  
+  var touchEvents = {
+      start: "touchstart",
+      move: "touchmove",
+      end: "touchend"
+  }
+  
+  function getTapEvents(){
+    if (brite.ua.hasTouch()){
+      return touchEvents;
+    }else{
+      return mouseEvents;
+    }
+  }  
+  
+  // --------- btap & btaphold --------- //
+  $.event.special.btap = {
+    add: btabAddHandler
+  }; 
+  
+  $.event.special.btaphold = {
+    add: btabAddHandler
+  }; 
+  
+	function btabAddHandler(handleObj) {
+
+    var tapEvents = getTapEvents();
+
+    $(this).on(tapEvents.start, handleObj.selector, function(event) {
+      var elem = this;
+      var $elem = $(elem);
+      
+      var origTarget = event.target, startEvent = event, timer;
+      
+      function handleEnd(event){
+        clearAll();
+        if (event.target === origTarget && !_dragging){
+          // we take the pageX and pageY of the start event (because in touch, touchend does not have pageX and pageY)
+          brite.event.fixTouchEvent(startEvent);
+          triggerCustomEvent(elem, event,{type:"btap",pageX: startEvent.pageX,pageY: startEvent.pageY});
+        }
+      }
+      
+      function clearAll(){
+        clearTimeout(timer);
+        $elem.off(tapEvents.end,handleEnd);
+      }  
+      
+      $elem.on(tapEvents.end,handleEnd);
+      
+      timer = setTimeout(function() {
+        if (!_dragging){
+          brite.event.fixTouchEvent(startEvent);
+          triggerCustomEvent( elem, startEvent,{type:"btaphold"});
+        }
+      }, 750 );
+    });
+
+  }  
+
+
+  linkSpecialEventsTo(["btaphold"],"btap");
+  
+  // --------- /btap & btaphold --------- //
+  
+  
+  // --------- bdrag* --------- //
+  var BDRAGSTART="bdragstart",BDRAGMOVE="bdragmove",BDRAGEND="bdragend";
+  
+  // Note: those below are part of the drop events, but are not supported yet.
+  //       Need to think some more.
+  var BDRAGENTER="bdragenter",BDRAGOVER="bdragover",BDRAGLEAVE="bdragleave",BDROP="bdrop";
+  
+  var dragThreshold = 5;
+  
+
+  $.event.special[BDRAGSTART] = {
+    add : bdragAddHandler
+  };
+
+  $.event.special[BDRAGMOVE] = {
+    add : bdragAddHandler
+  };
+
+  $.event.special[BDRAGEND] = {
+    add : bdragAddHandler
+  };
+  
+  function bdragAddHandler(handleObj) {
+    var tapEvents = getTapEvents();
+    $(this).on(tapEvents.start, handleObj.selector, function(event) {
+      var elem = this;
+      var $elem = $(this);
+      var dragStarted = false;
+      var startEvent = event;
+      var startPagePos = brite.event.eventPagePosition(startEvent);
+      var origTarget = event.target;
+      var $origTarget = $(origTarget);
+      
+      var $document = $(document);
+      var uid = "_" + brite.uuid(7);
+      
+      // drag move (and start)
+      $document.on(tapEvents.move + "." + uid,function(event){
+        
+        var currentPagePos = brite.event.eventPagePosition(event);
+        // fix a bug on Chrome that always change the cursor to text
+        $("body").css("-webkit-user-select","none");
+        
+        if (!dragStarted){
+          if(Math.abs(startPagePos.pageX - currentPagePos.pageX) > dragThreshold || Math.abs(startPagePos.pageY - currentPagePos.pageY) > dragThreshold) {
+            dragStarted = true;
+            _dragging = true;
+            $origTarget.data("bDragCtx", {});
+            var bextra = buildDragExtra(event, $origTarget, BDRAGSTART);
+            triggerCustomEvent( origTarget, event,{type:BDRAGSTART,target:origTarget,bextra:bextra});  
+            
+            event.stopPropagation();
+            event.preventDefault();
+            
+          }
+        }
+        
+        if(dragStarted) {
+          var bextra = buildDragExtra(event, $origTarget, BDRAGMOVE);
+          triggerCustomEvent( origTarget, event,{type:BDRAGMOVE,target:origTarget,bextra:bextra});
+          event.stopPropagation();
+          event.preventDefault();
+        }
+      });
+      
+      // drag end
+      $document.on(tapEvents.end + "." + uid, function(event){
+        // chrome fix cleanup (remove the hack)
+        $("body").css("-webkit-user-select","");
+        if (dragStarted){
+          var bextra = buildDragExtra(event, $origTarget, BDRAGEND);
+          triggerCustomEvent( origTarget, event,{type:BDRAGEND,target:origTarget,bextra:bextra});
+          event.stopPropagation();
+          event.preventDefault();            
+        }  
+        $document.off("." + uid);
+        _dragging = false;
+      });
+          
+    });
+  }
+  
+  
+   /**
+   * Build the extra event info for the drag event. 
+   */
+  function buildDragExtra(event,$elem,dragType){
+    brite.event.fixTouchEvent(event);
+    var hasTouch = brite.ua.hasTouch();
+    var extra = {
+      eventSource: event,
+      pageX: event.pageX,
+      pageY: event.pageY      
+    };
+    
+    var oe = event.originalEvent;
+    if (hasTouch){
+      extra.touches = oe.touches;
+    }
+    
+    var bDragCtx = $elem.data("bDragCtx");
+    
+    if (dragType === BDRAGSTART){
+      bDragCtx.startPageX = extra.startPageX = extra.pageX;
+      bDragCtx.startPageY = extra.startPageY = extra.pageY;
+      
+      bDragCtx.lastPageX = bDragCtx.startPageX = extra.startPageX;
+      bDragCtx.lastPageY = bDragCtx.startPageY = extra.startPageY;
+    }else if (dragType === BDRAGEND){
+      // because, on iOs, the touchEnd event does not have the .touches[0].pageX
+      extra.pageX = bDragCtx.lastPageX;
+      extra.pageY = bDragCtx.lastPageY;
+    }
+    
+    extra.startPageX = bDragCtx.startPageX;
+    extra.startPageY = bDragCtx.startPageY;
+    extra.deltaX = extra.pageX - bDragCtx.lastPageX;
+    extra.deltaY = extra.pageY - bDragCtx.lastPageY;
+    
+    bDragCtx.lastPageX = extra.pageX;
+    bDragCtx.lastPageY = extra.pageY;
+    return extra;
+  }
+  // --------- /bdrag* --------- //
+  
+  
+  
+  // --------- btransitionend --------- //
+  // Note: even if jQuery 1.8 add the prefix, it still does not normalize the transitionend event.
+  $.event.special.btransitionend = {
+
+    setup : function(data, namespaces) {
+      var eventListener = "transitionend";
+      if (this.addEventListener){
+        if (!$.browser.mozilla){
+          eventListener = brite.ua.cssVarPrefix().toLowerCase() + "TransitionEnd";
+        }
+        this.addEventListener(eventListener,function(event){
+          triggerCustomEvent(this,event,{type:"btransitionend"});
+        });
+        
+      }else{
+        // old browser, just trigger the event since transition should not be supported anyway
+        triggerCustomEvent(this,jQuery.Event("btransitionend"),{type:"btransitionend"});
+      }
+     
+
+    }
+
+  };   
+  // --------- /btransitionend --------- //
+  
+  // --------- Event Utilities --------- //
+  
+  // Link
+  function linkSpecialEventsTo(eventNames,eventRef){
+    $.each(eventNames,function(idx,val){
+      $.event.special[ val ] = {
+        setup: function() {
+          $( this ).bind( eventRef, $.noop );
+        }
+      };      
+    });
+  }
+    
+  function triggerCustomEvent( elem, nativeEvent, override ) {
+    var newEvent = jQuery.extend(
+      new jQuery.Event(),
+      nativeEvent,override
+    );
+    $(elem).trigger(newEvent);    
+  }
+  // --------- /Event Utilities --------- //  
+    
+})(jQuery);
+// ------ /brite special events ------ //
+
+
+
+
+

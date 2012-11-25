@@ -123,12 +123,12 @@
 					var $dragHelper;
 					
 
-          $container.on("bdragstart",".box.dragme",function(event){
+          $container.find(".box.dragme").on("bdragstart",function(event){
             console.log("bdragstart");
-            
           });
 
           $container.on("bdragmove",".box.dragme",function(event){
+            console.log("bdragmove");
             var $box = $(this);
             var pos = $box.position();
             $box.css({top: pos.top + event.bextra.deltaY,
