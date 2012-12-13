@@ -12,7 +12,8 @@
 	brite.registerView("MainView", {emptyParent:true}, {
 		
 		create: function(data, config) {
-			return $("#tmpl-MainView").render(data);
+			//return $("#tmpl-MainView").render(data);
+			return render("tmpl-MainView");
 		},
 		
 		postDisplay: function(data,config){

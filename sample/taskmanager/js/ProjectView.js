@@ -15,7 +15,8 @@
 			return $.when(main.projectDao.get(data.projectId),main.taskDao.list({match:{projectId:data.projectId}})).pipe(function(project,taskList){
 				view.project = project;
 				view.projectId = data.projectId;
-				return $("#tmpl-ProjectView").render({project:project,tasks:taskList});
+				view.taskList = taskList;
+				return render("tmpl-ProjectView",{project:project,tasks:taskList});
 			});			
 		},
 		
@@ -26,6 +27,9 @@
 		 	view.$cardBack = view.$el.find(".card-back");
 		 	view.$cardFront = view.$el.find(".card-front");		
 		 	view.$sectionContent = view.$el.find("section.content"); 	
+		 	
+		 	refreshTable.call(view);
+		 	
 		},
 		
 		events: {
@@ -190,7 +194,7 @@
 	function startDeleteMode(event){
 		var view = this;
 		// create the delete-controls element
-		var $controls = $($("#tmpl-ProjectView-delControls").render());
+		var $controls = $(render("tmpl-ProjectView-delControls"));
 		
 		view.$el.find("section.heading").append($controls);
 		
@@ -268,7 +272,7 @@
 		var view = this;
 		
 		return main.taskDao.list({match:{projectId:view.projectId}}).done(function(taskList){
-			var taskTableHtml = $("#tmpl-ProjectView-taskList").render({tasks:taskList});
+			var taskTableHtml = render("tmpl-ProjectView-taskList",{tasks:taskList});
 			view.$sectionContent.html(taskTableHtml);			
 		});
 	}

@@ -20,43 +20,17 @@
     <!-- This is the only hard dependency for Brite -->
     <script type="text/javascript" src="../../js-dependencies/jquery.min.js" ></script>
     
-    <!-- Best-Practice: We like JSRender as it is highly efficient and string based templating engine. 
-                        While binding-aware templating is of use in some cases, decoupling the binding from the 
-                        generation is often the right way to build flexible and efficient HTML UI. -->
-    <script type="text/javascript" src="../../others/jsrender.js" ></script>
+    <!-- Best-Practice: User handlebars. -->
+    <script type="text/javascript" src="../../others/handlebars-1.0.rc.1.js" ></script>
 
     <!-- Best-Practice: Should be "js/brite.min.js" but for this sample code we reuse the shared lib -->
     <script type="text/javascript" src="../../dist/brite.js" ></script>
-    
-    <!-- Set the default view config to load template -->
-    <!-- Best-Practice: Here we are telling brite to load the /tmpl/ViewName.tmpl and /css/ViewName.css
-                        on demand. This is good for development, but on production, the .css might might concatinated and minimized into a single file.
-                        Nevertheless, for scalable development, this is very useful since multiple developers can work on various views without 
-                        having to all change the same file.
-    -->
-    <script type="text/javascript">
-    brite.viewDefaultConfig.loadTmpl = true;
-    brite.viewDefaultConfig.loadCss = true;
-    </script>
-
     
     <!-- Best-Practice: Application always should have a main javascript file and a 
                         default namespace for it's variables and functions. 
     --> 
     <script "text/javascript" src="js/main.js" ></script>
       
-    
-    <!-- Display the main screen (which will display the sub components) -->
-    <script type="text/javascript">
-    $(function(){
-    	if($.browser.opera){
-			$("body").addClass("is-opera");
-		}	
-    	
-      	brite.display("MainView","#pageBody");
-    });
-    </script>
-    
   </head>
   
   <body>

@@ -13,7 +13,7 @@
 			var view = this;
 			return main.projectDao.get(data.projectId).pipe(function(project){
 				view.project = project;
-				return $("#tmpl-ProjectEdit").render({project:project});
+				return render("tmpl-ProjectEdit",{project:project});
 			});			
 		}, 
 		

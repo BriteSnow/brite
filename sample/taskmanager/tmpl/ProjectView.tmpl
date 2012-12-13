@@ -3,7 +3,7 @@
     <div class="card">
       <div class="card-face card-front">
         <header>
-          <h2>{{: project.title}}</h2>
+          <h2>{{project.title}}</h2>
           <div class="header-setting" data-action='editMode'><i class="icon-edit" style="opacity:.5"></i></div>
         </header>
         <section class="heading">
@@ -11,7 +11,7 @@
           <div class="del"><i class="icon-trash"></i></div>
         </section>
         <section class="content">      
-          {{for #data tmpl="#tmpl-ProjectView-taskList" /}}
+          The sub content
         </section>
       </div> <!-- /.card-front -->
       
@@ -26,16 +26,16 @@
 <script id="tmpl-ProjectView-taskList" type="text/html">
   <table class="table">
     <tbody>
-      {{for tasks}}
-      <tr data-entity="Task" data-entity-id="{{:id}}" {{if done}}class="done"{{/if}}>
-        <td class="check"><input data-prop="done" type="checkbox" {{if done}}checked="checked"{{/if}}/>
+      {{#each tasks}}
+      <tr data-entity="Task" data-entity-id="{{id}}" {{#if done}}class="done"{{/if}}>
+        <td class="check"><input data-prop="done" type="checkbox" {{#if done}}checked="checked"{{/if}}/>
           
         </td>
-        <td class="title"><input data-prop="title" value="{{:title}}" />
+        <td class="title"><input data-prop="title" value="{{title}}" />
           <i class="del-ico icon-ban-circle"></i>
         </td>
       </tr>
-      {{/for}}
+      {{/each}}
       
       <tr class="newTask">
         <td class="check"></td>

@@ -10,7 +10,7 @@
 	brite.registerView("ProjectListNav",{
 		
 		create: function(){
-			return $("#tmpl-ProjectListNav").html();
+			return render("tmpl-ProjectListNav");
 		},
 		
 		postDisplay: function(){
@@ -44,7 +44,7 @@
 	function refreshList(){
 		var view = this;
 		main.projectDao.list().done(function(projectList){
-			view.$listContainer.html($("#tmpl-ProjectListNav-list").render({projects:projectList}));
+			view.$listContainer.html(render("tmpl-ProjectListNav-list",{projects:projectList}));
 		});		
 	}
 

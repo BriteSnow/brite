@@ -1,5 +1,40 @@
 var main = main || {};
 
+/* Best-Practice: Here we are telling brite to load the /tmpl/ViewName.tmpl and /css/ViewName.css
+                  on demand. This is good for development, but on production, the .css might might concatinated and minimized into a single file.
+                  Nevertheless, for scalable development, this is very useful since multiple developers can work on various views without 
+                  having to all change the same file.
+*/
+brite.viewDefaultConfig.loadTmpl = true;
+brite.viewDefaultConfig.loadCss = true;
+
+
+
+// Just a little indirection to render a template using handlebars
+// (this allows much flexibility, when using pre-compiled or other templating engine)
+Handlebars.templates = Handlebars.templates || {};	
+function render(templateName,data){
+	var tmpl = Handlebars.templates[templateName];
+	
+	if (!tmpl){
+		var tmplContent = $("#" + templateName).html();
+		tmpl = Handlebars.compile(tmplContent);
+		Handlebars.templates[templateName] = tmpl;		
+	}
+	return tmpl(data);
+}
+
+
+// the document is ready, we display the MainView (which will display the sub views) 
+$(function(){
+	if($.browser.opera){
+		$("body").addClass("is-opera");
+	}
+		
+  brite.display("MainView","#pageBody");
+});
+
+
 
 // the data see
 (function(){
