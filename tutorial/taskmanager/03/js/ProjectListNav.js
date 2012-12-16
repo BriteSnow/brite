@@ -24,7 +24,7 @@
 		}
 	});
 	
-	
+	// --------- Private Methods --------- //
 	// Private view method: refresh the project list. 
 	function refreshList(){
 		var view = this;
@@ -35,5 +35,6 @@
 			view.$listContainer.html(render("tmpl-ProjectListNav-list",{projects:projectList}));
 		});		
 	}	
+	// --------- /Private Methods --------- //
 
 })(); 

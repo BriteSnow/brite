@@ -30,7 +30,7 @@
 		
 		docEvents: {
 			"PROJECT_SELECTION_CHANGE": function(event,extra){
-				showProjectSelected.call(this,extra.projectId);
+				showProjectSelected.call(this,extra.project.id);
 			}
 		},
 		

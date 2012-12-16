@@ -67,23 +67,31 @@
 		var newIdx = brite.array.getIndex(view.projectList,"id",view.currentProjectId);
 		
 		var forward = (oldIdx < newIdx);
-		
-		brite.display("ProjectView",$projectViewPanel, {projectId:extra.projectId}).done(function(){
-			var lastChild = view.$mainPanelsInner.children().filter(":last").attr("data-state","old");
-			var w = lastChild.width();
-			var newLeft = 0;
-			if (lastChild.length > 0){
-				if (forward){
-					newLeft = lastChild.position().left + w + 10;
-				}else{
-					newLeft = lastChild.position().left - w - 10;
+
+		// get the full project object		
+		main.projectDao.get(extra.projectId).done(function(project){
+
+			// display the new view, and do the animation
+			brite.display("ProjectView",$projectViewPanel, {project:project}).done(function(){
+				var lastChild = view.$mainPanelsInner.children().filter(":last").attr("data-state","old");
+				var w = lastChild.width();
+				var newLeft = 0;
+				if (lastChild.length > 0){
+					if (forward){
+						newLeft = lastChild.position().left + w + 10;
+					}else{
+						newLeft = lastChild.position().left - w - 10;
+					}
 				}
-			}
-			$projectViewPanel.css("left",newLeft + "px");
-			view.$mainPanelsInner.append($projectViewPanel);
-			view.$mainPanelsInner.css("transform","translateX(" + (-1 * newLeft) + "px)");
-			view.$el.trigger("PROJECT_SELECTION_CHANGE",{projectId:view.currentProjectId});
-		});		
+				$projectViewPanel.css("left",newLeft + "px");
+				view.$mainPanelsInner.append($projectViewPanel);
+				view.$mainPanelsInner.css("transform","translateX(" + (-1 * newLeft) + "px)");
+			});	
+			
+			// trigger the project selection change	
+			view.$el.trigger("PROJECT_SELECTION_CHANGE",{project:project});
+		});
+				
 	}
 	
 	function goNext(){

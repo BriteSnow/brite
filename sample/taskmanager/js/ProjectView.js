@@ -12,11 +12,19 @@
 	brite.registerView("ProjectView",{
 		create: function(data){
 			var view = this;
-			return main.projectDao.get(data.projectId).pipe(function(project){
-				view.project = project;
-				view.projectId = data.projectId;
-				return render("tmpl-ProjectView",{project:project});
-			});
+			
+			// if the project is given, then, just render it. 
+			if (data.project){
+				view.project = data.project;
+				return render("tmpl-ProjectView",{project:view.project});
+			}
+			// otherwise, we fetch it and return the appropriate promise.
+			else{
+				return main.projectDao.get(data.projectId).pipe(function(project){
+					view.project = project;
+					return render("tmpl-ProjectView",{project:project});
+				});		
+			}
 		},
 		
 		postDisplay: function(){
@@ -270,7 +278,7 @@
 	function refreshTable(){
 		var view = this;
 		
-		return main.taskDao.list({match:{projectId:view.projectId}}).done(function(taskList){
+		return main.taskDao.list({match:{projectId:view.project.id}}).done(function(taskList){
 			var taskTableHtml = render("tmpl-ProjectView-taskList",{tasks:taskList});
 			view.$sectionContent.html(taskTableHtml);			
 		});

@@ -41,7 +41,7 @@
     docEvents: {
     	// 3) on PROJECT_SELECTION_CHANGE select the appropriate LI
       "PROJECT_SELECTION_CHANGE": function(event,extra){
-      	showProjectSelected.call(this,extra.projectId);
+      	showProjectSelected.call(this,extra.project.id);
       }
     }
 	});
