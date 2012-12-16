@@ -2,9 +2,9 @@
   <div class="ProjectListNav">
     <h2>Projects</h2>
     <ul>
-      {{for projects}}
-      <li>{{: title}}</li>
-      {{/for}}
+      {{#each projects}}
+      <li><i class="icon-folder-close"></i>{{title}}</li>
+      {{/each}}
     </ul>
   </div>
 </script>

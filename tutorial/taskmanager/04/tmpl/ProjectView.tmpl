@@ -1,24 +1,23 @@
 <script id="tmpl-ProjectView" type="text/html">
   <div class="ProjectView">
     <header>
-      <h2>{{:project.title}}</h2>
+      <h2>{{project.title}}</h2>
     </header>
     <section class="heading">
       <label>Tasks</label>
     </section>
     <section class="content">    
-      {{for #data tmpl="#tmpl-ProjectView-taskList" /}}  
     </section>    
   </div>
 </script>
 
 <script id="tmpl-ProjectView-taskList" type="text/html">
   <table class="table">
-      {{for tasks}}
-      <tr data-entity="Task" data-entity-id="{{:id}}" {{if done}}class="done"{{/if}}>
-        <td class="title">{{:title}} <i class="icon-trash"></i></td>
+      {{#each tasks}}
+      <tr data-entity="Task" data-entity-id="{{id}}" {{#if done}}class="done"{{/if}}>
+        <td class="title">{{title}} <i class="icon-trash"></i></td>
       </tr>
-      {{/for}}        
+      {{/each}}        
   </table>  
 </script>
 

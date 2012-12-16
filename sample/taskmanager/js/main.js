@@ -1,17 +1,19 @@
-var main = main || {};
 
-/* Best-Practice: Here we are telling brite to load the /tmpl/ViewName.tmpl and /css/ViewName.css
-                  on demand. This is good for development, but on production, the .css might might concatinated and minimized into a single file.
-                  Nevertheless, for scalable development, this is very useful since multiple developers can work on various views without 
-                  having to all change the same file.
-*/
+
+// Set brite.js to load on demand
 brite.viewDefaultConfig.loadTmpl = true;
 brite.viewDefaultConfig.loadCss = true;
 
+// on document ready, display MainView
+$(document).ready(function(){
+	// hack for opera (since it does not support back-face)
+	if($.browser.opera){
+		$("body").addClass("is-opera");
+	}	
+  brite.display("MainView","#pageBody");
+});
 
-
-// Just a little indirection to render a template using handlebars
-// (this allows much flexibility, when using pre-compiled or other templating engine)
+// Handlebars.js render wrapper
 Handlebars.templates = Handlebars.templates || {};	
 function render(templateName,data){
 	var tmpl = Handlebars.templates[templateName];
@@ -24,19 +26,7 @@ function render(templateName,data){
 	return tmpl(data);
 }
 
-
-// the document is ready, we display the MainView (which will display the sub views) 
-$(function(){
-	if($.browser.opera){
-		$("body").addClass("is-opera");
-	}
-		
-  brite.display("MainView","#pageBody");
-});
-
-
-
-// the data see
+var main = main || {};
 (function(){
 	
 	var seedProjects = [

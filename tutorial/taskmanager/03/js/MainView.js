@@ -8,7 +8,7 @@
 	brite.registerView("MainView",{emptyParent:true},{
 		
 		create: function(){
-			return $("#tmpl-MainView").html();
+			return render("tmpl-MainView");
 		},
 		
     // Called after the view is displayed to the user

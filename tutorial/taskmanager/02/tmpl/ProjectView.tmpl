@@ -1,18 +1,18 @@
 <script id="tmpl-ProjectView" type="text/html">
   <div class="ProjectView">
     <header>
-      <h2>{{: project.title}}</h2>
+      <h2>{{project.title}}</h2>
     </header>
     <section class="heading">
       <label>Tasks</label>
     </section>
     <section class="content">      
       <table class="table">
-          {{for tasks}}
-          <tr {{if done}}class="done"{{/if}}>
-            <td class="title">{{:title}}</td>
+          {{#each tasks}}
+          <tr {{#if done}}class="done"{{/if}}>
+            <td class="title">{{title}}</td>
           </tr>
-          {{/for}}        
+          {{/each}}        
       </table>
     </section>    
   </div>

@@ -5,29 +5,33 @@
     
     <title>Brite - TaskManager Sample</title>
 
-    <!-- Best-Practice: In this sample we use bootstrap in a shared folder, but for a single application, 
-                        boostrap files should be under the boostrap/ folder (i.e., href="boostrap/css/boostrap.min.css") 
-                        (this way easy to update with new version of bootstrap)
+    <!-- Best-Practice: 
+           In this sample we use bootstrap in a shared folder, but for a single application, 
+           bootstrap files should be under the boostrap/ folder (i.e., href="boostrap/css/boostrap.min.css") 
+           (this way easy to update with new version of bootstrap)
     -->
     <link rel="stylesheet" href="../../others/bootstrap/css/bootstrap.min.css" />
     <link rel="stylesheet" href="../../others/bootstrap/css/bootstrap-responsive.min.css" />
 
 
-    <!-- Best-Practice: this is the main css to be included first. Component css will be included
-                        dynamically, and all start with UpperCase to match their component name -->
+    <!-- Best-Practice: 
+            This is the main css to be included first. Component css will be included
+            dynamically, and all start with UpperCase to match their component name -->
     <link rel="stylesheet" href="css/main.css" />
     
     <!-- This is the only hard dependency for Brite -->
     <script type="text/javascript" src="../../js-dependencies/jquery.min.js" ></script>
     
-    <!-- Best-Practice: User handlebars. -->
+    <!-- Best-Practice: Use handlebars. -->
     <script type="text/javascript" src="../../others/handlebars-1.0.rc.1.js" ></script>
 
     <!-- Best-Practice: Should be "js/brite.min.js" but for this sample code we reuse the shared lib -->
     <script type="text/javascript" src="../../dist/brite.js" ></script>
     
-    <!-- Best-Practice: Application always should have a main javascript file and a 
-                        default namespace for it's variables and functions. 
+    <!-- Best-Practice: 
+            Application always should have a main javascript file and a 
+            default namespace for it's variables and functions. 
+            main.js is also where we will set the app configuration and initialization
     --> 
     <script "text/javascript" src="js/main.js" ></script>
       

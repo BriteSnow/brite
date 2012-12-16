@@ -9,8 +9,8 @@
 
 <script id="tmpl-ProjectListNav-list" type="text/html">
   <ul>
-    {{for projects}}
-    <li data-entity="Project" data-entity-id="{{: id}}">{{: title}}</li>
-    {{/for}}
+    {{#each projects}}
+    <li data-entity="Project" data-entity-id="{{id}}">{{title}}</li>
+    {{/each}}
   </ul>  
 </script>

@@ -1,15 +1,37 @@
-var main = main || {};
+// Set brite.js to load on demand
+brite.viewDefaultConfig.loadTmpl = true;
+brite.viewDefaultConfig.loadCss = true;
 
-// the data see
+// on document ready, display MainView
+$(document).ready(function(){
+  brite.display("MainView","#pageBody");
+});
+
+// Handlebars.js render wrapper
+Handlebars.templates = Handlebars.templates || {};	
+function render(templateName,data){
+	var tmpl = Handlebars.templates[templateName];
+	
+	if (!tmpl){
+		var tmplContent = $("#" + templateName).html();
+		tmpl = Handlebars.compile(tmplContent);
+		Handlebars.templates[templateName] = tmpl;		
+	}
+	return tmpl(data);
+}
+
+var main = main || {};
 (function(){
 	
+	// sample data
 	var seedProjects = [
 		{id:"001",title:"Grocery List"},
 		{id:"002",title:"House Remodeling"},
 		{id:"003",title:"Learn HTML5"},
 		{id:"004",title:"Learn Brite"}
-	]
+	];
 	
+	// dample data;
 	var seedTasks = [
 		{id:"101",projectId:"001",done:false,title:"Heavy Whipping cream"},
 		{id:"102",projectId:"001",done:true,title:"1 Garlic"},

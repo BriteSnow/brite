@@ -16,28 +16,18 @@
                         dynamically, and all start with UpperCase to match their component name -->
     <link rel="stylesheet" href="css/main.css" />
     
-    <!-- This is the only hard dependency for Brite -->
-    <!-- Note: In real application, should be src="js/jquery.min.js" -->
-    <script type="text/javascript" src="../../../js-dependencies/jquery.js" ></script>
+    <!-- This is the only hard dependency for brite.js -->
+    <script type="text/javascript" src="../../../js-dependencies/jquery.min.js" ></script>
     
-    <!-- Note: In real application, should be src="js/jsrender.min.js" -->
-    <script type="text/javascript" src="../../../others/jsrender.js" ></script>
+    <!-- Best-Practice: Use handlebars. -->
+    <script type="text/javascript" src="../../../others/handlebars-1.0.rc.1.js" ></script>
+
     
     <!-- Note: Should be "js/brite.min.js" but for this sample code we reuse the shared lib -->
     <script type="text/javascript" src="../../../dist/brite.js" ></script>
 
-    <!-- Set the default view config to load template -->
-    <script type="text/javascript">
-    brite.viewDefaultConfig.loadTmpl = true;
-    brite.viewDefaultConfig.loadCss = true;
-    </script>
-    
-    <!-- Display the main screen (which will display the sub components) -->
-    <script type="text/javascript">
-    $(document).ready(function(){
-      brite.display("MainView","#pageBody");
-    });
-    </script>
+    <script "text/javascript" src="js/main.js" ></script>
+      
     
   </head>
   

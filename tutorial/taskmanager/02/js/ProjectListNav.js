@@ -9,7 +9,7 @@
 	brite.registerView("ProjectListNav",{
 
 		create: function(){
-			return $("#tmpl-ProjectListNav").render({projects:main.projectListTestData});
+			return render("tmpl-ProjectListNav",{projects:main.projectListTestData});
 		}
 		
 	});

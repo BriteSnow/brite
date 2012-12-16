@@ -11,17 +11,33 @@
 		create: function(data){
 			var view = this;
 			
-			// request the project and task list for the project
-			var whenBothComplete =  $.when(main.projectDao.get(data.projectId),
-																		 main.taskDao.list({match:{projectId:data.projectId}}));
-			
-			// when both requests get completed, return another deferred with the rendered new HTMLElement
-			return whenBothComplete.pipe(function(project,taskList){
+			return main.projectDao.get(data.projectId).pipe(function(project){
 				view.project = project;
 				view.projectId = data.projectId;
-				return $("#tmpl-ProjectView").render({project:project,tasks:taskList});
-			});			
+				return render("tmpl-ProjectView",{project:project});
+			});		
+		}, 
+		
+		postDisplay: function(){
+			var view = this;
+			
+			// Persist this element at the view for future use
+			view.$sectionContent = view.$el.find("section.content");
+			
+			refreshTable.call(view); 	
 		}
+			
 	});
+	
+	// --------- Private Methods --------- //
+	function refreshTable(){
+		var view = this;
+		
+		return main.taskDao.list({match:{projectId:view.projectId}}).done(function(taskList){
+			var taskTableHtml = render("tmpl-ProjectView-taskList",{tasks:taskList});
+			view.$sectionContent.html(taskTableHtml);			
+		});
+	}
+	// --------- /Private Methods --------- //
 	
 })(); 

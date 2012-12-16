@@ -12,12 +12,11 @@
 	brite.registerView("ProjectView",{
 		create: function(data){
 			var view = this;
-			return $.when(main.projectDao.get(data.projectId),main.taskDao.list({match:{projectId:data.projectId}})).pipe(function(project,taskList){
+			return main.projectDao.get(data.projectId).pipe(function(project){
 				view.project = project;
 				view.projectId = data.projectId;
-				view.taskList = taskList;
-				return render("tmpl-ProjectView",{project:project,tasks:taskList});
-			});			
+				return render("tmpl-ProjectView",{project:project});
+			});
 		},
 		
 		postDisplay: function(){
