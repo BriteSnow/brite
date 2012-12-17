@@ -52,7 +52,6 @@ var main = main || {};
 		{id:"302",projectId:"003",done:false,title:"Checkout html5rocks.com for new HTML5 features"},
 		{id:"303",projectId:"003",done:false,title:"Learn Object Oriented with JavaScript"},
 		{id:"304",projectId:"003",done:false,title:"Learn application layout with HTML and CSS"},
-		{id:"305",projectId:"003",done:false,title:"Learn"},
 		
 		{id:"401",projectId:"004",done:false,title:"Learn HTML5"},
 		{id:"402",projectId:"004",done:false,title:"Learn D-MVC (DOM centric MVC)"},

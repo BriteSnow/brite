@@ -25,10 +25,7 @@
   -webkit-backface-visibility: hidden;
   -moz-backface-visibility: hidden;
   backface-visibility: hidden;
-   border: solid 1px #ababab;
-  -moz-border-radius: 10px 10px 10px 10px;
-  -webkit-border-radius: 10px 10px 10px 10px;
-  border-radius: 10px 10px 10px 10px;
+   border: solid 3px #ccc;
   -moz-box-shadow: 1px 2px 5px rgba(0,0,0,.5);
   -webkit-box-shadow: 1px 2px 5px rgba(0,0,0,.5);
   box-shadow: 1px 2px 5px rgba(0,0,0,.5);   
@@ -57,22 +54,7 @@
   position: relative;
   padding: 0;
   height: 35px;
-  background-image: -moz-linear-gradient(bottom, #afafaf 0%, #fff 100%);
-  background-image: -o-linear-gradient(bottom, #afafaf 0%, #fff 100%);
-  background-image: -webkit-linear-gradient(bottom, #afafaf 0%, #fff 100%);
-  background-image: linear-gradient(bottom, #afafaf 0%, #fff 100%);
-  -moz-border-radius: 10px 10px 0px 0px;
-  -webkit-border-radius: 10px 10px 0px 0px;
-  border-radius: 10px 10px 0px 0px;  
-}
-
-.ProjectView section.content{
-  position: absolute;
-  top: 35px; right: 0; bottom: 0; left: 0;
-}
-
-.ProjectView section.content.withPadding{
-  padding: 10px;
+  background-color: #efefef;
 }
 
 .ProjectView .header-fav, .ProjectView .header-setting{
@@ -101,9 +83,8 @@
   line-height: normal;
   font-weight: bold;
   margin: 0;
-  padding: 7px 0 0 0;
+  padding: 7px 0 0 12px;
   font-size: 18px;
-  text-align: center;
 }
 
 .ProjectView header input{
@@ -132,6 +113,15 @@
   background-image: linear-gradient(bottom, #F1F1F1 0%, #FDFDFD 100%);
   border-top: solid 1px #EEE;
   border-bottom: solid 1px #DDD;
+}
+
+.ProjectView section.content{
+  position: absolute;
+  top: 35px; right: 0; bottom: 0; left: 0;
+}
+
+.ProjectView section.content.withPadding{
+  padding: 10px;
 }
 
 .ProjectView section.heading .del{
@@ -165,6 +155,25 @@
 .ProjectView section.content td.check{
   width: 15px;
 }
+
+.ProjectView .taskCheck{
+  border: solid 1px #aaa;
+  width: 16px;
+  height: 16px;
+  -moz-border-radius: 6px;
+  -webkit-border-radius: 6px;
+  border-radius: 6px;
+}
+
+.ProjectView .taskCheck.done::after{
+  content:"";
+  display: block;
+  background-image: url("images/icons.png");
+  width: 16px;
+  height: 16px;
+  margin: -2px 0 0 4px; 
+}
+
 
 .ProjectView td.title{
   position: relative;

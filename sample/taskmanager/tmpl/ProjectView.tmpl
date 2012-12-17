@@ -28,8 +28,8 @@
     <tbody>
       {{#each tasks}}
       <tr data-entity="Task" data-entity-id="{{id}}" {{#if done}}class="done"{{/if}}>
-        <td class="check"><input data-prop="done" type="checkbox" {{#if done}}checked="checked"{{/if}}/>
-          
+        <td class="check">
+          <div class="taskCheck {{#if done}}done{{/if}}" data-prop="done"></div>
         </td>
         <td class="title"><input data-prop="title" value="{{title}}" />
           <i class="del-ico icon-ban-circle"></i>

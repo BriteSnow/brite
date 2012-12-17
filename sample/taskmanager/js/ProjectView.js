@@ -42,16 +42,17 @@
 		events: {
 			
 			// User click on "done" checkbox.
-			"change; input[data-prop='done']" : function(event){
+			"btap; .taskCheck" : function(event){
 				var $check = $(event.currentTarget);
 				// the object type and id are store in the DOM, so, just look for the parent element for this
 				var taskId = $check.bEntity("Task").id;
-				var done = $check.prop("checked");
-				main.taskDao.update({id:taskId,done:done});
+				var currentDone = $check.hasClass("done");
+				var newDone = !currentDone;
+				main.taskDao.update({id:taskId,done:newDone});
 			},
 			
 			// User click on the delete icon
-			"click; section.heading .del" : startDeleteMode,
+			"btap; section.heading .del" : startDeleteMode,
 			
 			// Handle the task rename
 			"focus; [data-entity='Task'] input[data-prop='title']": startTaskRename,
@@ -100,8 +101,8 @@
 		var view = this;
 	  	view.$card.removeClass("flipped");	
 	  	
-	  	/* --------- for opera --------- */
-	  	$("body.is-opera .card-front").show();
+	  /* --------- for opera --------- */
+	  $("body.is-opera .card-front").show();
 		$("body.is-opera .card-back").hide();	
 		/* --------- /for opera --------- */
 	}
