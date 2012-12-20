@@ -1,6 +1,6 @@
 var brite = brite || {};
 
-brite.version = "1.0.1-SNAPSHOT";
+brite.version = "1.0.2-SNAPSHOT";
 
 // ---------------------- //
 // ------ brite ------ //
