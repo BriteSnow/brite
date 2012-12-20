@@ -1,6 +1,6 @@
 var brite = brite || {};
 
-brite.version = "1.0.1-snapshot";
+brite.version = "1.0.1-SNAPSHOT";
 
 // ---------------------- //
 // ------ brite ------ //
@@ -272,7 +272,9 @@ brite.version = "1.0.1-snapshot";
         includeDfd.done(function(){
           loadCssDfd.resolve();
         }).fail(function(){
-          console.log("Brite ERROR: cannot load " + cssFileName + ". Ignoring issue");
+        	if (console){
+          	console.log("Brite ERROR: cannot load " + cssFileName + ". Ignoring issue");
+         	}
           loadCssDfd.resolve();
         });      
       }
@@ -287,7 +289,9 @@ brite.version = "1.0.1-snapshot";
 		});
 		
 		loadComponentDefDfd.fail(function(ex){
-		  console.log("BRITE-ERROR: Brite cannot load component: " + name + "\n\t " + ex);
+			if (console){
+		  	console.log("BRITE-ERROR: Brite cannot load component: " + name + "\n\t " + ex);
+		 	}
 		  loaderDeferred.reject();
 		});
 		
@@ -694,14 +698,24 @@ brite.version = "1.0.1-snapshot";
     }
     
     if (fileType === "js"){
-      // TODO: need to add support for IE
-      fileref.onload = function(){
-        dfd.resolve(fileName);
-      }
+    	if (fileref.addEventListener){
+    		fileref.onload = function(){
+    			dfd.resolve(fileName);
+    		};
+    	}else{ // for old IE
+    		// TODO: probably need to handle the error case here
+    		fileref.onreadystatechange = function(){
+    			if (fileref.readyState === "loaded"){
+    					dfd.resolve(fileName);
+    			}
+    		};
+    	}
       
-      fileref.addEventListener('error', function(){
-        dfd.reject();
-      }, true);
+      if (fileref.addEventListener){
+	      fileref.addEventListener('error', function(){
+	        dfd.reject();
+	      }, true);
+      }
     }else if (fileType === "css"){
       // hack from: http://www.backalleycoder.com/2011/03/20/link-tag-css-stylesheet-load-event/
       var html = document.getElementsByTagName('html')[0];
@@ -1254,6 +1268,7 @@ brite.ua = {};
 	
 	var _hasTouch = null;
 	var _hasTransition = null;
+	var _hasBackfaceVisibility = null;
 	var _hasCanvas = null;
 	var _transitionPrefix = null; 
 	var _eventsMap = {}; // {eventName:true/false,....}
@@ -1377,21 +1392,35 @@ brite.ua = {};
 	 */
 	brite.ua.hasTransition = function() {
 		if (_hasTransition === null) {
-			var div = document.createElement('div');
-			var transitionStr = brite.ua.cssPrefix() + "transition";
-			div.innerHTML = '<div style="' + transitionStr + ': color 1s linear"></div>';
-			
-			if (div.firstChild.style[brite.ua.cssVarPrefix() + "Transition"]){
-			 _hasTransition = true;
-			}else{
-			  _hasTransition = false;
-			}
-			delete div;
+			_hasTransition = hasStyle("transition","Transition","color 1s linear",true);
 		}
 		return _hasTransition;
 	}
+	
+	
+	brite.ua.hasBackfaceVisibility = function(){
+		if (_hasBackfaceVisibility === null){
+			_hasBackfaceVisibility = hasStyle("backface-visibility","BackfaceVisibility","hidden",true);
+			
+			// being conservative, because, sometime windows does not support backface visibility.
+			if (navigator.platform.toLowerCase().indexOf("win") > -1){
+				_hasBackfaceVisibility = false;	
+			}
+		}
+		
+		return _hasBackfaceVisibility;
+	}
 
 	// ------ Privates ------ //
+	
+	function hasStyle(styleName,styleVarName,sampleValue,withPrefix){
+			var div = document.createElement('div');
+			styleName = (withPrefix)?(brite.ua.cssPrefix() + styleName):styleName;
+			div.innerHTML = '<div style="' + styleName + ': ' + sampleValue + '"></div>';
+			styleVarName = (withPrefix)?(brite.ua.cssVarPrefix() + styleVarName):styleVarName;
+			return (div.firstChild.style[styleVarName])?true:false;		
+	}
+	
 	var isEventSupported = (function() {
 		var TAGNAMES = {
 			'select' : 'input',

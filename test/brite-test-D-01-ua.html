@@ -27,13 +27,15 @@
 		
 		<p><strong>brite.ua.hasCanvas()</strong> <span id="hasCanvas"></span></p>
 		
+		<p><strong>brite.ua.hasBackfaceVisibility()</strong> <span id="hasBackfaceVisibility"></span></p>
+		
 		<p><strong>brite.ua.cssHas()</strong> <span id="cssHas"></span> </p>
 		
 		<p><strong>brite.ua.cssHasNo()</strong> <span id="cssHasNo"></span> </p>
 		
 		<p><strong>brite.ua.supportsEvent("mouseover")</strong> <span id="supportsMouseover"></span></p>
 		
-		
+		<div id="bftest" style="-webkit-backface-visibility: hidden"></div>
 		
 		<script type="text/javascript">
 			$(function(){
@@ -42,6 +44,8 @@
 				$("#hasTransition").html("" + brite.ua.hasTransition());
 				
 				$("#hasCanvas").html("" + brite.ua.hasCanvas());
+				
+				$("#hasBackfaceVisibility").html("" + brite.ua.hasBackfaceVisibility());
 				
 				$("#cssHas").html("" + brite.ua.cssHas());
 				

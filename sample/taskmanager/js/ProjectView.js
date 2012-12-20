@@ -86,13 +86,14 @@
 	// --------- Event Handlers for Project Edit --------- //
 	function startProjectEdit(){
 		var view = this;
-		console.log("projectId: " + view.projectId);
  		brite.display("ProjectEdit",view.$cardBack,{projectId:view.projectId}).done(function(){
  			view.$card.addClass("flipped");
  			
  			/* --------- for opera --------- */
- 			$("body.is-opera .card-front").hide();
- 			$("body.is-opera .card-back").show();
+ 			if (!brite.ua.hasBackfaceVisibility()) {
+	 			$(".card-front").hide();
+	 			$(".card-back").show();
+ 			}
  			/* --------- /for opera --------- */
  		});		
 	}
@@ -102,8 +103,10 @@
 	  	view.$card.removeClass("flipped");	
 	  	
 	  /* --------- for opera --------- */
-	  $("body.is-opera .card-front").show();
-		$("body.is-opera .card-back").hide();	
+		if (!brite.ua.hasBackfaceVisibility()) {
+			$(".card-front").show();
+			$(".card-back").hide();
+		}
 		/* --------- /for opera --------- */
 	}
 	// --------- /Event Handlers for Project Edit --------- //

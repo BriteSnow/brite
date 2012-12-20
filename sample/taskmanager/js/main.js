@@ -1,15 +1,11 @@
-
-
 // Set brite.js to load on demand
 brite.viewDefaultConfig.loadTmpl = true;
 brite.viewDefaultConfig.loadCss = true;
 
+
 // on document ready, display MainView
 $(document).ready(function(){
-	// hack for opera (since it does not support back-face)
-	if($.browser.opera){
-		$("body").addClass("is-opera");
-	}	
+	$("body").addClass(brite.ua.cssHasNo());
   brite.display("MainView","#pageBody");
 });
 

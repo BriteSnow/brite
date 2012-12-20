@@ -33,7 +33,7 @@
 }
 
 .ProjectView .card-front{
-  
+  -webkit-transform: rotateY( 0deg );
 }
 
 .ProjectView .card-back{
@@ -41,6 +41,10 @@
   -moz-transform: rotateY( -180deg );
   -o-transform:rotateY(-180deg); /* Opera */
   transform: rotateY( -180deg );
+}
+
+.has-no-backfacevisibility .ProjectView .card-back{
+  display: none;
 }
 
 .ProjectView .card.flipped {
@@ -256,11 +260,4 @@
 }
 
 /* --- /deleteMode --- */
-
-
-/* --------- for opera --------- */
-.is-opera .card-back{
-	display:none;
-}
-/* --------- /for opera --------- */
 

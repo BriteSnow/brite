@@ -1,3 +1,4 @@
+// NOT READY YET, DO NOT USE. 
 // --------- brite.idb --------- //
 // an attempt at making indexDb more $.Deferred oriented.
 // experimental API 
