@@ -1,0 +1,78 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>briteUITest - parentEvents</title>
+
+		<!-- Generic Test Includes -->
+		<link rel="stylesheet" href="css/sTestHelper.css"/>
+		<link rel="stylesheet" href="../others/bootstrap/css/bootstrap.css" />
+		<link rel="stylesheet" href="../others/bootstrap/css/bootstrap-responsive.css" />
+		
+		
+		<script type="text/javascript" src="../js-dependencies/jquery.js" ></script>
+		<!-- /Generic Test Includes -->
+
+		<script type="text/javascript" src="../src/js/brite.core.js" ></script>
+		<script type="text/javascript" src="../src/js/brite.dao.js" ></script>
+		<script type="text/javascript" src="../src/js/brite.event.js" ></script>
+		
+		<style type="text/css">
+		</style>
+
+    
+    <!-- The UserListView Component -->
+    <script type="text/javascript">
+    
+    brite.registerView("ContainerView",{
+      create: function(){
+        return "<div class="ContainerView">This is 
+      }
+    });
+    </script>
+
+    </head>
+    <body>
+    	<div class="sTestSection">
+	    <h2>View events</h2>
+
+			<div>
+				
+				<h3>Create new User</h3>
+				<div>User Name: <input id="userNameIpt" type="text" /> <button class="btn btn-primary" id="userCreateBut">Create</button></div>
+				
+				<!-- when click on create -->
+				<script type="text/javascript">
+				$(document).ready(function(){
+				  var $but = $("#userCreateBut");
+				  var $inputName = $("#userNameIpt");
+				  
+				  $inputName.on("keyup",function(event){
+				    if (event.which === 13){
+				      $but.trigger("click");
+				    }
+				  });  
+				  
+				  // create the user
+          $but.on("click",function(){
+            userDao.create({name: $("#userNameIpt").val(),
+                       city: $("#userCityIpt").val()});
+            
+            //clean the input and focus
+            $inputName.val("").focus();
+          });
+        });
+        </script>
+        
+        
+				<h3>UserList Views</h3>
+				
+				
+				<div id="userListViewsContainer" class="row-fluid">
+				  
+				</div>
+				
+			</div>			
+		</div> 
+    </body>
+</html>

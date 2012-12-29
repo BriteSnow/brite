@@ -685,7 +685,6 @@ brite.version = "1.0.2-SNAPSHOT";
    */
   function includeFile(fileName, fileType) {
     var dfd = $.Deferred();
-    
     if(fileType === "js") {
       var fileref = document.createElement('script');
       fileref.setAttribute("type", "text/javascript");
@@ -705,7 +704,7 @@ brite.version = "1.0.2-SNAPSHOT";
     	}else{ // for old IE
     		// TODO: probably need to handle the error case here
     		fileref.onreadystatechange = function(){
-    			if (fileref.readyState === "loaded"){
+    			if (fileref.readyState === "loaded" || fileref.readyState === "complete"){
     					dfd.resolve(fileName);
     			}
     		};
@@ -717,20 +716,37 @@ brite.version = "1.0.2-SNAPSHOT";
 	      }, true);
       }
     }else if (fileType === "css"){
-      // hack from: http://www.backalleycoder.com/2011/03/20/link-tag-css-stylesheet-load-event/
-      var html = document.getElementsByTagName('html')[0];
-      var img = document.createElement('img');
-      $(img).css("display","none"); // hide the image
-      img.onerror = function(){
-        html.removeChild(img);
-        // for css, we cannot know if it fail to load for now
-        dfd.resolve(fileName);
-      }
-      html.appendChild(img);
-      img.src = fileName;      
+    	if (document.all){
+			  // The IE way, which is interestingly the most standard
+			  fileref.onreadystatechange = function() {
+			    var state = fileref.readyState;
+			    if (state === 'loaded' || state === 'complete') {
+			      fileref.onreadystatechange = null;
+			      dfd.resolve(fileName);
+			    }
+			  };    		
+    	}else{
+    		
+				// unfortunately, this will rarely be taken in account in modern browsers
+			  if (fileref.addEventListener) {
+			    fileref.addEventListener('load', function() {
+			      dfd.resolve(fileName);
+			    }, false);
+			  }
+
+	      // hack from: http://www.backalleycoder.com/2011/03/20/link-tag-css-stylesheet-load-event/
+	      var html = document.getElementsByTagName('html')[0];
+	      var img = document.createElement('img');
+	      $(img).css("display","none"); // hide the image
+	      img.onerror = function(){
+	        html.removeChild(img);
+	        // for css, we cannot know if it fail to load for now
+	        dfd.resolve(fileName);
+	      }
+	      html.appendChild(img);
+	      img.src = fileName;      
+	    }
     }
-    
-    
     
     if( typeof fileref != "undefined") {
       document.getElementsByTagName("head")[0].appendChild(fileref);
@@ -738,7 +754,6 @@ brite.version = "1.0.2-SNAPSHOT";
     
     return dfd.promise();
   }
-
   // --------- /File Include (JS & CSS) ------ //
 
 })(jQuery);
