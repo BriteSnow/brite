@@ -69,22 +69,29 @@
 
 		// get the full project object		
 		main.projectDao.get(extra.projectId).done(function(project){
-
+			
 			// display the new view, and do the animation
 			brite.display("ProjectView",$projectViewPanel, {project:project}).done(function(){
-				var lastChild = view.$mainPanelsInner.children().filter(":last").attr("data-state","old");
-				var w = lastChild.width();
-				var newLeft = 0;
-				if (lastChild.length > 0){
-					if (forward){
-						newLeft = lastChild.position().left + w + 10;
-					}else{
-						newLeft = lastChild.position().left - w - 10;
+				
+				var $lastChild = view.$mainPanelsInner.children().filter(":last");
+				if (!brite.ua.hasTransition()){
+					$lastChild.bRemove();
+					view.$mainPanelsInner.append($projectViewPanel);
+				}else{
+					$lastChild.attr("data-state","old");
+					var w = $lastChild.width();
+					var newLeft = 0;
+					if ($lastChild.length > 0){
+						if (forward){
+							newLeft = $lastChild.position().left + w + 10;
+						}else{
+							newLeft = $lastChild.position().left - w - 10;
+						}
 					}
+					$projectViewPanel.css("left",newLeft + "px");
+					view.$mainPanelsInner.append($projectViewPanel);
+					view.$mainPanelsInner.css("transform","translateX(" + (-1 * newLeft) + "px)");
 				}
-				$projectViewPanel.css("left",newLeft + "px");
-				view.$mainPanelsInner.append($projectViewPanel);
-				view.$mainPanelsInner.css("transform","translateX(" + (-1 * newLeft) + "px)");
 			});	
 			
 			// trigger the project selection change	
