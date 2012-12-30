@@ -457,7 +457,6 @@ brite.version = "1.0.2-SNAPSHOT";
 
 			});
 			// ------ /render & resolve ------ //
-			// console.log
 			processPromise.whenPostDisplay.done(function() {
 				processDeferred.resolve(component);
 			});
@@ -561,7 +560,7 @@ brite.version = "1.0.2-SNAPSHOT";
 		component.el = $element[0];
 		// component.$element is for deprecated, .$el is te way to access it. 
 		component.$el = component.$element = $element; 
-		$element.data("component", component);
+		$element.data("bview", component);
 
 		$element.attr("data-b-view", config.componentName);
 		$element.attr("data-brite-cid", component.cid);
@@ -585,6 +584,16 @@ brite.version = "1.0.2-SNAPSHOT";
 		// bind the window events if present
 		if (component.winEvents){
 			bindEvents(component.winEvents,$(window),component, WIN_EVENT_NS_PREFIX + component.id);
+		}
+		
+		if (component.parentEvents){
+			$.each(component.parentEvents,function(key,val){
+				var parent = component.$el.bView(key);
+				if (parent != null){
+					var events = component.parentEvents[key];
+					bindEvents(events,parent.$el,component,"." + component.id);
+				}
+			});
 		}
 		
 		bindDaoEvents(component);
@@ -632,7 +641,6 @@ brite.version = "1.0.2-SNAPSHOT";
 			var ename = edefs[0] + ((namespace)?namespace:"");
 			var eselector = edefs[1]; // can be undefined, but in this case it is direct.
 
-			// 
 			var efn = getFn(component,etarget);
 			if (efn){
 				$baseElement.on(ename,eselector,function(){
@@ -803,7 +811,7 @@ brite.version = "1.0.2-SNAPSHOT";
 			$this.bEmpty();
 
 			if ($this.is("[data-b-view]")) {
-				var component = $this.data("component");
+				var component = $this.data("bview");
 				processDestroy(component);
 
 				$this.remove();
@@ -825,20 +833,33 @@ brite.version = "1.0.2-SNAPSHOT";
 			if (brite.dao){
 				brite.dao.offAny(component.id);
 			}
+			
+			if (component.parentEvents){
+				$.each(component.parentEvents,function(key,val){
+					var parent = component.$el.bView(key);
+					if (parent && parent.$el){
+						parent.$el.off("." + component.id);
+					}
+				});
+			}
 									
 			var destroyFunc = component.destroy;
 
 			if ($.isFunction(destroyFunc)) {
 				destroyFunc.call(component);
 			}
+			
+			// Delete this element, as a sign at this component has been destroyed.
+			delete component.$el;
 		}
 	}
 
 })(jQuery);
 
 // ------------------------------------- //
-// --------- old bComponent APIs ------- //
+// 
 (function($) {
+
 	/**
 	 * 
 	 * Return the component that this html element belong to. Thi traverse the tree backwards (this html element up to
@@ -857,19 +878,29 @@ brite.version = "1.0.2-SNAPSHOT";
 	 *            closestComponent will be return.
 	 * 
 	 */
-	$.fn.bComponent = function(componentName) {
+	$.fn.bView = function(viewName) {
 
 		// iterate and process each matched element
-		var $componentElement;
-		if (componentName) {
-			$componentElement = $(this).closest("[data-b-view='" + componentName + "']");
+		var $el;
+		if (viewName) {
+			$el = $(this).closest("[data-b-view='" + viewName + "']");
 		} else {
-			$componentElement = $(this).closest("[data-b-view]");
+			$el = $(this).closest("[data-b-view]");
 		}
 
-		return $componentElement.data("component");
+		return $el.data("bview");
 
 	};
+	
+})(jQuery);	
+
+// ------------------------------------- //
+// --------- old bComponent APIs ------- //
+(function($) {
+		
+	// backwards compatibility;
+	$.fn.bComponent = $.fn.bView;
+
 
 	/**
 	 * Get the list of components that this htmlElement contains.
@@ -894,7 +925,7 @@ brite.version = "1.0.2-SNAPSHOT";
 
 			$componentElements.each(function() {
 				var $component = $(this);
-				childrenComponents.push($component.data("component"));
+				childrenComponents.push($component.data("bview"));
 			});
 		});
 
@@ -924,7 +955,7 @@ brite.version = "1.0.2-SNAPSHOT";
 
 			$componentElements.each(function() {
 				var $component = $(this);
-				childrenComponents.push($component.data("component"));
+				childrenComponents.push($component.data("bview"));
 			});
 		});
 
