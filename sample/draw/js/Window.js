@@ -40,7 +40,7 @@
    */
   Window.prototype.create = function(data){
     var html = $("#tmpl-Window").render(data || {});
-    var $e = $(html);
+    var $e = $(html.trim());
     
     $e.addClass("trigger-element_resize");
     

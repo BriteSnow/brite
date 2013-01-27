@@ -6,8 +6,7 @@
 
 
   DrawSide.prototype.create = function(data, config) {
-    var html = $("#tmpl-" + this.name).render({});
-    return $(html);
+    return $("#tmpl-" + this.name).render({});
   }
   
   DrawSide.prototype.postDisplay = function(data, config) {

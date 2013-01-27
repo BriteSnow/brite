@@ -8,10 +8,9 @@
 
 
   DrawToolbar.prototype.create = function(data, config) {
-    var html = $("#tmpl-" + this.name).render({
+    return $("#tmpl-" + this.name).render({
       tools : tools
     });
-    return $(html);
   }
 
   DrawToolbar.prototype.postDisplay = function(data, config){

@@ -4,8 +4,7 @@
   }
 
   Info.prototype.create = function(){
-    var html = $("#tmpl-Info").render({});
-    return $(html);
+    return $("#tmpl-Info").render({});
   }
   
   Info.prototype.postDisplay = function(){

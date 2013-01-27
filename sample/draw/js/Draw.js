@@ -33,8 +33,7 @@
   }
   
   Draw.prototype.create = function(data, config){
-    var html = $("#tmpl-Draw").render({apps:demo.apps});
-    return $(html);
+    return $("#tmpl-Draw").render({apps:demo.apps});
   }
   
   Draw.prototype.postDisplay = function(){

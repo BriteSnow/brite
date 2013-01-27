@@ -295,7 +295,7 @@ brite.event = brite.event || {};
     setup : function(data, namespaces) {
       var eventListener = "transitionend";
       if (this.addEventListener){
-        if (!$.browser.mozilla){
+        if (!brite.ua.browser.mozilla){
           eventListener = brite.ua.cssVarPrefix().toLowerCase() + "TransitionEnd";
         }
         this.addEventListener(eventListener,function(event){

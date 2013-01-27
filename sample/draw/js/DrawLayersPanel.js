@@ -7,8 +7,7 @@
   }
   
   DrawLayersPanel.prototype.create = function(data, config){
-    var html = $("#tmpl-" + this.name).render({});
-    return $(html);
+    return $("#tmpl-" + this.name).render({});
   }
   
   DrawLayersPanel.prototype.postDisplay = function(){

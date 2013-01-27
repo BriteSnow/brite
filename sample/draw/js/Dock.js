@@ -6,8 +6,7 @@
   }
   
   Dock.prototype.create = function(data, config){
-    var html = $("#tmpl-Dock").render({apps:demo.apps});
-    return $(html);
+    return $("#tmpl-Dock").render({apps:demo.apps});
   }
   
   Dock.prototype.postDisplay = function(){

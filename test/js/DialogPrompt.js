@@ -11,9 +11,7 @@
 
 	DialogPrompt.prototype.create = function(data, config) {
 		this._answerCallBacks = [];
-		var html = $("#tmpl-DialogPrompt").render(data);
-		var $e = $(html);
-		return $e;
+		return $("#tmpl-DialogPrompt").render(data);
 	}
 
 	DialogPrompt.prototype.events = {

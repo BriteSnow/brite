@@ -1,6 +1,6 @@
 var brite = brite || {};
 
-brite.version = "1.0.2-SNAPSHOT";
+brite.version = "1.1.0-SNAPSHOT";
 
 // ---------------------- //
 // ------ brite ------ //
@@ -369,7 +369,7 @@ brite.version = "1.0.2-SNAPSHOT";
 				var createReturn = invokeCreate(component, data, config);
 				// if it custom Deferred, then, assume it will get resolved with the $element (as by the API contract)
 				if (createReturn && $.isFunction(createReturn.promise) && !createReturn.jquery) {
-					// TODO: will need to use the new jQuery 1.6 pipe here (right now, just trigger on done
+					// TODO: will need to use the new jQuery 1.6 pipe here (right now, just trigger on done)
 					createReturn.done(function($element) {
 						deferred$element.resolve($element);
 					}).fail(function() {
@@ -379,7 +379,7 @@ brite.version = "1.0.2-SNAPSHOT";
 				// otherwise, if the $element is returned , resolve the deferred$element immediately
 				else {
 					if (createReturn) {
-						$element = $(createReturn);
+						$element = createReturn;
 					}
 					deferred$element.resolve($element);
 				}
@@ -391,11 +391,15 @@ brite.version = "1.0.2-SNAPSHOT";
 			// ------ /create ------ //
 
 			// ------ render & resolve ------ //
-			deferred$element.promise().done(function($element) {
+			deferred$element.promise().done(function(createResult) {
 				// if there is an element, then, manage the rendering logic.
-				if ($element) {
+				var $element;
+				if (createResult) {
+					if (typeof createResult === "string"){
+						createResult = createResult.trim();
+					}
 					// make sure we get the jQuery object
-					$element = $($element);
+					$element = $(createResult);
 
 					bind$element($element, component, data, config);
 
@@ -1322,10 +1326,43 @@ brite.ua = {};
   var _browserType = null; // could be "webkit" "moz" "ms" "o"
   
   
+  // --------- Get brite.ua.browser --------- //
+  // Use the jquery compat code. (we still need this for the prefix)
+	function uaMatch( ua ) {
+		ua = ua.toLowerCase();
+	
+		var match = /(chrome)[ \/]([\w.]+)/.exec( ua ) ||
+		/(webkit)[ \/]([\w.]+)/.exec( ua ) ||
+		/(opera)(?:.*version|)[ \/]([\w.]+)/.exec( ua ) ||
+		/(msie) ([\w.]+)/.exec( ua ) ||
+		ua.indexOf("compatible") < 0 && /(mozilla)(?:.*? rv:([\w.]+)|)/.exec( ua ) ||
+		[];
+	
+		return {
+			browser: match[ 1 ] || "",
+			version: match[ 2 ] || "0"
+		};
+	};
+	var matched = uaMatch( navigator.userAgent );
+	var browser = {};	
+	if ( matched.browser ) {
+		browser[ matched.browser ] = true;
+		browser.version = matched.version;
+	}
+	// Chrome is Webkit, but Webkit is also Safari.
+	if ( browser.chrome ) {
+		browser.webkit = true;
+	} else if ( browser.webkit ) {
+		browser.safari = true;
+	}	
+	brite.ua.browser = browser;
+  // --------- /Get brite.ua.browser --------- //
+  
+  
   // --------- Prefix and rendererType ------ //
   function computeBrowserType(){
     $.each(CSS_PREFIXES,function(key,val){
-      if ($.browser[key]){
+      if (brite.ua.browser[key]){
         _browserType = key;
         _cssPrefix = CSS_PREFIXES[key];
         _cssVarPrefix = VAR_PREFIXES[key];

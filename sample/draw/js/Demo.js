@@ -15,8 +15,7 @@
   
   brite.registerView("Demo",{parent: "body"},{
   	create: function(){
-	    var html = $("#tmpl-Demo").render({});
-	    return $(html);
+	    return  $("#tmpl-Demo").render({});
   	},
   	
   	postDisplay: function(){
