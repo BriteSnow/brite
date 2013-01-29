@@ -979,7 +979,12 @@ brite.version = "1.1.0-SNAPSHOT";
 
 (function($) {
 	
-	
+	// add the trim prototype if not available natively.
+	if(!String.prototype.trim) {
+	  String.prototype.trim = function () {
+	    return this.replace(/^\s+|\s+$/g,'');
+	  };
+	}
 	
 	// default options for brite.whenEach
 	var whenEachOpts = {
@@ -1141,7 +1146,6 @@ brite.version = "1.1.0-SNAPSHOT";
       
    return r;
   }
-  
 
 	/**
 	 * @namespace
