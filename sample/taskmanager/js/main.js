@@ -19,7 +19,7 @@ function render(templateName,data){
 		tmpl = Handlebars.compile(tmplContent);
 		Handlebars.templates[templateName] = tmpl;		
 	}
-	return tmpl(data);
+	return tmpl(data).trim();
 }
 
 var main = main || {};

@@ -75,7 +75,7 @@
 				var view = this;
 				var daoEvent = event.daoEvent;
 				// if it is the same Project, then, update it
-				if (daoEvent.result && daoEvent.result.id === view.projectId){
+				if (daoEvent.result && daoEvent.result.id === view.project.id){
 					view.project = daoEvent.result;
 					view.$el.find("header h2").text(view.project.title);
 				}				
@@ -86,7 +86,7 @@
 	// --------- Event Handlers for Project Edit --------- //
 	function startProjectEdit(){
 		var view = this;
- 		brite.display("ProjectEdit",view.$cardBack,{projectId:view.projectId}).done(function(){
+ 		brite.display("ProjectEdit",view.$cardBack,{projectId:view.project.id}).done(function(){
  			view.$card.addClass("flipped");
  			
  			/* --------- for opera --------- */
@@ -126,7 +126,7 @@
 			// press ENTER
 			if (event.which === 13){
 				var newTask ={
-					projectId: view.projectId,
+					projectId: view.project.id,
 					title: $input.val()
 				}
 				main.taskDao.create(newTask).done(function(){
@@ -268,7 +268,7 @@
 			});
 			
 			/* --------- for opera and mozilla--------- */
-			if($.browser.opera || $.browser.mozilla){
+			if(brite.ua.browser.opera || brite.ua.browser.mozilla){
 	  			$controls.find(".delete-controls-inner").removeClass("show")
 				$controls.remove();
 			}
