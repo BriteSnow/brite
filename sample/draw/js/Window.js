@@ -196,7 +196,7 @@
     var tmplData = {maximized:isMaximized};
     
     var html = $("#tmpl-Window-controls").render(tmplData);
-    $controls = $(html);
+    $controls = $(html.trim());
     var $inner = $controls.find(".Window-controls-inner");
     $controls.css("opacity","0");
     c.$element.append($controls);

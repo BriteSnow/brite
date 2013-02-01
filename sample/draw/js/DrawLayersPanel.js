@@ -62,7 +62,7 @@
     });
     var contentHtml = $("#tmpl-DrawLayersPanel-layers").render({layers:layers});
     
-    var $newContent = $(contentHtml);
+    var $newContent = $(contentHtml.trim());
     
     // reset the selected state
     $newContent.find(".DrawLayersPanel-layer").eq(selectedIdx).addClass("sel");
