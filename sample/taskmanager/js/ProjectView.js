@@ -230,7 +230,7 @@
 			$tableContent.find("tr.to-delete").each(function(idx,tr){
 				ids.push($(tr).bEntity("Task").id);
 			});
-			main.taskDao.removeMany(ids).done(function(){
+			main.taskDao.deleteMany(ids).done(function(){
 				turnDeleteModeOff();
 			});
 		});

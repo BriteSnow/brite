@@ -195,7 +195,9 @@ var brite = brite || {};
 		var $receiver = dic[objectType];
 
 		// if the $receiver does not exist, create it.
-		if (!$receiver) {
+		// Note: Need to check the parent, because, if the data action is remove, jQuery will remove the node 
+		//       to its root, preventing other to add
+		if (!$receiver || $receiver.parent().length !== 1) {
 			dic[objectType] = $receiver = $("<div class='" + objectType + "'></div>");
 			$receiversRoot.append($receiver);
 		}

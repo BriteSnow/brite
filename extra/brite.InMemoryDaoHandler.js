@@ -95,7 +95,7 @@
 	 * @param {Integer} id
 	 *
 	 */
-	InMemoryDaoHandler.prototype.remove = function(id) {
+	InMemoryDaoHandler.prototype["delete"] = function(id) {
 		var entity = this._dataDic[id];
 		if (entity) {
 			delete this._dataDic[id];
@@ -110,7 +110,7 @@
 	 * 
 	 * @return the array of ids that have been removed
 	 */
-	InMemoryDaoHandler.prototype.removeMany = function(ids){
+	InMemoryDaoHandler.prototype.deleteMany = function(ids){
 		var that = this;
 		
 		// TODO: need to check if the entity exists and 

@@ -42,7 +42,7 @@
 				var entityRef = $(event.currentTarget).bEntity("Task");
 				
 				// 2) Delete the task by using the taskDao 
-				main.taskDao.remove(entityRef.id);
+				main.taskDao.delete(entityRef.id);
 			} 
 		},
 		
