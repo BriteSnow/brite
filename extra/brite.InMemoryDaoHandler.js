@@ -161,7 +161,14 @@
 		}
 	}
 	
-	InMemoryDaoHandler.prototype.batchUpdate = function(match,data){
+	/**
+	 * Batch update given a match criteria
+	 * 
+	 * @param {object} data the object with the prop:value to update
+	 * @param {object} (optional) match matching object as in list, delete. If not spe
+	 * 
+	 */
+	InMemoryDaoHandler.prototype.batchUpdate = function(data, match){
 		var dao = this;
 		var updatedList = [];
 		// make sure to remove any accidental .id property of the data
@@ -237,6 +244,8 @@
 
 		return resultSet;
 	}
+	
+	
 
 	// --------- /DAO Interface Implementation --------- //
 	

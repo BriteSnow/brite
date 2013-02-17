@@ -111,7 +111,7 @@
             assertEqual("brite.dao.list (Paris=2)",2,userList.length);
             
             // move Paris people to New York
-            userDao.batchUpdate({city:"Paris"},{city:"New York"}).done(function(updatedItems){
+            userDao.batchUpdate({city:"New York"},{city:"Paris"}).done(function(updatedItems){
                 assertEqual("brite.dao.batchUpdate (Paris to New York = 2)",2,updatedItems.length);
                 // Check we have 2 in new york
                 userDao.list({match:{city:"New York"}}).done(function(userList){
