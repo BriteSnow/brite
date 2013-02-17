@@ -251,7 +251,7 @@
 	
 	/**
 	 * 
-	 * Utility method that return if an object pass the matching rule. 
+	 * Utility method that return if an object pass the matching rule. If "match" is null or undefined, always return true;
 	 * 
 	 * @param {Object} obj The object to compare
 	 * @param {Object} match The comparator, on the format propName:value. 
@@ -263,10 +263,12 @@
 	 */
 	function passMatch(obj,match){
 		var pass = true;
-		for (k in match) {
-			if (obj[k] !== match[k]) {
-				pass = false;
-				break;
+		if (match){
+			for (k in match) {
+				if (obj[k] !== match[k]) {
+					pass = false;
+					break;
+				}
 			}
 		}
 		return pass;		
