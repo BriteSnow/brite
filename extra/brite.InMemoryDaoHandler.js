@@ -122,6 +122,19 @@
 		return ids;
 	}
 
+	InMemoryDaoHandler.prototype.batchDelete = function(match){
+		var dao = this;
+		var deletedIds = [];
+		$.each(this._dataDic, function(key, entity) {
+			if (passMatch(entity,match)){
+				var entity = dao._dataDic[key];
+				delete dao._dataDic[key];
+				deletedIds.push(key);				
+			}
+		});
+		return deletedIds;
+	}
+	
 	/**
 	 * DAO Interface: update a existing id with a set of property/value data.
 	 *
@@ -147,15 +160,32 @@
 			return null;
 		}
 	}
+	
+	InMemoryDaoHandler.prototype.batchUpdate = function(match,data){
+		var dao = this;
+		var updatedList = [];
+		// make sure to remove any accidental .id property of the data
+		delete data[this._idName];
+		// update all the matching records
+		$.each(this._dataDic, function(key, entity) {
+			if (passMatch(entity,match)){
+				$.extend(entity, data);
+				updatedList.push($.extend({}, entity));				
+			}
+		});
+		return updatedList;
+	}
+		
 
 	/**
 	 * DAO Interface: Return a deferred object for this objectType and options
-	 * @param {String} objectType
 	 * @param {Object} opts
 	 *           opts.pageIndex {Number} Index of the page, starting at 0.
 	 *           opts.pageSize  {Number} Size of the page
-	 *           opts.match     {Object} Object of matching items. If item is a single value, then, it is a ===, otherwise, it does an operation
-	 *                                        {prop:"name",op:"contains",val:"nana"} (will match an result like {name:"banana"})
+	 *           opts.match     {Object} Object of matching items. If item is a single value, then, it is a ===, 
+	 * 																	 Note implemented: advanced operation support with an object, with a .op for operation
+	 *                                        {age:{op:">",val:12}} (will match any item where .age > 12)
+	 *                                        if opts.match is an array, each block will be considered as OR block
 	 *           opts.orderBy   {String}
 	 *           opts.orderType {String} "asc" or "desc"
 	 */
@@ -169,13 +199,7 @@
 			var k, needPush = true;
 
 			if (opts.match) {
-				var filters = opts.match;
-				for (k in filters) {
-					if (entity[k] !== filters[k]) {
-						needPush = false;
-						break;
-					}
-				}
+				needPush = passMatch(entity,opts.match);
 			}
 
 			// TODO: needs to do the match. Probably regex of some sort
@@ -215,6 +239,29 @@
 	}
 
 	// --------- /DAO Interface Implementation --------- //
+	
+	/**
+	 * 
+	 * Utility method that return if an object pass the matching rule. 
+	 * 
+	 * @param {Object} obj The object to compare
+	 * @param {Object} match The comparator, on the format propName:value. 
+	 * 						     if "value" string, number, or boolean which will get compared a ===
+	 * 								 NOT SUPPORTED YET: if "value" is an object with propName:{op:operation,value:value}, where op is the operation to campare ("<", ">", "%")
+	 * 								 NOT SUPPORTED YET: Also, match can be an array of object, in this case, each item in the array will be OR block 
+	 * 								(i.e. [{age:12},{age:13}] would match any person of age 12 or 13)	
+	 * 
+	 */
+	function passMatch(obj,match){
+		var pass = true;
+		for (k in match) {
+			if (obj[k] !== match[k]) {
+				pass = false;
+				break;
+			}
+		}
+		return pass;		
+	}
 
 	brite.InMemoryDaoHandler = InMemoryDaoHandler;
 

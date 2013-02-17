@@ -2184,6 +2184,7 @@ var brite = brite || {};
 	 * @param {String} objType (optional) the object table
 	 * @return null if not found, single object with {id,type,$element} if only one jQuery object, a list of such if this jQuery contain multiple elements.
 	 */
+	//@Deprecated
 	$.fn.bObjRef = function(objType) {
 		var resultList = [];
 

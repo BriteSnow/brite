@@ -12,7 +12,7 @@
   
   <script type="text/javascript" src="../src/js/brite.core.js" ></script>
   <script type="text/javascript" src="../src/js/brite.dao.js" ></script>
-  <script type="text/javascript" src="../src/js/brite.InMemoryDaoHandler.js" ></script>
+  <script type="text/javascript" src="../extra/brite.InMemoryDaoHandler.js" ></script>
   
   <style type="text/css">
     #testList li{
@@ -51,13 +51,13 @@
         var newUserId = null;
         // test create
         userDao.create({name:"John Doe",city:"New York"}).done(function(newUser){
-           assertEqual("brite.dao.create John Doe","John Doe",newUser.name);
-           assertNotNull("brite.dao.crate John Doe",newUser.id,"user.id");    
+           assertEqual("brite.dao.create John Doe (user.name match)","John Doe",newUser.name);
+           assertNotNull("brite.dao.create John Doe (user.id exist)",newUser.id,"user.id");    
            newUserId = newUser.id;     
         });
         
-        // test remove
-        userDao.remove(newUserId).done(function(userIdRemoved){
+        // test delete
+        userDao.delete(newUserId).done(function(userIdRemoved){
           assertEqual("brite.dao.remove John Doe",newUserId,userIdRemoved);
           
           userDao.get(newUserId).done(function(johnUser){
@@ -65,11 +65,11 @@
           });
         });
         
-        // test removeMany
+        // test deleteMany
         $.when(userDao.create({name:"John Doe",city:"New York"}),userDao.create({name:"Rachel Lake",city:"Tahoe"}))
         .done(function(newUser1,newUser2){
           var ids = [newUser1.id,newUser2.id];
-          userDao.removeMany(ids).done(function(){
+          userDao.deleteMany(ids).done(function(){
             userDao.list().done(function(l){
               assertEqual("brite.dao.removeAll",2,l.length);
             });
@@ -100,9 +100,37 @@
         
         // test list
         userDao.list({match:{city:"Paris"}}).done(function(userList){
-          assertEqual("brite.dao.list",1,userList.length);        
+          assertEqual("brite.dao.list (Paris=1)",1,userList.length);        
         });        
 
+        // create another user in paris
+        userDao.create({name:"Flo C",city:"Paris"}).done(function(newParisUser){
+          assertEqual("brite.dao.create (Paris)","Paris",newParisUser.city);
+          // we list everybody in paris (should have 2)
+          userDao.list({match:{city:"Paris"}}).done(function(userList){
+            assertEqual("brite.dao.list (Paris=2)",2,userList.length);
+            
+            // move Paris people to New York
+            userDao.batchUpdate({city:"Paris"},{city:"New York"}).done(function(updatedItems){
+                assertEqual("brite.dao.batchUpdate (Paris to New York = 2)",2,updatedItems.length);
+                // Check we have 2 in new york
+                userDao.list({match:{city:"New York"}}).done(function(userList){
+                  assertEqual("brite.dao.list updated (New York = 2)",2,userList.length);
+                  // delete all New York people
+                  userDao.batchDelete({city:"New York"}).done(function(deletedList){
+                    assertEqual("brite.dao.batchDelete (New York)",2,deletedList.length);
+                    
+                    // check nobody in New York
+                    userDao.list({match:{city:"New York"}}).done(function(userList){
+                      assertEqual("brite.dao.list updated (New York = 0)",0,userList.length);
+                    });
+                  });
+                });                
+            });
+            
+          });              
+        });
+                
 
       });
       
