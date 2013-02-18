@@ -245,6 +245,20 @@
 		return resultSet;
 	}
 	
+	/**
+	 * @param {Object} match (optional) matching object as the list, and batchDelete, batchUpdate. Optional
+	 */
+	InMemoryDaoHandler.prototype.count = function(match){
+		
+		var val = 0;
+		$.each(this._dataDic, function(key, entity) {
+			if (passMatch(entity,match)){
+				val++;
+			}
+		});
+		
+		return val;
+	}
 	
 
 	// --------- /DAO Interface Implementation --------- //

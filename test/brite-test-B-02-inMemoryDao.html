@@ -107,8 +107,8 @@
         userDao.create({name:"Flo C",city:"Paris"}).done(function(newParisUser){
           assertEqual("brite.dao.create (Paris)","Paris",newParisUser.city);
           // we list everybody in paris (should have 2)
-          userDao.list({match:{city:"Paris"}}).done(function(userList){
-            assertEqual("brite.dao.list (Paris=2)",2,userList.length);
+          userDao.count({city:"Paris"}).done(function(count){
+            assertEqual("brite.dao.count (Paris=2)",2,count);
             
             // move Paris people to New York
             userDao.batchUpdate({city:"New York"},{city:"Paris"}).done(function(updatedItems){
