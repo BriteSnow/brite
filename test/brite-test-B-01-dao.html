@@ -12,7 +12,7 @@
 
 		<script type="text/javascript" src="../src/js/brite.core.js" ></script>
 		<script type="text/javascript" src="../src/js/brite.dao.js" ></script>
-		<script type="text/javascript" src="../src/js/brite.InMemoryDaoHandler.js" ></script>
+		<script type="text/javascript" src="../extra/brite.InMemoryDaoHandler.js" ></script>
 		
 		<style type="text/css">
 			.action{
@@ -130,7 +130,7 @@
 						// get the user objRef that this html element belong to.
 						var objRef = $(this).bEntity("User");
 						if (objRef){
-						  userDao.remove(objRef.id);
+						  userDao.delete(objRef.id);
 						}
 					});
 					// --- /Delete User --- //
