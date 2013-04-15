@@ -135,5 +135,35 @@
       });
       
   		</script>
+  		<script type="text/javascript">
+      $(function(){
+        function CustomDaoHandler(entityType,seed, opts){
+          this.constructor._super.constructor.call(this,entityType,seed, opts);
+        }
+        brite.inherit(CustomDaoHandler,brite.InMemoryDaoHandler);
+        
+        CustomDaoHandler.prototype.remove = function(id){
+          return this.delete(id);
+        }
+        
+        var taskSeed = [{id:"001",name:"Mike Donavan"},
+                     {id:"002",name:"Jennifer Aniston"}];
+                     
+        var dao = brite.registerDao(new CustomDaoHandler("Task",taskSeed));
+        var hasTrigger = false;
+        brite.dao.onDataChange("Task",function(){
+          hasTrigger = true;
+        },"testDataChange");
+        dao.remove("001");
+        
+        setTimeout(function(){
+          assertEqual("brite.dao.remove dataChange",true,hasTrigger);
+          brite.dao.offDataChange("testDataChange");
+        },500);
+        
+
+      });
+      
+  		</script>
   </body>
 </html>

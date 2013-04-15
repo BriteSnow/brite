@@ -203,6 +203,10 @@ var brite = brite || {};
 		}
 		// trigger with the event.type == action
 		$receiver.trigger(evt);
+		
+	  if($receiversRoot.find("."+objectType).size() == 0 && $receiver){
+      $receiversRoot.append($receiver);
+    }
 
 		// trigger _ALL_ action in case there are some events registered for all event
 		evt.type = _ALL_;
