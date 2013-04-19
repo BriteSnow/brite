@@ -194,17 +194,16 @@ var brite = brite || {};
 
 		var $receiver = dic[objectType];
 
-		// if the $receiver does not exist, create it.
-		// Note: Need to check the parent, because, if the data action is remove, jQuery will remove the node 
-		//       to its root, preventing other to add
-		if (!$receiver || $receiver.parent().length !== 1) {
+		if (!$receiver) {
 			dic[objectType] = $receiver = $("<div class='" + objectType + "'></div>");
 			$receiversRoot.append($receiver);
 		}
 		// trigger with the event.type == action
 		$receiver.trigger(evt);
 		
-	  if($receiversRoot.find("."+objectType).size() == 0 && $receiver){
+		// in the case of a "remove" event, we need to check if the $receiver did not get removed, 
+		// otherwise, we need to add it back.
+	  if(evt.type === "remove" && $receiversRoot.find("."+objectType).size() == 0 && $receiver){
       $receiversRoot.append($receiver);
     }
 
