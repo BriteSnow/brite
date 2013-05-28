@@ -131,7 +131,8 @@ brite.event = brite.event || {};
       
       function handleEnd(event){
         clearAll();
-        if (event.target === origTarget && !_dragging){
+        // use event.eventPhase because we should ignore bubbling event when triggering this meta event
+        if (event.target === origTarget  && event.eventPhase === 2 && !_dragging){
           // we take the pageX and pageY of the start event (because in touch, touchend does not have pageX and pageY)
           brite.event.fixTouchEvent(startEvent);
           triggerCustomEvent(elem, event,{type:"btap",pageX: startEvent.pageX,pageY: startEvent.pageY});

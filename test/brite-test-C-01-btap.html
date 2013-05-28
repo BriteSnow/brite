@@ -31,11 +31,57 @@
 			.button.on{
 				background: #e0ffe0;
 			}
+			.container-box{
+			  position: relative;
+			  border: solid 1px #aaa;
+			  padding: 20px;
+			  width: 400px;
+			}
+			#containerMessage{
+			  position: absolute;
+			  left: 150px;
+			  top: 0;
+			  right: 0;
+			  bottom: 0;
+			  padding: 5px;
+			}
 		</style>
 		
     </head>
     <body>
     	<p>UserAgent with touch events will use the "touchstart" event, others will use the tranditional "click" event.</p>
+		
+		<h2>Parent / Child</h2>
+		<div id="container" class="container-box">
+		  <div id="childButton" class="button">Tap me</div>
+		  <div id="containerMessage"></div>
+		</div>
+		
+		<script type="text/javascript">
+		  $(function(){
+		    var counter = 0;
+		    var timer = false;
+        $(document).on("btap","#childButton",function(){
+          console.log("btap on child: " + counter);
+          if (counter === 0 && !timer){
+            timer = true;
+            setTimeout(function(){
+              if (counter !== 2){
+                $("#containerMessage").html("FAIL: should have counter == 2,but was : " + counter);
+              }else{
+                $("#containerMessage").html("PASS");
+              }
+            },200);
+          }
+          counter++;
+        });		    
+		    $(document).on("btap","#container",function(){
+		      console.log("btap on container: " + counter);
+		      counter++;
+		    });
+
+		  });
+		</script>
 		
         <h2>Single btap bind</h2>
 		<div class="sTestSrc sTestShowSrc">
