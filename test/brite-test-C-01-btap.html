@@ -51,6 +51,25 @@
     <body>
     	<p>UserAgent with touch events will use the "touchstart" event, others will use the tranditional "click" event.</p>
 		
+    <h2>btap on parent only</h2>
+    <div>
+      <div id="parentDiv" style="width:200px;padding: 30px; border: solid #ddd 1px">
+        <div class="child" style="width: 100px; border: solid #ddd 1px">tap me</div>
+      </div>
+    </div>
+    
+    <script type="text/javascript">
+      $(function(){
+        $(document).on("mouseup",function(){
+          console.log("mouseup");
+        });
+        $(document).on("btap","#parentDiv",function(){
+        //$("#parentDiv").on("btap",function(){
+          console.log("btap");
+        });
+      });
+    </script>    
+    
 		<h2>Parent / Child</h2>
 		<div id="container" class="container-box">
 		  <div id="childButton" class="button">Tap me</div>

@@ -2357,11 +2357,18 @@ brite.event = brite.event || {};
       
       function handleEnd(event){
         clearAll();
-        // use event.eventPhase because we should ignore bubbling event when triggering this meta event
-        if (event.target === origTarget  && event.eventPhase === 2 && !_dragging){
-          // we take the pageX and pageY of the start event (because in touch, touchend does not have pageX and pageY)
-          brite.event.fixTouchEvent(startEvent);
-          triggerCustomEvent(elem, event,{type:"btap",pageX: startEvent.pageX,pageY: startEvent.pageY});
+        if (event.target === origTarget && !_dragging){
+        	// use event.eventPhase because we should ignore bubbling event when triggering this meta event
+        	var ep = event.eventPhase;
+	        var pass = (elem === origTarget && ep === 2) || (elem !== origTarget && ep === 3);
+	        if (pass && !event.originalEvent.b_processed){
+	          // we take the pageX and pageY of the start event (because in touch, touchend does not have pageX and pageY)
+	          brite.event.fixTouchEvent(startEvent);
+	          triggerCustomEvent(elem, event,{type:"btap",pageX: startEvent.pageX,pageY: startEvent.pageY});
+	          // flag this originalEvent as processed
+	          // Note: this allow to prevent multiple triggering without having to use the stopPropagation
+	          event.originalEvent.b_processed = true;
+         }
         }
       }
       
