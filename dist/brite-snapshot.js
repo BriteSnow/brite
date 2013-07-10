@@ -1789,7 +1789,6 @@ var brite = brite || {};
 			return dao;
 		} else {
 			var er = "Cannot find the DAO for objectType: " + objectType;
-			brite.log.error(er);
 			throw er;
 		}
 	};
