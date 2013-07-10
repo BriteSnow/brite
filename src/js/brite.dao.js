@@ -402,8 +402,11 @@ var brite = brite || {};
 					result = {
 						type : $sObj.attr("data-entity"),
 						id : $sObj.attr("data-entity-id"),
-						name: $sObj.attr("data-entity-name"),
 						$el : $sObj
+					}
+					var name = $sObj.attr("data-entity-name");
+					if (typeof name !== "undefined"){
+						result.name = name;
 					}
 				}
 			}
