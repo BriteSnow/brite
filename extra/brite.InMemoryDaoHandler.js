@@ -56,7 +56,6 @@
 	// --------- DAO Interface Implementation --------- //
 	/**
 	 * DAO Interface. Return value directly since it is in memory.
-	 * @param {String} objectType
 	 * @param {Integer} id
 	 * @return the entity
 	 */
@@ -73,7 +72,6 @@
 	/**
 	 * DAO Interface: Create new object, set new id, and add it.
 	 *
-	 * @param {String} objectType
 	 * @param {Object} newEntity if null, does nothing (TODO: needs to throw exception)
 	 */
 	InMemoryDaoHandler.prototype.create = function(newEntity) {
@@ -91,7 +89,6 @@
 	 *
 	 * Return the id deleted
 	 *
-	 * @param {String} objectType
 	 * @param {Integer} id
 	 *
 	 */
@@ -140,7 +137,6 @@
 	 *
 	 * The DAO resolve with the updated data.
 	 *
-	 * @param {String} objectType
 	 * @param {Object} data Object containing the id and the properties to be updated
 	 *
 	 * Return the new object data
