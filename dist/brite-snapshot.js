@@ -1962,8 +1962,8 @@ var brite = brite || {};
 		// in the case of a "remove" event, we need to check if the $receiver did not get removed, 
 		// otherwise, we need to add it back.
 	  if(evt.type === "remove" && $receiversRoot.find("."+objectType).size() == 0 && $receiver){
-      $receiversRoot.append($receiver);
-    }
+ $receiversRoot.append($receiver);
+ }
 
 		// trigger _ALL_ action in case there are some events registered for all event
 		evt.type = _ALL_;
