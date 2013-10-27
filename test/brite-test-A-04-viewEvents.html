@@ -7,8 +7,6 @@
 		<!-- Generic Test Includes -->
 		<link rel="stylesheet" href="css/sTestHelper.css"/>
 		<link rel="stylesheet" href="../others/bootstrap/css/bootstrap.css" />
-		<link rel="stylesheet" href="../others/bootstrap/css/bootstrap-responsive.css" />
-		
 		
 		<script type="text/javascript" src="../js-dependencies/jquery.js" ></script>
 		<!-- /Generic Test Includes -->
@@ -16,7 +14,7 @@
 		<script type="text/javascript" src="../src/js/brite.core.js" ></script>
 		<script type="text/javascript" src="../src/js/brite.dao.js" ></script>
 		<script type="text/javascript" src="../src/js/brite.event.js" ></script>
-		<script type="text/javascript" src="../src/js/brite.InMemoryDaoHandler.js" ></script>
+		<script type="text/javascript" src="../extra/brite.InMemoryDaoHandler.js" ></script>
 		
 		<style type="text/css">
   		body{
@@ -100,7 +98,7 @@
                 refreshList.call(this);
               }, 
               
-              "dataChange; User; remove" : function(event){
+              "dataChange; User; delete" : function(event){
                  refreshList.call(this);                
               },
               
@@ -119,7 +117,7 @@
       function onTapUserDel(event){
         var view = this;
         var entity = $(event.currentTarget).bEntity("User");
-        brite.dao("User").remove(entity.id);
+        brite.dao("User").delete(entity.id);
       }
       
       function onTapViewDel(){
