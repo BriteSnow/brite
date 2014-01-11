@@ -1,5 +1,13 @@
 var brite = brite || {};
 
+if ( typeof module === "object" && module && typeof module.exports === "object" ) {
+    module.exports = brite;
+} else if ( typeof define === "function" && define.amd ) {
+    define( "brite", [], function () { return brite; } );
+} else {
+    window.brite = brite;
+}
+
 brite.version = "1.1.2-SNAPSHOT";
 
 // ---------------------- //
