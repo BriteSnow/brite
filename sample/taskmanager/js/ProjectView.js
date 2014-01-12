@@ -211,13 +211,14 @@
 		
 		var $inner = $controls.find(".delete-controls-inner");
 		
+		var $tableContent = view.$el.find("section.content");
+
 		setTimeout(function(){
 			$inner.addClass("show");
 		},10);
 		
 		// add the deleteMode class and set component flag
-		var $tableContent = view.$el.find("section.content");
-		$tableContent.addClass("deleteMode");
+		view.$el.addClass("deleteMode")
 		view.deleteMode = true;
 		
 		// disable the inputs
@@ -252,8 +253,7 @@
 		
 		// define function in scope to reuse all context variables
 		function turnDeleteModeOff(){
-			$tableContent.removeClass("deleteMode");
-			$tableContent.removeClass("deleteMode");
+			view.$el.removeClass("deleteMode");
 			$tableContent.find("tr.to-delete").removeClass("to-delete");
 			view.deleteMode = false;
 			

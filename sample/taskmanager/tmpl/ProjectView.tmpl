@@ -4,11 +4,11 @@
       <div class="card-face card-front">
         <header>
           <h2>{{project.title}}</h2>
-          <div class="header-setting" data-action='editMode'><i class="icon-edit" style="opacity:.5"></i></div>
+          <div class="header-setting" data-action='editMode'><i class="glyphicon glyphicon-edit" style="opacity:.5"></i></div>
         </header>
         <section class="heading">
           <label>Tasks</label>
-          <div class="del"><i class="icon-trash"></i></div>
+          <div class="del"><span class="glyphicon glyphicon-remove"></span></div>
         </section>
         <section class="content">      
           The sub content
@@ -32,7 +32,7 @@
           <div class="taskCheck {{#if done}}done{{/if}}" data-prop="done"></div>
         </td>
         <td class="title"><input data-prop="title" value="{{title}}" />
-          <i class="del-ico icon-ban-circle"></i>
+          <span class="del-ico glyphicon glyphicon-remove"></span>
         </td>
       </tr>
       {{/each}}
@@ -50,8 +50,8 @@
 <script id="tmpl-ProjectView-delControls" type="text/html">
   <div class="delete-controls">
     <div class="delete-controls-inner">
-      <div class="btn btn-small btn-danger" data-action="delete">Delete (0)</div>
-      <div class="btn btn-small" data-action="cancel">Cancel</div>
+      <div class="btn btn-xs btn-danger" data-action="delete">Delete (0)</div>
+      <div class="btn btn-xs" data-action="cancel">Cancel</div>
     </div>
   </div>
 </script>

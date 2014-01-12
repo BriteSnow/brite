@@ -160,6 +160,10 @@
   width: 15px;
 }
 
+.ProjectView .del-ico{
+  display: none;
+}
+
 .ProjectView .taskCheck{
   border: solid 1px #aaa;
   width: 16px;
@@ -236,28 +240,33 @@
 
 
 /* --- deleteMode --- */
-.ProjectView section.content.deleteMode tr.to-delete{
-    background-color: #ffdddd;
-}
-
-.ProjectView section.content.deleteMode .newTask{
+.ProjectView.deleteMode .del{
   display: none;
 }
 
-.ProjectView section.content.deleteMode td{
+.ProjectView.deleteMode tr.to-delete{
+    background-color: #ffdddd;
+}
+
+.ProjectView.deleteMode .newTask{
+  display: none;
+}
+
+.ProjectView.deleteMode td{
   cursor: ponter;
 } 
 
-.ProjectView section.content.deleteMode input{
+.ProjectView.deleteMode input{
   cursor: pointer;
 }
 
-.ProjectView section.content.deleteMode td.title i.del-ico{
+.ProjectView.deleteMode td.title span.del-ico{
+  position: absolute;
+  top: 5px; right: 5px; 
   display: block;
   float: right;
   margin-top: 5px;
   cursor: pointer;
 }
-
 /* --- /deleteMode --- */
 
