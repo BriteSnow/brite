@@ -1,0 +1,11 @@
+{
+  "name": "brite",
+  "repo": "BriteSnow/brite",
+  "description": "The BriteJS library",
+  "version": "1.1.1",
+  "keywords": ["britejs"],
+  "main": "dist/brite.min.js",
+  "scripts": [
+    "dist/brite.min.js"
+  ]
+}
