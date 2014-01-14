@@ -1,5 +1,12 @@
+# Ignore Mac stuff
 .DS_Store
-.project
+
+# Ignore Sublime Stuff
+*.sublime-project
+*.sublime-workspace
+
+
+# Ignore Custom scripts
 britedoc.sh
 build.xml
-.settings
+
