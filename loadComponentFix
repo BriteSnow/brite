@@ -1,0 +1,49 @@
+	function loadComponent(name) {
+		var loaderDeferred = $.Deferred();
+
+		var loadComponentDefDfd = loadComponentDef(name);
+
+		// --------- Load the tmpl if needed --------- //
+		loadComponentDefDfd.done(function(componentDef) {
+			var loadTemplateDfd = $.Deferred();
+			var loadCssDfd = $.Deferred();
+			var loadTemplate = componentDef.config.loadTmpl;
+			if(loadTemplate && !_templateLoadedDfdPerComponentName[name]) {
+				_templateLoadedDfdPerComponentName[name] = $.ajax({
+					url: brite.config.tmplPath + name + brite.config.tmplExt,
+					async: true
+				}).always(function(jqXHR) {
+						$(brite.config.componentsHTMLHolder).append(jqXHR);
+						loadTemplateDfd.resolve();
+					});
+			} else {
+				_templateLoadedDfdPerComponentName[name].done(function() {loadTemplateDfd.resolve();})
+			}
+
+			// --------- Load the css if needed --------- //
+			var loadCss = componentDef.config.loadCss;
+			if(loadCss && !_cssLoadedDfdPerComponentName[name]) {
+				var cssFileName = "css/" + name + ".css";
+				_cssLoadedDfdPerComponentName[name] = includeFile(cssFileName, "css").done(function() {
+					loadCssDfd.resolve();
+				}).fail(function() {
+						console.log("Brite ERROR: cannot load " + cssFileName + ". Ignoring issue");
+						loadCssDfd.resolve();
+					});
+			} else {
+				_cssLoadedDfdPerComponentName[name].done(function() {loadCssDfd.resolve();})
+			}
+
+			$.when(loadTemplateDfd, loadCssDfd).done(function() {loaderDeferred.resolve(componentDef);});
+
+		});
+
+		loadComponentDefDfd.fail(function(ex) {
+			if(console) {
+				console.log("BRITE-ERROR: Brite cannot load component: " + name + "\n\t " + ex);
+			}
+			loaderDeferred.reject();
+		});
+
+		return loaderDeferred.promise();
+	}
