@@ -86,7 +86,7 @@ brite.event = brite.event || {};
 // ------ /transition helper ------ //
 
 // ------ /brite special events ------ //
-;(function($){
+(function($){
 	
 	// to prevent other events (i.e., btap) to trigger when dragging.
 	var _dragging = false;
@@ -141,7 +141,8 @@ brite.event = brite.event || {};
 						brite.event.fixTouchEvent(startEvent);
 						triggerCustomEvent(elem, event,{type:"btap",pageX: startEvent.pageX,pageY: startEvent.pageY});
 						// flag this originalEvent as processed
-						// Note: this allow to prevent multiple triggering without having to use the stopPropagation
+						// Note: this allow to prevent multiple triggering without having to use the stopPropagation which will be too
+						//       destructive for other event handlers
 						event.originalEvent.b_processed = true;
 					}
 				}
