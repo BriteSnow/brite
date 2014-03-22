@@ -1,146 +1,168 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
-	<head>
-		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-		<meta name="viewport" content="initial-scale=1.0; maximum-scale=1.0"/>
-		<title>brite - test - bdragstart, bdragmove, bdragend</title>
-		<!-- Generic Test Includes -->
-		<link rel="stylesheet" href="css/sTestHelper.css"/>
-		<script type="text/javascript" src="../js-dependencies/jquery.js" ></script>
-		<script type="text/javascript" src="js/sTestHelper.js" ></script>
-		<script type="text/javascript">
-			$( function() {
-				showTestSources();
-			});
-		</script>
-		<!-- /Generic Test Includes -->
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title>brite - test - bdragstart, bdragmove, bdragend</title>
 
-		<script type="text/javascript" src="../src/js/brite.core.js" ></script>
-		<script type="text/javascript" src="../src/js/brite.event.js" ></script>
-		<style>
-			.demoCtn{
-				width: 650px;
-				height: 400px;
-			}
-			#messageBox{
-				float: left;
-				width: 200px;
-				height: 400px;
-				border: solid 1px #777;
-				background: #ddd;
-				margin: 0 0 0 20px;
-				overflow: auto;
-			}
-			
-			#container {
-				float: left;
-				position: relative;
-				width: 400px;
-				height: 400px;
-				border: dotted 2px #777;
-				overflow: hidden;
-			}
-			.box{
-			  -webkit-user-select: none;
-				position: absolute;
-				width: 100px;
-				height: 100px;	
-				border: dotted 1px #777;	
-				color: white;
-				text-align: center;	
-				background: blue;	
-			}
-			.box h2{
-				font-size: 14px;
-				border: none;
-				text-align: center;
-				background: #aaa;
-				color: black;
-			}
-			.box label{
-				display:block;
-				font-size: .9em;
-				text-align: center;
-			}
-			.box.dragme{
-				overflow: auto;
-				cursor: pointer;
-				background: rgba(255,255,255,.7);
-				color: black;
-				text-align: left;
-				z-index: 1;				
-			}
-			#box1 {
-				top: 100px;
-				left: 100px;
-				
-			}
-			#box2 {
-				top: 150px;
-				left: 250px;
-			}
-			#box3 {
-				top: 250px;
-				left: 50px;
-			}
-			
-			.box.dragover{
-				background: green;
-			}
-			.box.droppedon{
-				background: #00aa00;
-			}
-			
-			small {
-				display:block;
-				font-size: 10px;
-			}
-		</style>
-	</head>
-	<body>
-		<h2>Single bDrag bind</h2>
-		<div class="sTestSrc sTestShowSrc">
-			<div class='demoCtn'>
-			<div id="container">
-				<div id="box1" class="box dragme">
-					<h2>Drag Me</h2>
-					<label class="drag"></label>
-				</div>
-			</div>
-			<div id="messageBox">
-				
-			</div>
-			</div>
-			
-			<script type="text/javascript">
-				$( function() {
-					var count = 0;
-					var $container = $("#container");
-					var $box1 = $("#box1");
-					
-					var $messageBox = $("#messageBox");
-					
-					var $dragHelper;
-					
+	
+	<link rel="stylesheet" href="../others/bootstrap/css/bootstrap.css"/>
 
-          $container.find(".box.dragme").on("bdragstart",function(event){
-            console.log("bdragstart");
-          });
+	<!-- Generic Test Includes -->
+	<link rel="stylesheet" href="css/sTestHelper.css"/>
+	<script type="text/javascript" src="../js-dependencies/jquery.js" ></script>
+	<script type="text/javascript" src="js/sTestHelper.js" ></script>
+	<!-- /Generic Test Includes -->
 
-          $container.on("bdragmove",".box.dragme",function(event){
-            console.log("bdragmove");
-            var $box = $(this);
-            var pos = $box.position();
-            $box.css({top: pos.top + event.bextra.deltaY,
-                      left: pos.left + event.bextra.deltaX});
-          });
+	<script type="text/javascript" src="../src/js/brite.core.js" ></script>
+	<script type="text/javascript" src="../src/js/brite.event.js" ></script>
+	<style>
+		.demo-panel{
+			position: absolute;
+			width: 200px;
+			height: 300px;
+		}
+		.demo-panel .panel-heading{
+			cursor: pointer;
+			user-select: none;
+			-webkit-user-select: none;
+		}
+		.demo-panel .list-group{
+			height: 220px;
+			border: solid 1px red;
+			overflow: scroll;
+		}
+		.demo-panel .list-group-item{
+			position: relative;
+		}
 
-          $container.on("bdragend",".box.dragme",function(){
-            console.log("bdragend");
-          });
-          				
-				});
-			</script>
-		</div>
-	</body>
+		.demo-panel .drag-handle{
+			cursor: pointer;
+			position: absolute;
+			top: 2px; bottom: 2px; left: 2px;
+			width: 10px;
+			background: #ddd;
+			user-select: none;
+			-webkit-user-select: none;
+		}
+
+		.demo-panel.list-b{
+			height: 340px;
+			padding: 15px;
+			background-color:#ddd;
+		}
+		.demo-panel.list-b .panel-body{
+			background: white;
+		}
+
+		.drag-helper{
+			position: absolute;
+			width: 100px;
+			background: #efefef;
+			padding: 10px;
+			color: red;
+		}
+	</style>
+
+	<script type="text/javascript">
+	$(function(){
+		var itemSize = 20;
+		// populate data for each panel
+		$(".demo-panel").each(function(){
+			var i;
+			var $demoPanel = $(this);
+			var htmls = [];
+			for (i = 0; i < itemSize; i++){
+				htmls.push('<li class="list-group-item"><div class="drag-handle"></div>Item - ' + i + '</li>');
+			}
+			$demoPanel.find(".list-group").html(htmls.join("\n"));
+		});
+
+		function dragPanel(event,extra){
+			var $panelHeading = $(this);
+			var $panel = $panelHeading.closest(".panel");
+			var pos = $panel.position();
+			var top = pos.top + event.bextra.deltaY;
+			var left = pos.left + event.bextra.deltaX;
+			$panel.css({top: top + "px",left: left + "px"});			
+		}
+
+		function dragItemStart(event,extra){
+			var $dragHandle = $(this);
+			var $li = $dragHandle.closest("li");
+			var $helper = $("<div class='drag-helper'>dragging</div>");
+			$("body").append($helper);
+			var offset = $dragHandle.offset();
+			$helper.css({top: offset.top - 15 + "px",left: offset.left - 15 + "px"});
+			$dragHandle.data("$helper",$helper);
+		}
+
+		function dragItemMove(event,extra){
+			var $dragHandle = $(this);
+			var $helper = $dragHandle.data("$helper");
+			var pos = $helper.position();
+			var top = pos.top + event.bextra.deltaY;
+			var left = pos.left + event.bextra.deltaX;
+			$helper.css({top: top + "px",left: left + "px"});
+		}
+
+		function dragItemEnd(event,extra){
+			var $dragHandle = $(this);
+			var $helper = $dragHandle.data("$helper");
+			if ($helper){
+				$helper.remove();
+			}
+		}
+
+		// TEST with drag on handlers only. 
+		// Enable drag on .panel from the .panel-heading, using delegate
+		$(".list-a").on("bdragmove",".panel-heading",dragPanel);
+		// enable drag on .list-group-item via .drag-handle
+		$(".list-a").on("bdragstart",".drag-handle",dragItemStart);
+		$(".list-a").on("bdragmove",".drag-handle",dragItemMove);	
+		$(".list-a").on("bdragend",".drag-handle",dragItemEnd);
+
+
+		// TEST with drag on container as well
+		// TODO: need to fix bdrag because with this option, 
+		//       does not work on touch devices (cannot scroll the list)
+		$(".list-b").on("bdragmove",function(event,extra){
+			var $target = $(event.target);
+			if ($target.hasClass("panel")){
+				console.log("bdragmove",$target);
+				var $panelHeading = $(this);
+				var $panel = $panelHeading.closest(".panel");
+				var pos = $panel.position();
+				var top = pos.top + event.bextra.deltaY;
+				var left = pos.left + event.bextra.deltaX;
+				$panel.css({top: top + "px",left: left + "px"});				
+			}
+		});		
+		// enable drag on .list-group-item via .drag-handle
+		$(".list-b").on("bdragstart",".drag-handle",dragItemStart);
+		$(".list-b").on("bdragmove",".drag-handle",dragItemMove);	
+		$(".list-b").on("bdragend",".drag-handle",dragItemEnd);		
+
+	});
+	</script>
+</head>
+<body>
+
+<div class="panel panel-primary demo-panel list-a" style="top:100px;left:100px">
+	<div class="panel-heading">List A</div>
+	<div class="panel-body">
+		<ul class="list-group">
+		</ul>
+	</div>
+</div>
+
+
+<div class="panel panel-primary demo-panel list-b" style="top:100px;left:400px">
+	<div class="panel-heading">List B</div>
+	<div class="panel-body">
+		<ul class="list-group">
+		</ul>
+	</div>
+</div>
+
+</body>
 </html>

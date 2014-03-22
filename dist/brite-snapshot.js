@@ -3,11 +3,11 @@ var brite = brite || {};
 brite.version = "1.1.2-SNAPSHOT";
 
 if ( typeof module === "object" && module && typeof module.exports === "object" ) {
-    module.exports = brite;
+		module.exports = brite;
 } else if ( typeof define === "function" && define.amd ) {
-    define( "brite", [], function () { return brite; } );
+		define( "brite", [], function () { return brite; } );
 } else {
-    window.brite = brite;
+		window.brite = brite;
 }
 
 // ------------------- //
@@ -18,12 +18,12 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
  * 
  */
 (function($) {
-  
-  // Note: for now, document bound view events are just namespaced with the view_id
-  var DOC_EVENT_NS_PREFIX = ".";
-  var WIN_EVENT_NS_PREFIX = ".";
-  
-  var cidSeq = 0;
+	
+	// Note: for now, document bound view events are just namespaced with the view_id
+	var DOC_EVENT_NS_PREFIX = ".";
+	var WIN_EVENT_NS_PREFIX = ".";
+	
+	var cidSeq = 0;
 
 	var _componentDefStore = {};
 	
@@ -65,12 +65,12 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 	 * 
 	 *            config.loadTmpl {Boolean|String} (default false) If true, then, it will load the template the first time this component is displayed.
 	 *                                                 If it is a string it use it as the file name to be loaded from the directory. If it starts with "/" then, it will be from the base, otherwise,
-	 * 												   it will be relative to the template folder. The default template folder is "template/" but can be set by brite.config.tmplPath.
+	 *                                                 it will be relative to the template folder. The default template folder is "template/" but can be set by brite.config.tmplPath.
 	 *                                                 
 	 * 
 	 *            config.checkTmpl {Boolean|String|jQuery} (default false). (require config.loadTmpl) If true, it will check if the template for this component has been added, by default it will check "#tmpl-ComponentName". 
 	 *                                                                   If it is a string or jQuery, then it will be use with jQuery if it exists.
-	 *                                       							 Note that the check happen only the first time, then, brite will remember for subsequent brite.display  
+	 *                                                                   Note that the check happen only the first time, then, brite will remember for subsequent brite.display  
 	 *                                     
 	 * @param {Object|Function}
 	 *            componentFactory (Required) Factory function or "object template" that will be used to create the
@@ -84,7 +84,7 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 	 *      component.create(data,config): (required) function that will be called with (data,config) to build the
 	 *                                     component.$element.<br />
 	 *      component.init(data,config): (optional) Will be called just after the create and the component instance has been
-	 * 								      initialized. <br />
+	 *                                   initialized. <br />
 	 *      component.postDisplay(data,config): (optional) This method will get called with (data,config) after the component
 	 *                                          has been created and initialized (postDisplay is deferred for performance optimization) <br />
 	 *                                          Since this call will be deferred, it is a good place to do non-visible logic, such as event bindings.<br />
@@ -136,11 +136,11 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 	// ------ Public API: Transition Management ------ //
 	brite.registerTransition = function(name, transition) {
 		_transitions[name] = transition;
-	}
+	};
 
 	brite.getTransition = function(name) {
 		return _transitions[name];
-	}
+	};
 	// ------ /Public API: Transition Management ------ //
 
 	// ------ Public API: Display Management ------ //
@@ -181,7 +181,7 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 	 */
 	brite.attach = function(viewName, $element, data, config) {
 		return process(viewName, data, config, $element);
-	}
+	};
 	// ------ /Public API: Display Management ------ //
 
 	// ------ Public Properties: Config ------ //
@@ -199,14 +199,14 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 		tmplPath: "tmpl/",
 		tmplExt: ".tmpl"
 		
-	}
+	};
 
 	brite.viewDefaultConfig = {
-	  loadTmpl: false,
-	  loadCss: false,
+		loadTmpl: false,
+		loadCss: false,
 		emptyParent : false,
 		postDisplayDelay : 0
-	}
+	};
 	
 	brite.defaultComponentConfig = brite.viewDefaultConfig;
 	// ------ /Public Properties: Config ------ //
@@ -239,101 +239,100 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 		
 		
 		loadComponentDefDfd.done(function(componentDef){
-		  var loadTemplateDfd, loadCssDfd;
-		  // --------- Load the tmpl if needed --------- //
-      var loadTemplate = componentDef.config.loadTmpl; 
-      if (loadTemplate && !_templateLoadedPerComponentName[name] ){
-        // if we have a check template, we need to check if the template has been already loaded
-        var needsToLoadTemplate = true;
-        var checkTemplate = componentDef.config.checkTemplate;        
-        if (checkTemplate){
-          var templateSelector = (typeof checkTemplate == "string")?checkTemplate:("#tmpl-" + name);
-          if ($(templateSelector).length > 0){
-            needsToLoadTemplate = false;
-          }         
-        }
-         
-        if (needsToLoadTemplate){
-          loadTemplateDfd = $.Deferred();
-          // if it is a string, then, it is the templatename, otherwise, the component name is the name
-          var templateName = (typeof loadTemplate == "string")?templateName:(name + ".html");
-          $.ajax({
-            url : brite.config.tmplPath + name + brite.config.tmplExt,
-            async : true
-          }).complete(function(jqXHR, textStatus) {
-            $(brite.config.componentsHTMLHolder).append(jqXHR.responseText);
-            _templateLoadedPerComponentName[name] = true;
-            loadTemplateDfd.resolve();
-          });       
-        }
-        
-      }
-      // --------- /Load the tmpl if needed --------- //
-      
-      // --------- Load the css if needed --------- //
-      var loadCss = componentDef.config.loadCss;
-      if (loadCss){
-        //TODO: need to add the checkCss support
-        loadCssDfd = $.Deferred();
-        var cssFileName = "css/" + name + ".css";
-        var includeDfd = includeFile(cssFileName,"css");
-        includeDfd.done(function(){
-          loadCssDfd.resolve();
-        }).fail(function(){
-        	if (console){
-          	console.log("Brite ERROR: cannot load " + cssFileName + ". Ignoring issue");
-         	}
-          loadCssDfd.resolve();
-        });      
-      }
-      // --------- /Load the Template if needed --------- //
-      
-      
-      $.when(loadTemplateDfd,loadCssDfd).done(function(){
-        loaderDeferred.resolve(componentDef);
-      });
-      
-      		  
+			var loadTemplateDfd, loadCssDfd;
+			// --------- Load the tmpl if needed --------- //
+			var loadTemplate = componentDef.config.loadTmpl; 
+			if (loadTemplate && !_templateLoadedPerComponentName[name] ){
+				// if we have a check template, we need to check if the template has been already loaded
+				var needsToLoadTemplate = true;
+				var checkTemplate = componentDef.config.checkTemplate;        
+				if (checkTemplate){
+					var templateSelector = (typeof checkTemplate == "string")?checkTemplate:("#tmpl-" + name);
+					if ($(templateSelector).length > 0){
+						needsToLoadTemplate = false;
+					}         
+				}
+				 
+				if (needsToLoadTemplate){
+					loadTemplateDfd = $.Deferred();
+					// if it is a string, then, it is the templatename, otherwise, the component name is the name
+					var templateName = (typeof loadTemplate == "string")?templateName:(name + ".html");
+					$.ajax({
+						url : brite.config.tmplPath + name + brite.config.tmplExt,
+						async : true
+					}).complete(function(jqXHR, textStatus) {
+						$(brite.config.componentsHTMLHolder).append(jqXHR.responseText);
+						_templateLoadedPerComponentName[name] = true;
+						loadTemplateDfd.resolve();
+					});       
+				}
+				
+			}
+			// --------- /Load the tmpl if needed --------- //
+			
+			// --------- Load the css if needed --------- //
+			var loadCss = componentDef.config.loadCss;
+			if (loadCss){
+				//TODO: need to add the checkCss support
+				loadCssDfd = $.Deferred();
+				var cssFileName = "css/" + name + ".css";
+				var includeDfd = includeFile(cssFileName,"css");
+				includeDfd.done(function(){
+					loadCssDfd.resolve();
+				}).fail(function(){
+					if (console){
+						console.log("Brite ERROR: cannot load " + cssFileName + ". Ignoring issue");
+					}
+					loadCssDfd.resolve();
+				});      
+			}
+			// --------- /Load the Template if needed --------- //
+			
+			
+			$.when(loadTemplateDfd,loadCssDfd).done(function(){
+				loaderDeferred.resolve(componentDef);
+			});
+			
+						
 		});
 		
 		loadComponentDefDfd.fail(function(ex){
 			if (console){
-		  	console.log("BRITE-ERROR: Brite cannot load component: " + name + "\n\t " + ex);
-		 	}
-		  loaderDeferred.reject();
+				console.log("BRITE-ERROR: Brite cannot load component: " + name + "\n\t " + ex);
+			}
+			loaderDeferred.reject();
 		});
 		
 		return loaderDeferred.promise();
 	}
 
-  // Load the componentDef if needed and return the promise for it
-  function loadComponentDef(name){
-    var dfd = $.Deferred();
-    
-    var componentDef = _componentDefStore[name];
-    
-    if (componentDef){
-      dfd.resolve(componentDef);
-    }else{
-      var resourceFile = "js/" + name + ".js";
-      var includeDfd = includeFile(resourceFile,"js");
-      includeDfd.done(function(){
-        componentDef = _componentDefStore[name];
-        if (componentDef){
-          dfd.resolve(componentDef);
-        }else{ 
-          dfd.reject("Component js file [" + resourceFile + 
-                     "] loaded, but it did not seem to have registered the view - it needs to call brite.registerView('" + name + 
-                     "',...config...) - see documentation");        
-        }
-      }).fail(function(){
-        dfd.reject("Component resource file " + resourceFile + " not found");
-      });
-    }
-    
-    return dfd.promise();
-    
-  }
+	// Load the componentDef if needed and return the promise for it
+	function loadComponentDef(name){
+		var dfd = $.Deferred();
+		
+		var componentDef = _componentDefStore[name];
+		
+		if (componentDef){
+			dfd.resolve(componentDef);
+		}else{
+			var resourceFile = "js/" + name + ".js";
+			var includeDfd = includeFile(resourceFile,"js");
+			includeDfd.done(function(){
+				componentDef = _componentDefStore[name];
+				if (componentDef){
+					dfd.resolve(componentDef);
+				}else{ 
+					dfd.reject("Component js file [" + resourceFile + 
+										"] loaded, but it did not seem to have registered the view - it needs to call brite.registerView('" + name + 
+										"',...config...) - see documentation");        
+				}
+			}).fail(function(){
+				dfd.reject("Component resource file " + resourceFile + " not found");
+			});
+		}
+		
+		return dfd.promise();
+	}
 
 	// if $element exist, then, bypass the create
 	function process(name, data, config, $element) {
@@ -349,7 +348,7 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 		processPromise.whenCreate = createDeferred.promise();
 		processPromise.whenInit = initDeferred.promise();
 		processPromise.whenPostDisplay = postDisplayDeferred.promise();
-    
+		
 		loaderDeferred.done(function(componentDef) {
 			config = buildConfig(componentDef, config);
 			var component = instantiateComponent(componentDef);
@@ -474,12 +473,12 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 			});
 		});
 
-    loaderDeferred.fail(function(){
-      processDeferred.reject();
-      createDeferred.reject();
-      initDeferred.reject();
-      postDisplayDeferred.reject();
-    });
+		loaderDeferred.fail(function(){
+			processDeferred.reject();
+			createDeferred.reject();
+			initDeferred.reject();
+			postDisplayDeferred.reject();
+		});
 
 		return processPromise;
 	}
@@ -513,7 +512,6 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 		}
 
 	}
-	;
 
 	// ------ Helpers ------ //
 	// build a config for a componentDef
@@ -535,8 +533,8 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 			else if ($.isPlainObject(componentFactory)) {
 				component = $.extend({}, componentFactory);
 			} else {
-				brite.log.error("Invalid ComponentFactory for component [" + componentDef.componentName
-						+ "]. Only types Function or Object are supported as componentFactory. Empty component will be created.");
+				brite.log.error("Invalid ComponentFactory for component [" + componentDef.componentName +
+												"]. Only types Function or Object are supported as componentFactory. Empty component will be created.");
 			}
 		} else {
 			brite.log.error("No ComponentFactory for component [" + componentDef.componentName + "]");
@@ -601,7 +599,7 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 		if (component.parentEvents){
 			$.each(component.parentEvents,function(key,val){
 				var parent = component.$el.bView(key);
-				if (parent != null){
+				if (parent !== null){
 					var events = component.parentEvents[key];
 					bindEvents(events,parent.$el,component,"." + component.id);
 				}
@@ -691,7 +689,7 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 	}
 	
 	function getFn(component,target){
- 			var fn = target;
+			var fn = target;
 			if (!$.isFunction(fn)){
 				fn = component[target];
 			}
@@ -699,82 +697,83 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 	}
 	// ------ /Helpers ------ //
 
-  // --------- File Include (JS & CSS) ------ //
-  /*
-   * Include the file name in the <head> part of the DOM and return a deferred that will resolve when done
-   */
-  function includeFile(fileName, fileType) {
-    var dfd = $.Deferred();
-    if(fileType === "js") {
-      var fileref = document.createElement('script');
-      fileref.setAttribute("type", "text/javascript");
-      fileref.setAttribute("src", fileName);
-    } else if(fileType === "css") {
-      var fileref = document.createElement("link");
-      fileref.setAttribute("rel", "stylesheet");
-      fileref.setAttribute("type", "text/css");
-      fileref.setAttribute("href", fileName);
-    }
-    
-    if (fileType === "js"){
-    	if (fileref.addEventListener){
-    		fileref.onload = function(){
-    			dfd.resolve(fileName);
-    		};
-    	}else{ // for old IE
-    		// TODO: probably need to handle the error case here
-    		fileref.onreadystatechange = function(){
-    			if (fileref.readyState === "loaded" || fileref.readyState === "complete"){
-    					dfd.resolve(fileName);
-    			}
-    		};
-    	}
-      
-      if (fileref.addEventListener){
-	      fileref.addEventListener('error', function(){
-	        dfd.reject();
-	      }, true);
-      }
-    }else if (fileType === "css"){
-    	if (document.all){
-			  // The IE way, which is interestingly the most standard
-			  fileref.onreadystatechange = function() {
-			    var state = fileref.readyState;
-			    if (state === 'loaded' || state === 'complete') {
-			      fileref.onreadystatechange = null;
-			      dfd.resolve(fileName);
-			    }
-			  };    		
-    	}else{
-    		
+	// --------- File Include (JS & CSS) ------ //
+	/*
+	 * Include the file name in the <head> part of the DOM and return a deferred that will resolve when done
+	 */
+	function includeFile(fileName, fileType) {
+		var dfd = $.Deferred();
+		var fileref;
+		if(fileType === "js") {
+			fileref = document.createElement('script');
+			fileref.setAttribute("type", "text/javascript");
+			fileref.setAttribute("src", fileName);
+		} else if(fileType === "css") {
+			fileref = document.createElement("link");
+			fileref.setAttribute("rel", "stylesheet");
+			fileref.setAttribute("type", "text/css");
+			fileref.setAttribute("href", fileName);
+		}
+		
+		if (fileType === "js"){
+			if (fileref.addEventListener){
+				fileref.onload = function(){
+					dfd.resolve(fileName);
+				};
+			}else{ // for old IE
+				// TODO: probably need to handle the error case here
+				fileref.onreadystatechange = function(){
+					if (fileref.readyState === "loaded" || fileref.readyState === "complete"){
+							dfd.resolve(fileName);
+					}
+				};
+			}
+			
+			if (fileref.addEventListener){
+				fileref.addEventListener('error', function(){
+					dfd.reject();
+				}, true);
+			}
+		}else if (fileType === "css"){
+			if (document.all){
+				// The IE way, which is interestingly the most standard
+				fileref.onreadystatechange = function() {
+					var state = fileref.readyState;
+					if (state === 'loaded' || state === 'complete') {
+						fileref.onreadystatechange = null;
+						dfd.resolve(fileName);
+					}
+				};
+			}else{
+				
 				// unfortunately, this will rarely be taken in account in modern browsers
-			  if (fileref.addEventListener) {
-			    fileref.addEventListener('load', function() {
-			      dfd.resolve(fileName);
-			    }, false);
-			  }
+				if (fileref.addEventListener) {
+					fileref.addEventListener('load', function() {
+						dfd.resolve(fileName);
+					}, false);
+				}
 
-	      // hack from: http://www.backalleycoder.com/2011/03/20/link-tag-css-stylesheet-load-event/
-	      var html = document.getElementsByTagName('html')[0];
-	      var img = document.createElement('img');
-	      $(img).css("display","none"); // hide the image
-	      img.onerror = function(){
-	        html.removeChild(img);
-	        // for css, we cannot know if it fail to load for now
-	        dfd.resolve(fileName);
-	      }
-	      html.appendChild(img);
-	      img.src = fileName;      
-	    }
-    }
-    
-    if( typeof fileref != "undefined") {
-      document.getElementsByTagName("head")[0].appendChild(fileref);
-    }
-    
-    return dfd.promise();
-  }
-  // --------- /File Include (JS & CSS) ------ //
+				// hack from: http://www.backalleycoder.com/2011/03/20/link-tag-css-stylesheet-load-event/
+				var html = document.getElementsByTagName('html')[0];
+				var img = document.createElement('img');
+				$(img).css("display","none"); // hide the image
+				img.onerror = function(){
+					html.removeChild(img);
+					// for css, we cannot know if it fail to load for now
+					dfd.resolve(fileName);
+				};
+				html.appendChild(img);
+				img.src = fileName;      
+			}
+		}
+		
+		if( typeof fileref != "undefined") {
+			document.getElementsByTagName("head")[0].appendChild(fileref);
+		}
+		
+		return dfd.promise();
+	}
+	// --------- /File Include (JS & CSS) ------ //
 
 })(jQuery);
 
@@ -808,7 +807,7 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 			$this.empty();
 
 		});
-	}
+	};
 
 	/**
 	 * Safely remove a HTMLElement and the related bComponent by calling the preRemote and postRemove on every child
@@ -832,7 +831,7 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 			}
 		});
 
-	}
+	};
 
 	function processDestroy(component) {
 		// The if(component) is a safeguard in case destroy gets call twice (issue when clicking fast on
@@ -869,7 +868,7 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 })(jQuery);
 
 // ------------------------------------- //
-// 
+// ------------- bView APIs ------------ //
 (function($) {
 
 	/**
@@ -905,6 +904,9 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 	};
 	
 })(jQuery);	
+// ------------- /bView APIs ------------ //
+// ------------------------------------- //
+
 
 // ------------------------------------- //
 // --------- old bComponent APIs ------- //
@@ -912,7 +914,6 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 		
 	// backwards compatibility;
 	$.fn.bComponent = $.fn.bView;
-
 
 	/**
 	 * Get the list of components that this htmlElement contains.
@@ -942,7 +943,7 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 		});
 
 		return childrenComponents;
-	}
+	};
 
 	/**
 	 * Get the list of components that this htmlElement contains.
@@ -972,7 +973,7 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 		});
 
 		return childrenComponents;
-	}
+	};
 
 
 
@@ -989,15 +990,15 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 	
 	// add the trim prototype if not available natively.
 	if(!String.prototype.trim) {
-	  String.prototype.trim = function () {
-	    return this.replace(/^\s+|\s+$/g,'');
-	  };
+		String.prototype.trim = function () {
+			return this.replace(/^\s+|\s+$/g,'');
+		};
 	}
 	
 	// default options for brite.whenEach
 	var whenEachOpts = {
 		failOnFirst : true
-	}
+	};
 	
 	/**
 	 * Convenient function that resolve each items serially with resolver function. 
@@ -1015,53 +1016,53 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 	 *     
 	 */
 	brite.whenEach = function(items,resolver,opts){
-  	var dfd = $.Deferred();
-  	var results = [];
-  	var i = 0;
-  	
-  	opts = $.extend({},whenEachOpts, opts);
-  	
-  	resolveAndNext();
-  	
-  	function resolveAndNext(){
-  		if (i < items.length){
-  			var item = items[i];
-  			var result = resolver(item,i);
+		var dfd = $.Deferred();
+		var results = [];
+		var i = 0;
+		
+		opts = $.extend({},whenEachOpts, opts);
+		
+		resolveAndNext();
+		
+		function resolveAndNext(){
+			if (i < items.length){
+				var item = items[i];
+				var result = resolver(item,i);
 
-  			// if the result is a promise (but not a jquery object, which is also a promise), then, pipe it
-  			if (typeof result !== "undefined" && result !== null && $.isFunction(result.promise) && !result.jquery){
-  				result.done(function(finalResult){
-  					results.push(finalResult);
-    				i++;
-    				resolveAndNext();
-  				});		
-  				
-  				// if it fails, then, reject
-  				// TODO: needs to support the failOnFirst: true
-  				result.fail(function(ex){
-  					var fails = $.map(function(val,idx){
-  						return {success:true,value:val};
-  					});
-  					fails.push({success:false,value:ex});
-  					dfd.reject(fails);
-  				});
-  				// TODO: need to handle the case the promise fail
-  			}
-  			// if it is a normal object or a jqueryObject, then, just push the value and move to the next
-  			else{
-  				results.push(result);
-  				i++;
-  				resolveAndNext();
-  			}
-  		}
-  		// once we run out
-  		else{
-  			dfd.resolve(results);
-  		}
-  	} 
-  	
-  	return dfd.promise();    		
-  }
+				// if the result is a promise (but not a jquery object, which is also a promise), then, pipe it
+				if (typeof result !== "undefined" && result !== null && $.isFunction(result.promise) && !result.jquery){
+					result.done(function(finalResult){
+						results.push(finalResult);
+						i++;
+						resolveAndNext();
+					});		
+					
+					// if it fails, then, reject
+					// TODO: needs to support the failOnFirst: true
+					result.fail(function(ex){
+						var fails = $.map(function(val,idx){
+							return {success:true,value:val};
+						});
+						fails.push({success:false,value:ex});
+						dfd.reject(fails);
+					});
+					// TODO: need to handle the case the promise fail
+				}
+				// if it is a normal object or a jqueryObject, then, just push the value and move to the next
+				else{
+					results.push(result);
+					i++;
+					resolveAndNext();
+				}
+			}
+			// once we run out
+			else{
+				dfd.resolve(results);
+			}
+		} 
+		
+		return dfd.promise();
+	};
 	
 	
 	// Private array of chars to use
@@ -1127,33 +1128,33 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 			}
 		}
 		return iVal;
-	}
+	};
 
-  // substract all the values for two object (ignore the not numbers one), and return the new object.
-  brite.substract = function(obj1,obj2){
-    var r = {};
-    $.each(obj1,function(key,val1){
-      var val2 = obj2[key];
-      if (!isNaN(val1) && !isNaN(val2)){
-        r[key] = val1 - val2;
-      }
-    });
-      
-   return r;
-  }
-  
-  // add all the values for two object (ignore the not numbers one), and return the new object.
-  brite.add = function(obj1,obj2){
-    var r = {};
-    $.each(obj1,function(key,val1){
-      var val2 = obj2[key];
-      if (!isNaN(val1) && !isNaN(val2)){
-        r[key] = val1 + val2;
-      }
-    });
-      
-   return r;
-  }
+	// substract all the values for two object (ignore the not numbers one), and return the new object.
+	brite.substract = function(obj1,obj2){
+		var r = {};
+		$.each(obj1,function(key,val1){
+			var val2 = obj2[key];
+			if (!isNaN(val1) && !isNaN(val2)){
+				r[key] = val1 - val2;
+			}
+		});
+			
+		return r;
+	};
+	
+	// add all the values for two object (ignore the not numbers one), and return the new object.
+	brite.add = function(obj1,obj2){
+		var r = {};
+		$.each(obj1,function(key,val1){
+			var val2 = obj2[key];
+			if (!isNaN(val1) && !isNaN(val2)){
+				r[key] = val1 + val2;
+			}
+		});
+			
+		return r;
+	};
 
 	/**
 	 * @namespace
@@ -1192,7 +1193,7 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 		getIndex : function(a, propName, propValue) {
 			if (a && propName && typeof propValue != "undefined") {
 				var i, obj, l = a.length;
-				for ( var i = 0; i < l; i++) {
+				for (i = 0; i < l; i++) {
 					obj = a[i];
 					if (obj && obj[propName] === propValue) {
 						return i;
@@ -1203,12 +1204,12 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 		},
 		
 		getItem : function(a, propName, propValue){
-		  var idx = this.getIndex(a,propName,propValue);
-		  if (idx > -1){
-		    return a[idx];
-		  }else{
-		    return null;
-		  }
+			var idx = this.getIndex(a,propName,propValue);
+			if (idx > -1){
+				return a[idx];
+			}else{
+				return null;
+			}
 		},
 
 		/**
@@ -1257,7 +1258,7 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 			}
 			return map;
 		}
-	}
+	};
 
 	/**
 	 * Give a random number between two number
@@ -1270,7 +1271,7 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 	brite.randomInt = function(from, to) {
 		var offset = to - from;
 		return from + Math.floor(Math.random() * (offset + 1));
-	}
+	};
 
 	// from the "JavaScript Pattern" book
 	brite.inherit = function(C, P) {
@@ -1289,16 +1290,16 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 	var _flushUIVar = 2;
 	var _$flushUI;
 	brite.flushUI = function(){
-	  if (brite.ua.hasTouch()){
-	    if (!_$flushUI){
-	      _$flushUI = $("<div id='b-flushUI' style='position:absolute;opacity:1;z-index:-1000;overflow:hidden;width:2px;color:rgba(0,0,0,0)'>flushUI</div>");
-	      $("body").append(_$flushUI);
-	    }
-	    _flushUIVar = _flushUIVar * -1;
-	    _$flushUI.text("").text(_flushUIVar);
-	    _$flushUI.css("width",_flushUIVar + "px");
-	  };
-  }
+		if (brite.ua.hasTouch()){
+			if (!_$flushUI){
+				_$flushUI = $("<div id='b-flushUI' style='position:absolute;opacity:1;z-index:-1000;overflow:hidden;width:2px;color:rgba(0,0,0,0)'>flushUI</div>");
+				$("body").append(_$flushUI);
+			}
+			_flushUIVar = _flushUIVar * -1;
+			_$flushUI.text("").text(_flushUIVar);
+			_$flushUI.css("width",_flushUIVar + "px");
+		}
+	};
 
 })(jQuery);
 
@@ -1317,10 +1318,10 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 brite.ua = {};
 
 (function($) {
-  var CSS_PREFIXES = {webkit:"-webkit-",chrome:"-webkit-",mozilla:"-moz-",msie:"-ms-",opera:"-o-"};
-  
-  var VAR_PREFIXES = {webkit:"Webkit",mozilla:"Moz",chrome:"Webkit",msie:"ms",opera:"o"};
-  
+	var CSS_PREFIXES = {webkit:"-webkit-",chrome:"-webkit-",mozilla:"-moz-",msie:"-ms-",opera:"-o-"};
+	
+	var VAR_PREFIXES = {webkit:"Webkit",mozilla:"Moz",chrome:"Webkit",msie:"ms",opera:"o"};
+	
 
 	// privates
 	var _cssVarPrefix = null;
@@ -1335,11 +1336,11 @@ brite.ua = {};
 	var _transitionPrefix = null; 
 	var _eventsMap = {}; // {eventName:true/false,....}
 
-  var _browserType = null; // could be "webkit" "moz" "ms" "o"
-  
-  
-  // --------- Get brite.ua.browser --------- //
-  // Use the jquery compat code. (we still need this for the prefix)
+	var _browserType = null; // could be "webkit" "moz" "ms" "o"
+	
+	
+	// --------- Get brite.ua.browser --------- //
+	// Use the jquery compat code. (we still need this for the prefix)
 	function uaMatch( ua ) {
 		ua = ua.toLowerCase();
 	
@@ -1354,7 +1355,8 @@ brite.ua = {};
 			browser: match[ 1 ] || "",
 			version: match[ 2 ] || "0"
 		};
-	};
+	}
+
 	var matched = uaMatch( navigator.userAgent );
 	var browser = {};	
 	if ( matched.browser ) {
@@ -1368,35 +1370,35 @@ brite.ua = {};
 		browser.safari = true;
 	}	
 	brite.ua.browser = browser;
-  // --------- /Get brite.ua.browser --------- //
-  
-  
-  // --------- Prefix and rendererType ------ //
-  function computeBrowserType(){
-    $.each(CSS_PREFIXES,function(key,val){
-      if (brite.ua.browser[key]){
-        _browserType = key;
-        _cssPrefix = CSS_PREFIXES[key];
-        _cssVarPrefix = VAR_PREFIXES[key];
-      }
-    });
-  }
-  
-	brite.ua.cssPrefix = function() {
-	  if (_cssPrefix === null){
-	    computeBrowserType();
-	  }
-	  return _cssPrefix;
+	// --------- /Get brite.ua.browser --------- //
+	
+	
+	// --------- Prefix and rendererType ------ //
+	function computeBrowserType(){
+		$.each(CSS_PREFIXES,function(key,val){
+			if (brite.ua.browser[key]){
+				_browserType = key;
+				_cssPrefix = CSS_PREFIXES[key];
+				_cssVarPrefix = VAR_PREFIXES[key];
+			}
+		});
 	}
+	
+	brite.ua.cssPrefix = function() {
+		if (_cssPrefix === null){
+			computeBrowserType();
+		}
+		return _cssPrefix;
+	};
 
 	brite.ua.cssVarPrefix = function() {
-    if (_cssVarPrefix === null){
-      computeBrowserType();
-    }
-    return _cssVarPrefix;
-	}
-  // --------- /Prefix and rendererType ------ //
-  
+		if (_cssVarPrefix === null){
+			computeBrowserType();
+		}
+		return _cssVarPrefix;
+	};
+	// --------- /Prefix and rendererType ------ //
+	
 	/**
 	 * return a css friendly string with all the "has-**" that this ua supports
 	 * 
@@ -1424,7 +1426,7 @@ brite.ua = {};
 		}
 		
 		return _cssHas;
-	}
+	};
 	
 	/**
 	 * Return a css friendly version of the "no" of the has. "has-no-canvas" for example.
@@ -1450,7 +1452,8 @@ brite.ua = {};
 		}
 		
 		return _cssHasNo;		
-	}
+	};
+
 	/**
 	 * Return true if the eventname is supported by this user agent.
 	 * 
@@ -1464,23 +1467,22 @@ brite.ua = {};
 			_eventsMap[eventName] = r;
 		}
 		return r;
-	}
+	};
 
 	/**
 	 * Convenient methods to know if this user agent supports touch events. It tests "touchstart".
 	 */
 	brite.ua.hasTouch = function() {
 		return this.supportsEvent("touchstart");
-	}
+	};
 
 	brite.ua.hasCanvas = function() {
 		if (_hasCanvas === null) {
 			var test_canvas = document.createElement("canvas");
-			_hasCanvas = (test_canvas.getContext) ? true : false
-			delete test_canvas;
+			_hasCanvas = (test_canvas.getContext) ? true : false;
 		}
 		return _hasCanvas;
-	}
+	};
 
 	/**
 	 * Return true if the user agent supports CSS3 transition.
@@ -1490,7 +1492,7 @@ brite.ua = {};
 			_hasTransition = hasStyle("transition","Transition","color 1s linear",true);
 		}
 		return _hasTransition;
-	}
+	};
 	
 	
 	brite.ua.hasBackfaceVisibility = function(){
@@ -1504,10 +1506,9 @@ brite.ua = {};
 		}
 		
 		return _hasBackfaceVisibility;
-	}
+	};
 
 	// ------ Privates ------ //
-	
 	function hasStyle(styleName,styleVarName,sampleValue,withPrefix){
 			var div = document.createElement('div');
 			styleName = (withPrefix)?(brite.ua.cssPrefix() + styleName):styleName;
@@ -1525,7 +1526,8 @@ brite.ua = {};
 			'error' : 'img',
 			'load' : 'img',
 			'abort' : 'img'
-		}
+		};
+
 		function isEventSupported(eventName) {
 			var el = document.createElement(TAGNAMES[eventName] || 'div');
 			eventName = 'on' + eventName;
@@ -1538,7 +1540,7 @@ brite.ua = {};
 			return isSupported;
 		}
 		return isEventSupported;
-	})()
+	})();
 	// ------ /Privates ------ //
 
 })(jQuery);
@@ -1581,11 +1583,11 @@ var brite = brite || {};
 			var er = "Cannot find the DAO for objectType: " + objectType;
 			throw er;
 		}
-	};
+	}
 
 	brite.dao = function(entityType) {
 		return getDao(entityType);
-	}
+	};
 
 	var internalMethods = {
 		isDataChange : true, 
@@ -1610,7 +1612,7 @@ var brite = brite || {};
 		
 		if (!entityType || typeof entityType !== "string"){
 			throw "Cannot register daoHandler because entityType '" + entityType + "' is not valid." + 
-			      " Make sure the daoHandler emplement .entityType() method which must return a string of the entity type"; 
+						" Make sure the daoHandler emplement .entityType() method which must return a string of the entity type"; 
 		}
 		
 		daoObject._entityType = entityType;
@@ -1654,7 +1656,7 @@ var brite = brite || {};
 		}
 		
 		return daoObject;
-	}
+	};
 
 	// --------- Internal Utilities For Dao Events --------- //
 	var _ALL_ = "_ALL_";
@@ -1700,8 +1702,8 @@ var brite = brite || {};
 		// create the namespace if not present
 		if ( typeof namespace === "undefined") {
 			throw "BRITE DAO BINDING ERROR: any binding with brite.dao.on*** needs to have a namespace after the function. " + 
-			      " Remember to cleanup the event at component close with brite.dao.off(mynamespace)"; 
-			       
+						" Remember to cleanup the event at component close with brite.dao.off(mynamespace)"; 
+						 
 		}
 
 		
@@ -1751,9 +1753,9 @@ var brite = brite || {};
 		
 		// in the case of a "remove" event, we need to check if the $receiver did not get removed, 
 		// otherwise, we need to add it back.
-	  if(evt.type === "remove" && $receiversRoot.find("."+objectType).size() == 0 && $receiver){
- $receiversRoot.append($receiver);
- }
+		if(evt.type === "remove" && $receiversRoot.find("." + objectType).size() == 0 && $receiver){
+			$receiversRoot.append($receiver);
+		}
 
 		// trigger _ALL_ action in case there are some events registered for all event
 		evt.type = _ALL_;
@@ -1769,7 +1771,7 @@ var brite = brite || {};
 	var onDaoReceiverDic = {};
 	/**
 	 * This will trigger on any DAO calls before the dao action is completed (for
-	 * 	asynch daos), hence, the resultPromise property of the daoEvent.
+	 * asynch daos), hence, the resultPromise property of the daoEvent.
 	 *
 	 * @param objectTypes       e.g., "User, Task" (null for any)
 	 * @param actions            e.g., "create, list, get" (null for any)
@@ -1784,19 +1786,19 @@ var brite = brite || {};
 		var map = buildDaoOnEventParamMap(arguments);
 		$daoDao.on(map.actions, map.objectTypes, map.func);
 		return map.namespace;
-	}
+	};
 
 
 	brite.dao.offDao = function(namespace) {
 		$daoDao.off("." + namespace);
-	}
+	};
 
 	function _triggerOnDao(entityType, action, resultPromise) {
 		var daoEvent = {
 			entityType : entityType,
 			action : action,
 			resultPromise : resultPromise
-		}
+		};
 
 		_triggerDaoEvent(onDaoReceiverDic, $daoDao, entityType, daoEvent);
 	}
@@ -1827,12 +1829,12 @@ var brite = brite || {};
 		var map = buildDaoOnEventParamMap(arguments);
 		$daoResult.on(map.actions, map.objectTypes, map.func);
 		return map.namespace;
-	}
+	};
 
 
 	brite.dao.offResult = function(namespace) {
 		$daoResult.off("." + namespace);
-	}
+	};
 
 	function _triggerOnResult(entityType, action, result) {
 		var daoEvent = {
@@ -1864,12 +1866,12 @@ var brite = brite || {};
 		var map = buildDaoOnEventParamMap(arguments);
 		$daoDataChange.on(map.actions, map.objectTypes, map.func);
 		return map.namespace;
-	}
+	};
 
 
 	brite.dao.offDataChange = function(namespace) {
 		$daoDataChange.off("." + namespace);
-	}
+	};
 
 
 	brite.triggerDataChange = function(entityType, action, result) {
@@ -1880,7 +1882,7 @@ var brite = brite || {};
 		};
 
 		_triggerDaoEvent(dataChangeReceiverDic, $daoDataChange, entityType, daoEvent);
-	}
+	};
 
 	// --------- /Brite.dao.onDataChange --------- //
 	
@@ -1888,7 +1890,7 @@ var brite = brite || {};
 		brite.dao.offResult(namespace);
 		brite.dao.offDao(namespace);
 		brite.dao.offDataChange(namespace);
-	}
+	};
 
 	/**
 	 * Wrap with a deferred object if the obj is not a deferred itself.
@@ -1920,14 +1922,14 @@ var brite = brite || {};
 	 * .type     will be the value of the attribute data-entity 
 	 * .id       will be the value of the data-entity-id
 	 * .name     (optional) will be the value of the data-entity-name
-	 * .$el 			will be the $element containing the matching data-entity attribute
+	 * .$el      will be the $element containing the matching data-entity attribute
 	 *  
 	 * If no entityType, then, return the first entity of the closest html element having a data-b-entity. <br />
 	 * 
 	 * $element.bEntity("User"); // return the closest entity with data-entity="User"
 	 * $element.bEntity(">children","Task"); // return all the data-entity="Task" children from this $element.  
-   * $element.bEntity(">first","Task"); // return the first child entity matching data-entity="Task"
-   * 
+	 * $element.bEntity(">first","Task"); // return the first child entity matching data-entity="Task"
+	 * 
 	 * TODO: needs to implement the >children and >first
 	 * 
 	 * @param {String} entity type (optional) the object 
@@ -1952,7 +1954,7 @@ var brite = brite || {};
 						type : $sObj.attr("data-entity"),
 						id : $sObj.attr("data-entity-id"),
 						$el : $sObj
-					}
+					};
 					var name = $sObj.attr("data-entity-name");
 					if (typeof name !== "undefined"){
 						result.name = name;
@@ -1998,7 +2000,7 @@ var brite = brite || {};
 					type : $sObj.attr("data-obj_type"),
 					id : $sObj.attr("data-obj_id"),
 					$element : $sObj
-				}
+				};
 				resultList.push(objRef);
 			}
 		});
@@ -2027,340 +2029,344 @@ brite.event = brite.event || {};
 (function($){
 	var hasTouch = brite.ua.hasTouch();
 	/**
-     * if it is a touch device, populate the event.pageX and event.page& from the event.touches[0].pageX/Y
-     * @param {jQuery Event} e the jquery event object 
-     */
-    brite.event.fixTouchEvent = function(e){
-        if (hasTouch) {
-            var oe = e.originalEvent;
-            if (oe.touches.length > 0) {
-                e.pageX = oe.touches[0].pageX;
-                e.pageY = oe.touches[0].pageY;
-            }
-        }
-        
-        return e;
-    }
-    
-    /**
-     * Return the event {pageX,pageY} object for a jquery event object (will take the touches[0] if it is a touch event)
-     * @param {jQuery Event} e the jquery event object
-     */
-    brite.event.eventPagePosition = function(e){
-      var pageX, pageY;
-  		if (e.originalEvent && e.originalEvent.touches){
-  			pageX = e.originalEvent.touches[0].pageX;
-  			pageY = e.originalEvent.touches[0].pageY;
-  		}else{
-  			pageX = e.pageX;
-  			pageY = e.pageY;
-  		}
-  		return {
-  			pageX: pageX,
-  			pageY: pageY
-  		}
-    }
+	 * if it is a touch device, populate the event.pageX and event.page& from the event.touches[0].pageX/Y
+	 * @param {jQuery Event} e the jquery event object 
+	 */
+	brite.event.fixTouchEvent = function(e){
+			if (hasTouch) {
+					var oe = e.originalEvent;
+					if (oe.touches.length > 0) {
+							e.pageX = oe.touches[0].pageX;
+							e.pageY = oe.touches[0].pageY;
+					}
+			}
+			
+			return e;
+	};
+		
+	/**
+	 * Return the event {pageX,pageY} object for a jquery event object (will take the touches[0] if it is a touch event)
+	 * @param {jQuery Event} e the jquery event object
+	 */
+	brite.event.eventPagePosition = function(e){
+		var pageX, pageY;
+		if (e.originalEvent && e.originalEvent.touches){
+			pageX = e.originalEvent.touches[0].pageX;
+			pageY = e.originalEvent.touches[0].pageY;
+		}else{
+			pageX = e.pageX;
+			pageY = e.pageY;
+		}
+		return {
+			pageX: pageX,
+			pageY: pageY
+		};
+	};
+
 })(jQuery);
 // ------ /brite event helpers ------ //
 
 // ------ transition helper ------ //
 ;(function($){
-  
-  /**
-   * simple and convenient methods to perform css3 animations (takes care of the css prefix)
-   * opts.transition: this will be the transition value added as css style (e.g.,: "all 0.3s ease;")
-   * opts.transform: the css transform instruction (e.g.,: "scale(.01)")
-   * opts.onTimeout: (optional, default false). If true or >= 0, then the transformation will be performed on timeout)  
-   */
-  
-  $.fn.bTransition = function(opts) {
-    
-    return this.each(function() {
-      var $this = $(this);
-      var timeout = -1;
-      if (typeof opts.onTimeout === "boolean"){
-        timeout = (opts.onTimeout)?0:-1;
-      }else if (typeof opts.onTimeout === "number"){
-        timeout = opts.onTimeout;
-      }
-      if (timeout > -1){
-        setTimeout(function(){
-          performTransition($this,opts);
-        },timeout);
-      }else{
-        performTransition($this,opts);
-      } 
-      // add the transition
-    });
-  }
-  
-  // helper function
-  function performTransition($this,opts){
-    $this.css("transition",opts.transition);
-    $this.css("transform",opts.transform);
-  }
+	
+	/**
+	 * simple and convenient methods to perform css3 animations (takes care of the css prefix)
+	 * opts.transition: this will be the transition value added as css style (e.g.,: "all 0.3s ease;")
+	 * opts.transform: the css transform instruction (e.g.,: "scale(.01)")
+	 * opts.onTimeout: (optional, default false). If true or >= 0, then the transformation will be performed on timeout)  
+	 */
+	
+	$.fn.bTransition = function(opts) {
+		
+		return this.each(function() {
+			var $this = $(this);
+			var timeout = -1;
+			if (typeof opts.onTimeout === "boolean"){
+				timeout = (opts.onTimeout)?0:-1;
+			}else if (typeof opts.onTimeout === "number"){
+				timeout = opts.onTimeout;
+			}
+			if (timeout > -1){
+				setTimeout(function(){
+					performTransition($this,opts);
+				},timeout);
+			}else{
+				performTransition($this,opts);
+			} 
+			// add the transition
+		});
+	};
+	
+	// helper function
+	function performTransition($this,opts){
+		$this.css("transition",opts.transition);
+		$this.css("transform",opts.transform);
+	}
 })(jQuery);  
 // ------ /transition helper ------ //
 
 // ------ /brite special events ------ //
 ;(function($){
-  
-  // to prevent other events (i.e., btap) to trigger when dragging.
-  var _dragging = false;
-  
-  var mouseEvents = {
-      start: "mousedown",
-      move: "mousemove",
-      end: "mouseup"
-  }
-  
-  var touchEvents = {
-      start: "touchstart",
-      move: "touchmove",
-      end: "touchend"
-  }
-  
-  function getTapEvents(){
-    if (brite.ua.hasTouch()){
-      return touchEvents;
-    }else{
-      return mouseEvents;
-    }
-  }  
-  
-  // --------- btap & btaphold --------- //
-  $.event.special.btap = {
-    add: btabAddHandler
-  }; 
-  
-  $.event.special.btaphold = {
-    add: btabAddHandler
-  }; 
-  
+	
+	// to prevent other events (i.e., btap) to trigger when dragging.
+	var _dragging = false;
+	
+	var mouseEvents = {
+			start: "mousedown",
+			move: "mousemove",
+			end: "mouseup"
+	};
+
+	var touchEvents = {
+			start: "touchstart",
+			move: "touchmove",
+			end: "touchend"
+	};
+	
+	function getTapEvents(){
+		if (brite.ua.hasTouch()){
+			return touchEvents;
+		}else{
+			return mouseEvents;
+		}
+	}  
+	
+	// --------- btap & btaphold --------- //
+	$.event.special.btap = {
+		add: btabAddHandler
+	}; 
+	
+	$.event.special.btaphold = {
+		add: btabAddHandler
+	}; 
+	
 	function btabAddHandler(handleObj) {
 
-    var tapEvents = getTapEvents();
+		var tapEvents = getTapEvents();
 
-    $(this).on(tapEvents.start, handleObj.selector, function(event) {
-      var elem = this;
-      var $elem = $(elem);
-      
-      var origTarget = event.target, startEvent = event, timer;
-      
-      function handleEnd(event){
-        clearAll();
-        if (event.target === origTarget && !_dragging){
-        	// use event.eventPhase because we should ignore bubbling event when triggering this meta event
-        	var ep = event.eventPhase;
-	        var pass = (elem === origTarget && ep === 2) || (elem !== origTarget && ep === 3);
-	        if (pass && !event.originalEvent.b_processed){
-	          // we take the pageX and pageY of the start event (because in touch, touchend does not have pageX and pageY)
-	          brite.event.fixTouchEvent(startEvent);
-	          triggerCustomEvent(elem, event,{type:"btap",pageX: startEvent.pageX,pageY: startEvent.pageY});
-	          // flag this originalEvent as processed
-	          // Note: this allow to prevent multiple triggering without having to use the stopPropagation
-	          event.originalEvent.b_processed = true;
-         }
-        }
-      }
-      
-      function clearAll(){
-        clearTimeout(timer);
-        $elem.off(tapEvents.end,handleEnd);
-      }  
-      
-      $elem.on(tapEvents.end,handleEnd);
-      
-      timer = setTimeout(function() {
-        if (!_dragging){
-          brite.event.fixTouchEvent(startEvent);
-          triggerCustomEvent( elem, startEvent,{type:"btaphold"});
-        }
-      }, 750 );
-    });
+		$(this).on(tapEvents.start, handleObj.selector, function(event) {
+			var elem = this;
+			var $elem = $(elem);
+			
+			var origTarget = event.target, startEvent = event, timer;
+			
+			function handleEnd(event){
+				clearAll();
+				if (event.target === origTarget && !_dragging){
+					// use event.eventPhase because we should ignore bubbling event when triggering this meta event
+					var ep = event.eventPhase;
+					var pass = (elem === origTarget && ep === 2) || (elem !== origTarget && ep === 3);
+					if (pass && !event.originalEvent.b_processed){
+						// we take the pageX and pageY of the start event (because in touch, touchend does not have pageX and pageY)
+						brite.event.fixTouchEvent(startEvent);
+						triggerCustomEvent(elem, event,{type:"btap",pageX: startEvent.pageX,pageY: startEvent.pageY});
+						// flag this originalEvent as processed
+						// Note: this allow to prevent multiple triggering without having to use the stopPropagation
+						event.originalEvent.b_processed = true;
+					}
+				}
+			}
+			
+			function clearAll(){
+				clearTimeout(timer);
+				$elem.off(tapEvents.end,handleEnd);
+			}  
+			
+			$elem.on(tapEvents.end,handleEnd);
+			
+			timer = setTimeout(function() {
+				if (!_dragging){
+					brite.event.fixTouchEvent(startEvent);
+					triggerCustomEvent( elem, startEvent,{type:"btaphold"});
+				}
+			}, 750 );
+		});
 
-  }  
+	}  
 
 
-  linkSpecialEventsTo(["btaphold"],"btap");
-  
-  // --------- /btap & btaphold --------- //
-  
-  
-  // --------- bdrag* --------- //
-  var BDRAGSTART="bdragstart",BDRAGMOVE="bdragmove",BDRAGEND="bdragend";
-  
-  // Note: those below are part of the drop events, but are not supported yet.
-  //       Need to think some more.
-  var BDRAGENTER="bdragenter",BDRAGOVER="bdragover",BDRAGLEAVE="bdragleave",BDROP="bdrop";
-  
-  var dragThreshold = 5;
-  
+	linkSpecialEventsTo(["btaphold"],"btap");
+	
+	// --------- /btap & btaphold --------- //
+	
+	
+	// --------- bdrag* --------- //
+	var BDRAGSTART="bdragstart",BDRAGMOVE="bdragmove",BDRAGEND="bdragend";
+	
+	// Note: those below are part of the drop events, but are not supported yet.
+	//       Need to think some more.
+	var BDRAGENTER="bdragenter",BDRAGOVER="bdragover",BDRAGLEAVE="bdragleave",BDROP="bdrop";
+	
+	var dragThreshold = 5;
+	
 
-  $.event.special[BDRAGSTART] = {
-    add : bdragAddHandler
-  };
+	$.event.special[BDRAGSTART] = {
+		add : bdragAddHandler
+	};
 
-  $.event.special[BDRAGMOVE] = {
-    add : bdragAddHandler
-  };
+	$.event.special[BDRAGMOVE] = {
+		add : bdragAddHandler
+	};
 
-  $.event.special[BDRAGEND] = {
-    add : bdragAddHandler
-  };
-  
-  function bdragAddHandler(handleObj) {
-    var tapEvents = getTapEvents();
-    $(this).on(tapEvents.start, handleObj.selector, function(event) {
-      var elem = this;
-      var $elem = $(this);
-      var dragStarted = false;
-      var startEvent = event;
-      var startPagePos = brite.event.eventPagePosition(startEvent);
-      var origTarget = event.target;
-      var $origTarget = $(origTarget);
-      
-      var $document = $(document);
-      var uid = "_" + brite.uuid(7);
-      
-      // drag move (and start)
-      $document.on(tapEvents.move + "." + uid,function(event){
-        
-        var currentPagePos = brite.event.eventPagePosition(event);
-        // fix a bug on Chrome that always change the cursor to text
-        $("body").css("-webkit-user-select","none");
-        
-        if (!dragStarted){
-          if(Math.abs(startPagePos.pageX - currentPagePos.pageX) > dragThreshold || Math.abs(startPagePos.pageY - currentPagePos.pageY) > dragThreshold) {
-            dragStarted = true;
-            _dragging = true;
-            $origTarget.data("bDragCtx", {});
-            var bextra = buildDragExtra(event, $origTarget, BDRAGSTART);
-            triggerCustomEvent( origTarget, event,{type:BDRAGSTART,target:origTarget,bextra:bextra});  
-            
-            event.stopPropagation();
-            event.preventDefault();
-            
-          }
-        }
-        
-        if(dragStarted) {
-          var bextra = buildDragExtra(event, $origTarget, BDRAGMOVE);
-          triggerCustomEvent( origTarget, event,{type:BDRAGMOVE,target:origTarget,bextra:bextra});
-          event.stopPropagation();
-          event.preventDefault();
-        }
-      });
-      
-      // drag end
-      $document.on(tapEvents.end + "." + uid, function(event){
-        // chrome fix cleanup (remove the hack)
-        $("body").css("-webkit-user-select","");
-        if (dragStarted){
-          var bextra = buildDragExtra(event, $origTarget, BDRAGEND);
-          triggerCustomEvent( origTarget, event,{type:BDRAGEND,target:origTarget,bextra:bextra});
-          event.stopPropagation();
-          event.preventDefault();            
-        }  
-        $document.off("." + uid);
-        _dragging = false;
-      });
-          
-    });
-  }
-  
-  
-   /**
-   * Build the extra event info for the drag event. 
-   */
-  function buildDragExtra(event,$elem,dragType){
-    brite.event.fixTouchEvent(event);
-    var hasTouch = brite.ua.hasTouch();
-    var extra = {
-      eventSource: event,
-      pageX: event.pageX,
-      pageY: event.pageY      
-    };
-    
-    var oe = event.originalEvent;
-    if (hasTouch){
-      extra.touches = oe.touches;
-    }
-    
-    var bDragCtx = $elem.data("bDragCtx");
-    
-    if (dragType === BDRAGSTART){
-      bDragCtx.startPageX = extra.startPageX = extra.pageX;
-      bDragCtx.startPageY = extra.startPageY = extra.pageY;
-      
-      bDragCtx.lastPageX = bDragCtx.startPageX = extra.startPageX;
-      bDragCtx.lastPageY = bDragCtx.startPageY = extra.startPageY;
-    }else if (dragType === BDRAGEND){
-      // because, on iOs, the touchEnd event does not have the .touches[0].pageX
-      extra.pageX = bDragCtx.lastPageX;
-      extra.pageY = bDragCtx.lastPageY;
-    }
-    
-    extra.startPageX = bDragCtx.startPageX;
-    extra.startPageY = bDragCtx.startPageY;
-    extra.deltaX = extra.pageX - bDragCtx.lastPageX;
-    extra.deltaY = extra.pageY - bDragCtx.lastPageY;
-    
-    bDragCtx.lastPageX = extra.pageX;
-    bDragCtx.lastPageY = extra.pageY;
-    return extra;
-  }
-  // --------- /bdrag* --------- //
-  
-  
-  
-  // --------- btransitionend --------- //
-  // Note: even if jQuery 1.8 add the prefix, it still does not normalize the transitionend event.
-  $.event.special.btransitionend = {
+	$.event.special[BDRAGEND] = {
+		add : bdragAddHandler
+	};
+	
+	function bdragAddHandler(handleObj) {
+		
+		var tapEvents = getTapEvents();
 
-    setup : function(data, namespaces) {
-      var eventListener = "transitionend";
-      if (this.addEventListener){
-        if (!brite.ua.browser.mozilla){
-          eventListener = brite.ua.cssVarPrefix().toLowerCase() + "TransitionEnd";
-        }
-        this.addEventListener(eventListener,function(event){
-          triggerCustomEvent(this,event,{type:"btransitionend"});
-        });
-        
-      }else{
-        // old browser, just trigger the event since transition should not be supported anyway
-        triggerCustomEvent(this,jQuery.Event("btransitionend"),{type:"btransitionend"});
-      }
-     
+		$(this).on(tapEvents.start, handleObj.selector, function(event) {
+			var elem = this;
+			var $elem = $(this);
+			var dragStarted = false;
+			var startEvent = event;
+			var startPagePos = brite.event.eventPagePosition(startEvent);
+			var origTarget = event.target;
+			var $origTarget = $(origTarget);
+			
+			var $document = $(document);
+			var uid = "_" + brite.uuid(7);
+			
+			// drag move (and start)
+			$document.on(tapEvents.move + "." + uid,function(event){
+				var bextra;
+				var currentPagePos = brite.event.eventPagePosition(event);
+				// fix a bug on Chrome that always change the cursor to text
+				$("body").css("-webkit-user-select","none");
+				
+				if (!dragStarted){
+					if(Math.abs(startPagePos.pageX - currentPagePos.pageX) > dragThreshold || Math.abs(startPagePos.pageY - currentPagePos.pageY) > dragThreshold) {
+						dragStarted = true;
+						_dragging = true;
+						$origTarget.data("bDragCtx", {});
+						bextra = buildDragExtra(event, $origTarget, BDRAGSTART);
+						triggerCustomEvent( origTarget, event,{type:BDRAGSTART,target:origTarget,bextra:bextra});  
+						
+						event.stopPropagation();
+						event.preventDefault();
+						
+					}
+				}
+				
+				if(dragStarted) {
+					bextra = buildDragExtra(event, $origTarget, BDRAGMOVE);
+					triggerCustomEvent( origTarget, event,{type:BDRAGMOVE,target:origTarget,bextra:bextra});
+					event.stopPropagation();
+					event.preventDefault();
+				}
+			});
+			
+			// drag end
+			$document.on(tapEvents.end + "." + uid, function(event){
+				// chrome fix cleanup (remove the hack)
+				$("body").css("-webkit-user-select","");
+				if (dragStarted){
+					var bextra = buildDragExtra(event, $origTarget, BDRAGEND);
+					triggerCustomEvent( origTarget, event,{type:BDRAGEND,target:origTarget,bextra:bextra});
+					event.stopPropagation();
+					event.preventDefault();            
+				}  
+				
+				$document.off("." + uid);
+				_dragging = false;
+			});
+					
+		});
+	}
+	
+	
+	/**
+	 * Build the extra event info for the drag event. 
+	 */
+	function buildDragExtra(event,$elem,dragType){
+		brite.event.fixTouchEvent(event);
+		var hasTouch = brite.ua.hasTouch();
+		var extra = {
+			eventSource: event,
+			pageX: event.pageX,
+			pageY: event.pageY      
+		};
+		
+		var oe = event.originalEvent;
+		if (hasTouch){
+			extra.touches = oe.touches;
+		}
+		
+		var bDragCtx = $elem.data("bDragCtx");
+		
+		if (dragType === BDRAGSTART){
+			bDragCtx.startPageX = extra.startPageX = extra.pageX;
+			bDragCtx.startPageY = extra.startPageY = extra.pageY;
+			
+			bDragCtx.lastPageX = bDragCtx.startPageX = extra.startPageX;
+			bDragCtx.lastPageY = bDragCtx.startPageY = extra.startPageY;
+		}else if (dragType === BDRAGEND){
+			// because, on iOs, the touchEnd event does not have the .touches[0].pageX
+			extra.pageX = bDragCtx.lastPageX;
+			extra.pageY = bDragCtx.lastPageY;
+		}
+		
+		extra.startPageX = bDragCtx.startPageX;
+		extra.startPageY = bDragCtx.startPageY;
+		extra.deltaX = extra.pageX - bDragCtx.lastPageX;
+		extra.deltaY = extra.pageY - bDragCtx.lastPageY;
+		
+		bDragCtx.lastPageX = extra.pageX;
+		bDragCtx.lastPageY = extra.pageY;
+		return extra;
+	}
+	// --------- /bdrag* --------- //
+	
+	
+	
+	// --------- btransitionend --------- //
+	// Note: even if jQuery 1.8 add the prefix, it still does not normalize the transitionend event.
+	$.event.special.btransitionend = {
 
-    }
+		setup : function(data, namespaces) {
+			var eventListener = "transitionend";
+			if (this.addEventListener){
+				if (!brite.ua.browser.mozilla){
+					eventListener = brite.ua.cssVarPrefix().toLowerCase() + "TransitionEnd";
+				}
+				this.addEventListener(eventListener,function(event){
+					triggerCustomEvent(this,event,{type:"btransitionend"});
+				});
+				
+			}else{
+				// old browser, just trigger the event since transition should not be supported anyway
+				triggerCustomEvent(this,jQuery.Event("btransitionend"),{type:"btransitionend"});
+			}
+		 
 
-  };   
-  // --------- /btransitionend --------- //
-  
-  // --------- Event Utilities --------- //
-  
-  // Link
-  function linkSpecialEventsTo(eventNames,eventRef){
-    $.each(eventNames,function(idx,val){
-      $.event.special[ val ] = {
-        setup: function() {
-          $( this ).bind( eventRef, $.noop );
-        }
-      };      
-    });
-  }
-    
-  function triggerCustomEvent( elem, nativeEvent, override ) {
-    var newEvent = jQuery.extend(
-      new jQuery.Event(),
-      nativeEvent,override
-    );
-    $(elem).trigger(newEvent);    
-  }
-  // --------- /Event Utilities --------- //  
-    
+		}
+
+	};   
+	// --------- /btransitionend --------- //
+	
+	// --------- Event Utilities --------- //
+	
+	// Link
+	function linkSpecialEventsTo(eventNames,eventRef){
+		$.each(eventNames,function(idx,val){
+			$.event.special[ val ] = {
+				setup: function() {
+					$( this ).bind( eventRef, $.noop );
+				}
+			};      
+		});
+	}
+		
+	function triggerCustomEvent( elem, nativeEvent, override ) {
+		var newEvent = jQuery.extend(
+			new jQuery.Event(),
+			nativeEvent,override
+		);
+		$(elem).trigger(newEvent);    
+	}
+	// --------- /Event Utilities --------- //  
+		
 })(jQuery);
 // ------ /brite special events ------ //
 

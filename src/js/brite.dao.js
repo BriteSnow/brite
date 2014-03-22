@@ -32,11 +32,11 @@ var brite = brite || {};
 			var er = "Cannot find the DAO for objectType: " + objectType;
 			throw er;
 		}
-	};
+	}
 
 	brite.dao = function(entityType) {
 		return getDao(entityType);
-	}
+	};
 
 	var internalMethods = {
 		isDataChange : true, 
@@ -61,7 +61,7 @@ var brite = brite || {};
 		
 		if (!entityType || typeof entityType !== "string"){
 			throw "Cannot register daoHandler because entityType '" + entityType + "' is not valid." + 
-			      " Make sure the daoHandler emplement .entityType() method which must return a string of the entity type"; 
+						" Make sure the daoHandler emplement .entityType() method which must return a string of the entity type"; 
 		}
 		
 		daoObject._entityType = entityType;
@@ -105,7 +105,7 @@ var brite = brite || {};
 		}
 		
 		return daoObject;
-	}
+	};
 
 	// --------- Internal Utilities For Dao Events --------- //
 	var _ALL_ = "_ALL_";
@@ -151,8 +151,8 @@ var brite = brite || {};
 		// create the namespace if not present
 		if ( typeof namespace === "undefined") {
 			throw "BRITE DAO BINDING ERROR: any binding with brite.dao.on*** needs to have a namespace after the function. " + 
-			      " Remember to cleanup the event at component close with brite.dao.off(mynamespace)"; 
-			       
+						" Remember to cleanup the event at component close with brite.dao.off(mynamespace)"; 
+						 
 		}
 
 		
@@ -202,9 +202,9 @@ var brite = brite || {};
 		
 		// in the case of a "remove" event, we need to check if the $receiver did not get removed, 
 		// otherwise, we need to add it back.
-	  if(evt.type === "remove" && $receiversRoot.find("."+objectType).size() == 0 && $receiver){
- $receiversRoot.append($receiver);
- }
+		if(evt.type === "remove" && $receiversRoot.find("." + objectType).size() == 0 && $receiver){
+			$receiversRoot.append($receiver);
+		}
 
 		// trigger _ALL_ action in case there are some events registered for all event
 		evt.type = _ALL_;
@@ -220,7 +220,7 @@ var brite = brite || {};
 	var onDaoReceiverDic = {};
 	/**
 	 * This will trigger on any DAO calls before the dao action is completed (for
-	 * 	asynch daos), hence, the resultPromise property of the daoEvent.
+	 * asynch daos), hence, the resultPromise property of the daoEvent.
 	 *
 	 * @param objectTypes       e.g., "User, Task" (null for any)
 	 * @param actions            e.g., "create, list, get" (null for any)
@@ -235,19 +235,19 @@ var brite = brite || {};
 		var map = buildDaoOnEventParamMap(arguments);
 		$daoDao.on(map.actions, map.objectTypes, map.func);
 		return map.namespace;
-	}
+	};
 
 
 	brite.dao.offDao = function(namespace) {
 		$daoDao.off("." + namespace);
-	}
+	};
 
 	function _triggerOnDao(entityType, action, resultPromise) {
 		var daoEvent = {
 			entityType : entityType,
 			action : action,
 			resultPromise : resultPromise
-		}
+		};
 
 		_triggerDaoEvent(onDaoReceiverDic, $daoDao, entityType, daoEvent);
 	}
@@ -278,12 +278,12 @@ var brite = brite || {};
 		var map = buildDaoOnEventParamMap(arguments);
 		$daoResult.on(map.actions, map.objectTypes, map.func);
 		return map.namespace;
-	}
+	};
 
 
 	brite.dao.offResult = function(namespace) {
 		$daoResult.off("." + namespace);
-	}
+	};
 
 	function _triggerOnResult(entityType, action, result) {
 		var daoEvent = {
@@ -315,12 +315,12 @@ var brite = brite || {};
 		var map = buildDaoOnEventParamMap(arguments);
 		$daoDataChange.on(map.actions, map.objectTypes, map.func);
 		return map.namespace;
-	}
+	};
 
 
 	brite.dao.offDataChange = function(namespace) {
 		$daoDataChange.off("." + namespace);
-	}
+	};
 
 
 	brite.triggerDataChange = function(entityType, action, result) {
@@ -331,7 +331,7 @@ var brite = brite || {};
 		};
 
 		_triggerDaoEvent(dataChangeReceiverDic, $daoDataChange, entityType, daoEvent);
-	}
+	};
 
 	// --------- /Brite.dao.onDataChange --------- //
 	
@@ -339,7 +339,7 @@ var brite = brite || {};
 		brite.dao.offResult(namespace);
 		brite.dao.offDao(namespace);
 		brite.dao.offDataChange(namespace);
-	}
+	};
 
 	/**
 	 * Wrap with a deferred object if the obj is not a deferred itself.
@@ -371,14 +371,14 @@ var brite = brite || {};
 	 * .type     will be the value of the attribute data-entity 
 	 * .id       will be the value of the data-entity-id
 	 * .name     (optional) will be the value of the data-entity-name
-	 * .$el 			will be the $element containing the matching data-entity attribute
+	 * .$el      will be the $element containing the matching data-entity attribute
 	 *  
 	 * If no entityType, then, return the first entity of the closest html element having a data-b-entity. <br />
 	 * 
 	 * $element.bEntity("User"); // return the closest entity with data-entity="User"
 	 * $element.bEntity(">children","Task"); // return all the data-entity="Task" children from this $element.  
-   * $element.bEntity(">first","Task"); // return the first child entity matching data-entity="Task"
-   * 
+	 * $element.bEntity(">first","Task"); // return the first child entity matching data-entity="Task"
+	 * 
 	 * TODO: needs to implement the >children and >first
 	 * 
 	 * @param {String} entity type (optional) the object 
@@ -403,7 +403,7 @@ var brite = brite || {};
 						type : $sObj.attr("data-entity"),
 						id : $sObj.attr("data-entity-id"),
 						$el : $sObj
-					}
+					};
 					var name = $sObj.attr("data-entity-name");
 					if (typeof name !== "undefined"){
 						result.name = name;
@@ -449,7 +449,7 @@ var brite = brite || {};
 					type : $sObj.attr("data-obj_type"),
 					id : $sObj.attr("data-obj_id"),
 					$element : $sObj
-				}
+				};
 				resultList.push(objRef);
 			}
 		});

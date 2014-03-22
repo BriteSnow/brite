@@ -1,8 +1,10 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-        <title>brite test - event - btap</title>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<title>brite test - event - btap</title>
+
+		<link rel="stylesheet" href="../others/bootstrap/css/bootstrap.min.css" />
 
 		<!-- Generic Test Includes -->
 		<link rel="stylesheet" href="css/sTestHelper.css"/>
@@ -14,175 +16,66 @@
 		});
 		</script>
 		<!-- /Generic Test Includes -->
-	    
+		
 		<script type="text/javascript" src="../src/js/brite.core.js" ></script>
 		<script type="text/javascript" src="../src/js/brite.event.js" ></script>
 		
 		<style>
-			.button{
-				display: inline-block;
-				padding: 5px 10px;
-				margin: 0 10px 0 0;
-				border: solid 1px #333333;
-				background: #e0e0e0;
-				color: #333333;
-				cursor: pointer;
+			.test-container{
+				padding: 20px;
+				border: solid 1px #ddd;
 			}
-			.button.on{
-				background: #e0ffe0;
-			}
-			.container-box{
-			  position: relative;
-			  border: solid 1px #aaa;
-			  padding: 20px;
-			  width: 400px;
-			}
-			#containerMessage{
-			  position: absolute;
-			  left: 150px;
-			  top: 0;
-			  right: 0;
-			  bottom: 0;
-			  padding: 5px;
+
+			.test-container.on{
+				background: #ddffdd;
 			}
 		</style>
+	</head>
+
+	<body>
+		<p>UserAgent with touch events will use the "touchstart" event, others will use the tranditional "click" event.</p>
 		
-    </head>
-    <body>
-    	<p>UserAgent with touch events will use the "touchstart" event, others will use the tranditional "click" event.</p>
-		
-    <h2>btap on parent only</h2>
-    <div>
-      <div id="parentDiv" style="width:200px;padding: 30px; border: solid #ddd 1px">
-        <div class="child" style="width: 100px; border: solid #ddd 1px">tap me</div>
-      </div>
-    </div>
-    
-    <script type="text/javascript">
-      $(function(){
-        $(document).on("mouseup",function(){
-          console.log("mouseup");
-        });
-        $(document).on("btap","#parentDiv",function(){
-        //$("#parentDiv").on("btap",function(){
-          console.log("btap");
-        });
-      });
-    </script>    
-    
-		<h2>Parent / Child</h2>
-		<div id="container" class="container-box">
-		  <div id="childButton" class="button">Tap me</div>
-		  <div id="containerMessage"></div>
+		<h2>btap tests</h2>
+		<div>
+		  <div id="test-container-1" class="test-container">
+		  	<div id="test-direct-button-1" type="button" class="btn btn-default">Direct bTap</div>
+				<div class="btn btn-default test-button">Delegate bTap</div>
+				<div id="test-direct-click-button-1" class="btn btn-default">Standard Click</div>
+		  </div>
 		</div>
 		
 		<script type="text/javascript">
 		  $(function(){
-		    var counter = 0;
-		    var timer = false;
-        $(document).on("btap","#childButton",function(){
-          console.log("btap on child: " + counter);
-          if (counter === 0 && !timer){
-            timer = true;
-            setTimeout(function(){
-              if (counter !== 2){
-                $("#containerMessage").html("FAIL: should have counter == 2,but was : " + counter);
-              }else{
-                $("#containerMessage").html("PASS");
-              }
-            },200);
-          }
-          counter++;
-        });		    
-		    $(document).on("btap","#container",function(){
-		      console.log("btap on container: " + counter);
-		      counter++;
-		    });
+		  	// we bind the row events to make sure it does not stop the other event
+				$("#test-container-1").on("mouseup",function(){
+				  //console.log("test-container-1 mouseup");
+				});
 
+				// direct binding
+				$("#test-direct-button-1").on("btap",onButton);
+
+				$("#test-container-1").on("btap",".test-button",onButton);				
+
+				// delegate binding
+				$("#test-container-1").on("btap",function(event){
+					var $container = $(event.target);
+					// change state only if the element clicked is the container
+					if ($container.hasClass("test-container")){
+						$container.toggleClass("on");	
+					}
+				});
+
+				// make sure it behave the same than the btap
+				$("#test-direct-click-button-1").on("click",onButton);
+
+				function onButton(event){
+					var $button = $(event.target);
+					$button.toggleClass("btn-default");
+					$button.toggleClass("btn-success");
+				}
 		  });
-		</script>
-		
-        <h2>Single btap bind</h2>
-		<div class="sTestSrc sTestShowSrc">
-		
-		<div id="container">
-  		<div id="tapButton" class="button">Tap me</div>
-  		
-  		<div class="button tapme">Tapme 1</div>
-  		
-  		<div class="button tapme">Tapme 2</div>
-  		
-  		<div id="tapholdButton" class="button">Tap and Hold</div>
-  		
-  		<div id="touchButtonResult"></div>
-		</div>
-		
-		<script type="text/javascript">
-			$(function(){
-				var count = 0;
-				
-				var $container = $("#container");
-				
-				$("#tapButton").on("btap",function(){
-					$(this).toggleClass("on");
-				});
-				
-				$container.on("btap",".tapme",function(){
-				  $(this).toggleClass("on");
-				});
+		</script>    
+	
 
-        $("#tapholdButton").on("btaphold",function(){
-          $(this).toggleClass("on");
-        });				
-				
-			});
-		</script>
-		</div>
-		
-		<h2>Deleguate btap</h2>
-		<div class="sTestSrc sTestShowSrc">
-			<div id="touchButtons">
-				<div class="button">Click me</div><div class="button">Click me too</div><div class="button">Me too</div>
-			</div>
-			
-			<script type="text/javascript">
-			$(function(){
-				
-				var count = 0;
-				$("#touchButtons").on("btap",".button",function(){
-					$(this).toggleClass("on");
-				});
-				
-			});
-		</script>			
-		</div>
-		
-		
-		<h2>Deleguate btap two triggers</h2>
-		<div class="sTestSrc sTestShowSrc">
-			<div id="touchButtonsTwoTrigger">
-				<div class="wrap">
-					<div class="button button1">Click me</div>
-				</div>
-			</div>
-
-			<script type="text/javascript">
-			$(function(){
-				
-				var count = 0;
-				$("#touchButtonsTwoTrigger").on("btap",".button1",function(){
-				  $(this).toggleClass("on");
-					console.log("trigger event if twice");
-				});
-				
-				//just keep it here to test if the event trigger twice
-				$("#touchButtonsTwoTrigger .wrap").on("btap",".whateverElements",function(){
-				});
-				
-			});
-		</script>			
-		</div>
-		
-		
-    </body>
+	</body>
 </html>

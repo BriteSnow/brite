@@ -12,9 +12,10 @@ if (!console){
 		log: function(txt){
 			// for now, nothing.
 		}
-		
-	}
+	};
 }
+
+
 function log(txt){
 	if (console){
 		console.log(txt);

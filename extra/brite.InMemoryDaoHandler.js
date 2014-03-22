@@ -3,7 +3,7 @@
 
 	var defaultOpts = {
 		idName : "id"
-	}
+	};
 
 	/**
 	 * Create a InMemoryDaoHandler type
@@ -50,7 +50,7 @@
 	// --------- DAO Info Methods --------- //
 	InMemoryDaoHandler.prototype.entityType = function() {
 		return this._entityType;
-	}	
+	};
 	// --------- DAO Info Methods --------- //
 
 	// --------- DAO Interface Implementation --------- //
@@ -67,7 +67,7 @@
 		} else {
 			return entity;
 		}
-	}
+	};
 
 	/**
 	 * DAO Interface: Create new object, set new id, and add it.
@@ -82,7 +82,7 @@
 		}
 
 		return $.extend({}, newEntity);
-	}
+	};
 
 	/**
 	 * DAO Interface: remove an instance of objectType for a given type and id.
@@ -98,7 +98,7 @@
 			delete this._dataDic[id];
 		}
 		return id;
-	}
+	};
 
 	/**
 	 * Additional methods to remove multiple items
@@ -117,20 +117,19 @@
 		});
 		
 		return ids;
-	}
+	};
 
 	InMemoryDaoHandler.prototype.batchDelete = function(match){
 		var dao = this;
 		var deletedIds = [];
 		$.each(this._dataDic, function(key, entity) {
 			if (passMatch(entity,match)){
-				var entity = dao._dataDic[key];
 				delete dao._dataDic[key];
 				deletedIds.push(key);				
 			}
 		});
 		return deletedIds;
-	}
+	};
 	
 	/**
 	 * DAO Interface: update a existing id with a set of property/value data.
@@ -155,7 +154,7 @@
 		} else {
 			return null;
 		}
-	}
+	};
 	
 	/**
 	 * Batch update given a match criteria
@@ -177,7 +176,7 @@
 			}
 		});
 		return updatedList;
-	}
+	};
 		
 
 	/**
@@ -186,9 +185,9 @@
 	 *           opts.pageIndex {Number} Index of the page, starting at 0.
 	 *           opts.pageSize  {Number} Size of the page
 	 *           opts.match     {Object} Object of matching items. If item is a single value, then, it is a ===, 
-	 * 																	 Note implemented: advanced operation support with an object, with a .op for operation
-	 *                                        {age:{op:">",val:12}} (will match any item where .age > 12)
-	 *                                        if opts.match is an array, each block will be considered as OR block
+	 *																		Note implemented: advanced operation support with an object, with a .op for operation
+	 *																		{age:{op:">",val:12}} (will match any item where .age > 12)
+	 *																		if opts.match is an array, each block will be considered as OR block
 	 *           opts.orderBy   {String}
 	 *           opts.orderType {String} "asc" or "desc"
 	 */
@@ -225,10 +224,10 @@
 			});
 		}
 
-		if (opts.pageIndex || opts.pageIndex == 0) {
+		if (opts.pageIndex || opts.pageIndex === 0) {
 			if (opts.pageSize) {
 				newResults = rawResultSet.slice(opts.pageIndex * opts.pageSize, (opts.pageIndex + 1) * opts.pageSize);
-			} else if (opts.pageSize != 0) {
+			} else if (opts.pageSize !== 0) {
 				newResults = rawResultSet.slice(opts.pageIndex * opts.pageSize);
 			}
 		}
@@ -239,7 +238,7 @@
 		});
 
 		return resultSet;
-	}
+	};
 	
 	/**
 	 * @param {Object} match (optional) matching object as the list, and batchDelete, batchUpdate. Optional
@@ -254,7 +253,7 @@
 		});
 		
 		return val;
-	}
+	};
 	
 
 	// --------- /DAO Interface Implementation --------- //
@@ -265,14 +264,14 @@
 	 * 
 	 * @param {Object} obj The object to compare
 	 * @param {Object} match The comparator, on the format propName:value. 
-	 * 						     if "value" string, number, or boolean which will get compared a ===
-	 * 								 NOT SUPPORTED YET: if "value" is an object with propName:{op:operation,value:value}, where op is the operation to campare ("<", ">", "%")
-	 * 								 NOT SUPPORTED YET: Also, match can be an array of object, in this case, each item in the array will be OR block 
-	 * 								(i.e. [{age:12},{age:13}] would match any person of age 12 or 13)	
+	 *									if "value" string, number, or boolean which will get compared a ===
+	 *									NOT SUPPORTED YET: if "value" is an object with propName:{op:operation,value:value}, where op is the operation to campare ("<", ">", "%")
+	 *									NOT SUPPORTED YET: Also, match can be an array of object, in this case, each item in the array will be OR block 
+	 *								(i.e. [{age:12},{age:13}] would match any person of age 12 or 13)	
 	 * 
 	 */
 	function passMatch(obj,match){
-		var pass = true;
+		var pass = true, k;
 		if (match){
 			for (k in match) {
 				if (obj[k] !== match[k]) {
