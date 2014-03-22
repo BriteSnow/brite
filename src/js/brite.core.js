@@ -197,6 +197,8 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 	brite.config = {
 		componentsHTMLHolder: "body",
 		tmplPath: "tmpl/",
+		jsPath: "js/",
+		cssPath: "css/",
 		tmplExt: ".tmpl"
 		
 	};
@@ -275,7 +277,7 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 			if (loadCss){
 				//TODO: need to add the checkCss support
 				loadCssDfd = $.Deferred();
-				var cssFileName = "css/" + name + ".css";
+				var cssFileName = brite.config.cssPath + name + ".css";
 				var includeDfd = includeFile(cssFileName,"css");
 				includeDfd.done(function(){
 					loadCssDfd.resolve();
@@ -315,7 +317,7 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 		if (componentDef){
 			dfd.resolve(componentDef);
 		}else{
-			var resourceFile = "js/" + name + ".js";
+			var resourceFile = brite.config.jsPath + name + ".js";
 			var includeDfd = includeFile(resourceFile,"js");
 			includeDfd.done(function(){
 				componentDef = _componentDefStore[name];

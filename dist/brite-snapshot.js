@@ -197,6 +197,8 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 	brite.config = {
 		componentsHTMLHolder: "body",
 		tmplPath: "tmpl/",
+		jsPath: "js/",
+		cssPath: "css/",
 		tmplExt: ".tmpl"
 		
 	};
@@ -275,7 +277,7 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 			if (loadCss){
 				//TODO: need to add the checkCss support
 				loadCssDfd = $.Deferred();
-				var cssFileName = "css/" + name + ".css";
+				var cssFileName = brite.config.cssPath + name + ".css";
 				var includeDfd = includeFile(cssFileName,"css");
 				includeDfd.done(function(){
 					loadCssDfd.resolve();
@@ -315,7 +317,7 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 		if (componentDef){
 			dfd.resolve(componentDef);
 		}else{
-			var resourceFile = "js/" + name + ".js";
+			var resourceFile = brite.config.jsPath + name + ".js";
 			var includeDfd = includeFile(resourceFile,"js");
 			includeDfd.done(function(){
 				componentDef = _componentDefStore[name];
@@ -2018,6 +2020,7 @@ var brite = brite || {};
 })(jQuery);
 
 // ------ /LEGACY jQuery DAO Helper ------ //
+
 var brite = brite || {};
 
 /**
@@ -2106,7 +2109,7 @@ brite.event = brite.event || {};
 // ------ /transition helper ------ //
 
 // ------ /brite special events ------ //
-;(function($){
+(function($){
 	
 	// to prevent other events (i.e., btap) to trigger when dragging.
 	var _dragging = false;
@@ -2161,7 +2164,8 @@ brite.event = brite.event || {};
 						brite.event.fixTouchEvent(startEvent);
 						triggerCustomEvent(elem, event,{type:"btap",pageX: startEvent.pageX,pageY: startEvent.pageY});
 						// flag this originalEvent as processed
-						// Note: this allow to prevent multiple triggering without having to use the stopPropagation
+						// Note: this allow to prevent multiple triggering without having to use the stopPropagation which will be too
+						//       destructive for other event handlers
 						event.originalEvent.b_processed = true;
 					}
 				}
@@ -2369,8 +2373,3 @@ brite.event = brite.event || {};
 		
 })(jQuery);
 // ------ /brite special events ------ //
-
-
-
-
-

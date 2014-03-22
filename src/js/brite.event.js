@@ -350,8 +350,3 @@ brite.event = brite.event || {};
 		
 })(jQuery);
 // ------ /brite special events ------ //
-
-
-
-
-
