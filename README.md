@@ -4,9 +4,12 @@ The driving concept is to just add the missing MVC pieces to the DOM rather than
 and Widget patterns to the DOM. The result is simpler, easier to optimize, and more scalable HTML/CSS/JS
 application code. In short, brite turns the DOM (and jQuery) into a robust, efficient, and scalable MVC platform.
 
-*License:* MIT | Download: [brite.min.js](https://raw2.github.com/BriteSnow/brite/master/dist/brite.min.js) (or [brite.js](https://raw2.github.com/BriteSnow/brite/master/dist/brite.js), [brite-snapshot.js](https://raw2.github.com/BriteSnow/brite/master/dist/brite-snapshot.js))
+- Donwload: [brite.min.js](https://raw2.github.com/BriteSnow/brite/master/dist/brite.min.js) (or [brite.js](https://raw2.github.com/BriteSnow/brite/master/dist/brite.js), [brite-snapshot.js](https://raw2.github.com/BriteSnow/brite/master/dist/brite-snapshot.js)) (__MIT__ licensed)
 
-## Usage
+- [brite.js documentation](http://britesnow.com/brite)
+- [Sample App (TodoMVC)](https://github.com/BriteSnow/sampleTodoMVC)
+
+## Quick Overview
 
 Create a new view definition
 
