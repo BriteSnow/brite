@@ -4,10 +4,9 @@ The driving concept is to just add the missing MVC pieces to the DOM rather than
 and Widget patterns to the DOM. The result is simpler, easier to optimize, and more scalable HTML/CSS/JS
 application code. In short, brite turns the DOM (and jQuery) into a robust, efficient, and scalable MVC platform.
 
-- Donwload: [brite.min.js](https://raw2.github.com/BriteSnow/brite/master/dist/brite.min.js) (or [brite.js](https://raw2.github.com/BriteSnow/brite/master/dist/brite.js), [brite-snapshot.js](https://raw2.github.com/BriteSnow/brite/master/dist/brite-snapshot.js)) (__MIT__ licensed)
+__MIT__ licensed | [brite.min.js](https://raw2.github.com/BriteSnow/brite/master/dist/brite.min.js) | [documentation](http://britesnow.com/brite) | [Sample App (TodoMVC)](https://github.com/BriteSnow/sampleTodoMVC) | [Release Log](#release-log) | [more dist](https://github.com/BriteSnow/brite/tree/master/dist)
 
-- [brite.js documentation](http://britesnow.com/brite)
-- [Sample App (TodoMVC)](https://github.com/BriteSnow/sampleTodoMVC)
+
 
 ## Quick Overview
 
@@ -74,4 +73,19 @@ brite.display("MyView","body").done(function(myViewInstance){
         }
         …
     }
+
+## Release Log
+Notation: "+" Addition | "-" Fix | "!" API change | "*" Important | "." minor
+
+#### 1.1.2 (March 22nd 2014)
++ added brite.config.jsPath and brite.config.cssPath for configuring the location of the brite view components when using on demand loading
+. updated examples to jquery 1.11
+. minor reformating to be more jshint compliant. Updated to bootstrap 3.1.1
+. update to handlebars 1.3.0 and fix taskmanager with latest bootstrap
++ Makes brite.js compatible with AMD and CommonJS (Thanks to [Sankar Gorthi](https://github.com/sankargorthi))
+. updated sample/taskmanager to point correctly to the bootstrap 3.0 and use handlebars-1.0.0
+! remove the brite.gtx (canvas utilities) from brite (moved gtx.js to /extra)
+- btap issue when binding only on parent, btap on child does not propagate
+- Fix btap event to fire only once (without the use of preventDefault which would be too destructive for other event handlers)
+
 
