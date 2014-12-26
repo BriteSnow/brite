@@ -1,6 +1,6 @@
 var brite = brite || {};
 
-brite.version = "1.1.3";
+brite.version = "1.1.4-SNAPSHOT";
 
 if ( typeof module === "object" && module && typeof module.exports === "object" ) {
 		module.exports = brite;
@@ -847,7 +847,7 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 				brite.dao.offAny(component.id);
 			}
 			
-			if (component.parentEvents){
+			if (component.parentEvents && component.$el){
 				$.each(component.parentEvents,function(key,val){
 					var parent = component.$el.bView(key);
 					if (parent && parent.$el){
