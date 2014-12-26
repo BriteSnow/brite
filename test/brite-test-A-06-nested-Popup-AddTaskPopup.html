@@ -1,0 +1,87 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+		<head>
+				<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+				<title>briteUITest - parentEvents</title>
+
+		<!-- Generic Test Includes -->
+		<link rel="stylesheet" href="css/test.css"/>
+		<link rel="stylesheet" href="../others/bootstrap/css/bootstrap.min.css" />
+		
+		
+		<script type="text/javascript" src="../js-dependencies/jquery.js" ></script>
+		<!-- /Generic Test Includes -->
+
+		<!-- This is just for internal testing. In dev or prod, use brite-snapshot.js or brite.js (or the .min equivalent) -->
+		<script type="text/javascript" src="../src/js/brite.core.js" ></script>
+		<script type="text/javascript" src="../src/js/brite.dao.js" ></script>
+		<script type="text/javascript" src="../src/js/brite.event.js" ></script>
+		
+		<script type="text/javascript" src="../others/handlebars.min.js" ></script>
+		<script type="text/javascript" src="js/main.js" ></script>
+
+		<script type="text/javascript" src="js/Popup.js" ></script>
+		<script type="text/javascript" src="js/AddTaskPopup.js" ></script>
+
+		<link rel="stylesheet" href="css/Popup.css"/>
+		
+		<style type="text/css">
+		#message{
+			margin: 32px;
+			height: 64px;
+			width: 600px;
+			border: solid 1px #ddd;
+		}
+		</style>
+
+		
+		<!-- The UserListView Component -->
+		<script type="text/javascript">
+		$(function(){
+			$("#raw-popup-btn").on("click", function(){
+				brite.display("Popup");
+			});
+
+			$("#add-item-btn").on("click", function(){
+				brite.display("AddTaskPopup").done(function(addTaskPopup){
+					addTaskPopup.onOk(function(data){
+						$("#message").html("Will create task with title: " + data.title);
+					});
+
+					addTaskPopup.onCancel(function(){
+						$("#message").html("Add Task Popup cancelled");
+					})
+				});
+			});			
+		});
+		</script>
+
+		</head>
+		<body>
+			<h2>Nested Popup / AddTaskPopup</h2>
+
+			<button id="raw-popup-btn">Raw Popup</button>
+			<button id="add-item-btn">Add Item Popup</button>
+
+			<div id="message"></div>
+
+			<!-- ********* Handlebars Inline Template ********* --> 
+			<script id="tmpl-AddTaskPopup" type="text/html">
+				<header>Add Item</header>
+				<section class="content">
+					<form>
+						<div class="form-group">
+							<label>Task Title</label>
+							<input name="title" class="form-control" placeholder="Enter task title">
+						</div>
+					</form>					
+				</section>
+				<footer>
+					<button class="btn btn-default action-cancel">Cancel</button>
+					<button class="btn btn-primary action-ok">Add Item</button>
+				</footer>
+			</script>
+			<!-- ********* /Handlebars Inline Template ********* --> 			
+
+		</body>
+</html>

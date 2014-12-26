@@ -1,0 +1,54 @@
+.Popup{
+	background-color: rgba(0,0,0,.3);
+	position: absolute;
+	top: 0; right: 0; bottom: 0; left: 0;
+}
+
+.Popup > .dialog{
+	position: absolute;
+	height: 300px;
+	top: 50%;
+	margin-top: -150px;
+	width: 400px;
+	left: 50%;
+	margin-left: -200px;
+	background: #fff;
+
+	border: solid 1px #ddd;
+
+}
+
+.Popup > .dialog-inner{
+	position: absolute;
+	top: 8px;
+	right: 8px;
+	bottom: 8px;	
+	left: 8px;
+}
+
+.Popup header{
+	position: absolute;
+	top: 0; right: 0; left: 0;
+	padding: 8px;
+	height: 52px;
+	border-bottom: solid 1px #ddd;
+	font-size: 24px;
+	font-weight: 200;
+}
+
+.Popup section.content{
+	position: absolute;
+	top: 60px;
+	right: 8px;
+	bottom: 60px;
+	left: 8px;
+}
+
+.Popup footer{
+	text-align: right;
+	position: absolute;
+	padding: 8px;
+	bottom: 0; right: 0; left: 0;
+	height: 52px;
+	border-top: solid 1px #ddd;	
+}
