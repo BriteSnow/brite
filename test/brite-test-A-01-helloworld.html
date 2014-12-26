@@ -1,106 +1,96 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-        <title>briteUITest - brite</title>
+		<head>
+				<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+				<title>briteUITest - brite</title>
 
 		<!-- Generic Test Includes -->
-		<link rel="stylesheet" href="css/sTestHelper.css"/>
+		<link rel="stylesheet" href="css/test.css"/>
 		<script type="text/javascript" src="../js-dependencies/jquery.js" ></script>
-		<script type="text/javascript" src="js/sTestHelper.js" ></script>
-		<script type="text/javascript">
-		$(function(){
-			showTestSources();
-		});
-		</script>
 		<!-- /Generic Test Includes -->
 
 		<!-- This is just for internal testing. In dev or prod, use brite-snapshot.js or brite.js (or the .min equivalent) -->
 		<script type="text/javascript" src="../src/js/brite.core.js" ></script>
 		
-    </head>
-    <body>
-    	<div class="sTestSection">
-	        <h2>brite Hello World</h2>
+		</head>
+		<body>
+		
+			<h2>brite Hello World</h2>
 
-			<div class="sTestSrc sTestShowSrc">
+			<h3>Hello World</h3>
+
+			<button id="helloButton">Display Hello World</button>
+
+
+			<div id="HelloWorld-Container" style="margin: 30px;border: solid 1px #dddddd;height: 30px">
 				
-				<h3>Hello World</h3>
-				
-				<button id="helloButton">Display Hello World</button>
-				
-				
-				<div id="HelloWorld-Container" style="margin: 30px;border: solid 1px #dddddd;height: 30px">
-					
-				</div>
-				
-				
-				
-				<script type="text/javascript">
-				
-				
-				$(document).ready(function(){
-          $("#helloButton").click(function(){
-            brite.display("helloWorld","#HelloWorld-Container",{name:"Mike"});
-          });
+			</div>
+
+
+
+			<script type="text/javascript">
+
+
+			$(document).ready(function(){
+				$("#helloButton").click(function(){
+					brite.display("helloWorld","#HelloWorld-Container",{name:"Mike"});
 				});
-				</script>
+			});
+			</script>
+
+			<!-- Simple HelloWorld Component -->
+			<script type="text/javascript">
+				var helloWorlCount = 0;
 				
-				<!-- Simple HelloWorld Component -->
-				<script type="text/javascript">
-					var helloWorlCount = 0;
+				brite.registerComponent("helloWorld",
+				 {
+						// Tell to empty the parent before adding the output of built element
+						emptyParent: true
+				 },
 					
-					brite.registerComponent("helloWorld",
-					 {
-						  // Tell to empty the parent before adding the output of built element
-						  emptyParent: true
-					 },
+					{// Build the component $element
+						create: function(data){
+							this.hellowWorldCount = ++helloWorlCount;
+							console.log("helloWorld#" + this.hellowWorldCount + " create");
+							var $e = $("<div><strong>Hello " + data.name + "</strong></div>");
+							
+							// just to keep track of the number of display
+							$e.find("strong").append(" " + this.hellowWorldCount );
+							
+							//return the element to have brite managing the rendering logic
+							return $e;
+							
+							// Not recommended, but if return null, then, this build function is responsible of the display logic 
+							// (i.e. need to add itself to the appropriate HTMLElement)
+							// 
+						},
 						
-						{// Build the component $element
-							create: function(data){
-								this.hellowWorldCount = ++helloWorlCount;
-								console.log("helloWorld#" + this.hellowWorldCount + " create");
-								var $e = $("<div><strong>Hello " + data.name + "</strong></div>");
-								
-								// just to keep track of the number of display
-								$e.find("strong").append(" " + this.hellowWorldCount );
-								
-								//return the element to have brite managing the rendering logic
-								return $e;
-								
-								// Not recommended, but if return null, then, this build function is responsible of the display logic 
-								// (i.e. need to add itself to the appropriate HTMLElement)
-								// 
-							},
-							
-							init: function(data,config){
-								console.log("helloWorld#" + this.hellowWorldCount + " init");
-							},
-							
-							// The postDisplay will be called after the display
-							postDisplay: function(data,config){
-								console.log("helloWorld#" + this.hellowWorldCount + " postDisplay");
-								this.$element.click(function(){
-									alert("You clicked on " + $(this).html());
-								});
-							},
-							
-							destroy: function(){
-								console.log("helloWorld#" + this.hellowWorldCount + " destroy");
-							}, 
-							
-							postDestroy: function(){
-								console.log("helloWorld#" + this.hellowWorldCount + " postDestroy");
-							}
+						init: function(data,config){
+							console.log("helloWorld#" + this.hellowWorldCount + " init");
+						},
+						
+						// The postDisplay will be called after the display
+						postDisplay: function(data,config){
+							console.log("helloWorld#" + this.hellowWorldCount + " postDisplay");
+							this.$element.click(function(){
+								alert("You clicked on " + $(this).html());
+							});
+						},
+						
+						destroy: function(){
+							console.log("helloWorld#" + this.hellowWorldCount + " destroy");
+						}, 
+						
+						postDestroy: function(){
+							console.log("helloWorld#" + this.hellowWorldCount + " postDestroy");
 						}
-					);
+					}
+				);
+
+			</script>
+			<!--  /Simple HelloWorld Component -->
 				
-				</script>
-				<!--  /Simple HelloWorld Component -->
 				
 				
-				
-			</div> <!-- .sTestShowSrc -->			
-		</div> <!-- .sTestSection -->
-    </body>
+		</body>
 </html>

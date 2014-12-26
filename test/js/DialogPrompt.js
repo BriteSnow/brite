@@ -1,39 +1,46 @@
 // BEST-PRACTICE: enclose all the component code in a immediate JS function (and make it $ safe by passing the jQuery as param)
-
-// Note: For testing purposes, the DialogPrompt component is a prototype based object with the appropriate properties. 
-//       This could be usefull for advanced Views that might need some sort of inheritance. 
  
 (function($) {
 	
-	// --------- View Interface Implementation ---------- //
-	function DialogPrompt() {
-	};
+	brite.registerView("DialogPrompt",{parent: "body"}, {
+		create: function(data){
+			this._answerCallBacks = [];
+			// render is a little handlebars wrapper 
+			return render("tmpl-DialogPrompt",data);
+		}, 
 
-	DialogPrompt.prototype.create = function(data, config) {
-		this._answerCallBacks = [];
-		return $("#tmpl-DialogPrompt").render(data);
-	}
+		events: {
+			"click; button.ok": onOk,
+			"click; button.cancel": onCancel
+		}, 
 
-	DialogPrompt.prototype.events = {
-		"click; button.ok": onOk,
-		"click; button.cancel": onCancel,
- 	}
- 	
- 	DialogPrompt.prototype.docEvents = {
- 		"click": function(event){
- 			console.log("clicking somewhere on the $document");
- 		}
- 	}
- 	
- 	DialogPrompt.prototype.winEvents = {
- 		"resize": function(event){
- 			console.log("window is resizing",event);
- 		}
- 	}
- 	
-	// --------- /View Interface Implementation ---------- //
-	
-	// --------- View Events Handling --------- //
+		docEvents: {
+			"click": function(event){
+				console.log("clicking somewhere on the $document");
+			}, 
+		},
+
+		winEvents: {
+			"resize": function(event){
+				console.log("window is resizing",event);
+			}
+		},
+
+		// --------- Public DialogPrompt API --------- //
+		onAnswer: function(answerCallBack) {
+			var view = this;
+			view._answerCallBacks.push(answerCallBack);
+		},
+
+		close: function() {
+			var view = this;
+			view.$el.bRemove();
+		}
+		// --------- /Public DialogPrompt API --------- //
+
+	});
+
+	// --------- Private View Events Handling --------- //
 	function onOk(event){
 		var view = this;
 		setAnswer.call(view,true);
@@ -43,24 +50,9 @@
 		var view = this;
 		setAnswer.call(view,false);
 	}	
-	// --------- /View Events Handling --------- //
+	// --------- /Private View Events Handling --------- //
 	
-
-	// --------- View Public API --------- //
-	// register a callback on answer
-	DialogPrompt.prototype.onAnswer = function(answerCallBack) {
-		var view = this;
-		view._answerCallBacks.push(answerCallBack);
-	}
-
-	// this will be call by this component when the user close the dialog by answering or pressing esc
-	DialogPrompt.prototype.close = function() {
-		var view = this;
-		view.$el.bRemove();
-	}
-	// --------- /View Public API --------- //
-
-	// --------- View Private Methods --------- //
+	// --------- Private Methods --------- //
 	// Note: this can be any API the developers was to expose
 	// this will be called by this component (from the postDisplay logic) when the user answer the prompt dialog
 	function setAnswer(answer) {
@@ -72,17 +64,6 @@
 
 		view.close();
 	}
-	// --------- /View Private Methods --------- //
-
-	// --------- View Registration --------- //
-	brite.registerComponent("DialogPrompt", {
-		parent : "body",
-		loadTmpl : true
-	},
-	// Note in this way, when a function is passed, this function will be use as the factory for the new instance it is responsible to return an instance of the Component
-	function() {
-		return new DialogPrompt();
-	});
-	// --------- View Registration --------- //
+	// --------- /Private Methods --------- //
 
 })(jQuery);

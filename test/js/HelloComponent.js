@@ -10,9 +10,7 @@
 	//       but look at the DialogPrompt.html/.js to see the recommended way (Object Oriented).
 	brite.registerComponent("HelloComponent", {
 		// Tell to empty the parent before adding this one
-		emptyParent: true,
-		// Tell to load the template (by default template/[ComponentName].html so, here it will be template/HelloComponent).
-		loadTmpl: true
+		emptyParent: true
 	},
 	//Component factory build the component $el.
 	//Note: since this is just a JS Structure it will be clone when brite create an instance of this component (on brite.display...)
@@ -24,7 +22,7 @@
 			// since we have set loadTmpl = true
 			
 			// this will return a HTML string, which is valid also
-			return $("#tmpl-HelloComponent").render(data);
+			return render("tmpl-HelloComponent",data);
 		},
 
 		// The postDisplay will be called after the display
@@ -37,4 +35,4 @@
 
 	});
 
-})(jQuery)
+})(jQuery);

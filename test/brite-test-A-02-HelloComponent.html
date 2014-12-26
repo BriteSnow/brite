@@ -1,57 +1,50 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-        <title>briteUITest - brite</title>
+		<head>
+				<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+				<title>briteUITest - brite</title>
 
 		<!-- Generic Test Includes -->
-		<link rel="stylesheet" href="css/sTestHelper.css"/>
+		<link rel="stylesheet" href="css/test.css"/>
 		<script type="text/javascript" src="../js-dependencies/jquery.js" ></script>
-		<script type="text/javascript" src="js/sTestHelper.js" ></script>
-		<script type="text/javascript">
-		$(function(){
-			showTestSources();
-		});
-		</script>
 		<!-- /Generic Test Includes -->
 		
 		<!-- We are using jQuery Render here, but can use any templating engine -->
-		<script type="text/javascript" src="../others/jsrender.js" ></script>
+		<script type="text/javascript" src="../others/handlebars.min.js" ></script>
 		
 		<!-- This is just for internal testing. In dev or prod, use brite-snapshot.js or brite.js (or the .min equivalent) -->
 		<script type="text/javascript" src="../src/js/brite.core.js" ></script>
 		<!-- /Brite Lib --> 
 		
+		<script type="text/javascript" src="js/main.js"></script>
 		<script type="text/javascript" src="js/HelloComponent.js"></script>
 		
+		<script type="text/javascript">
+		$(function(){
+			$("#helloButton").on("click",function(){
+				brite.display("HelloComponent","#HelloWorld-Container",{name:"Mike"});
+			})			
+		})
+		</script>		
 		
-		
-    </head>
-    <body>
-    	<div class="sTestSection">
-	        <h2>brite Hello World</h2>
+		</head>
+		<body>
+			<h2>brite Hello World</h2>
+			
+			<h3>Hello World</h3>
+			
+			<button id="helloButton">Display Hello World</button>
+			
+			<div id="HelloWorld-Container" style="margin: 30px;border: solid 1px #dddddd;height: 30px">
+				
+			</div>
+			
 
-			<div class="sTestSrc sTestShowSrc">
-				
-				<h3>Hello World</h3>
-				
-				<button id="helloButton">Display Hello World</button>
-				
-				
-				<div id="HelloWorld-Container" style="margin: 30px;border: solid 1px #dddddd;height: 30px">
-					
-				</div>
-				
-				<script type="text/javascript">
-				(function(){
-					$("#helloButton").click(function(){
-						brite.display("HelloComponent","#HelloWorld-Container",{name:"Mike"});
-					})
-				})();
-				</script>
-			</div> <!-- .sTestShowSrc -->			
-		</div> <!-- .sTestSection -->
+			<!-- ********* Handlebars Inline Template ********* --> 
+			<script id="tmpl-HelloComponent" type="text/html">
+				<div style='position:absolute'>Hello... {{name}} ({{count}})</div>
+			</script>
+			<!-- ********* /Handlebars Inline Template ********* --> 						
 		
-		
-    </body>
+		</body>
 </html>
