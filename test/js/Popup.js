@@ -1,7 +1,11 @@
 (function(){
 	
 	/**
-	 * Events
+	 * Action Events: 
+	 *  - Popup_DO_CLOSE: perform the close this popup
+	 * 
+	 * Status Events: 
+	 *  - Popup_CLOSING: triggered when the Popup is getting closed
 	 **/
 	brite.registerView("Popup",{parent: "body"}, {
 
@@ -30,7 +34,6 @@
 				}
 			}
 		}
-
 
 	});	
 })();
