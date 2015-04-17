@@ -8,7 +8,7 @@
 			// Here, we display the Popup view, and return a new Deferred (per jQuery.then) that will resolve with the 
 			// HTML of the AddTaskPopup and we override the AddTaskPopup config.parent with the .dialog-inner
 			// of the Popup
-			return brite.display("Popup").then(function(popup){
+			return brite.display("Popup").whenCreate.then(function(popup){
 				// change the parent of this AddTaskPopup instance
 				cfg.parent = popup.$el.find(".dialog-inner");
 				return render("tmpl-AddTaskPopup");
