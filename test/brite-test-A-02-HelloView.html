@@ -17,12 +17,12 @@
 		<!-- /Brite Lib --> 
 		
 		<script type="text/javascript" src="js/main.js"></script>
-		<script type="text/javascript" src="js/HelloComponent.js"></script>
+		<script type="text/javascript" src="js/HelloView.js"></script>
 		
 		<script type="text/javascript">
 		$(function(){
 			$("#helloButton").on("click",function(){
-				brite.display("HelloComponent","#HelloWorld-Container",{name:"Mike"});
+				brite.display("HelloView","#HelloWorld-Container",{name:"Mike"});
 			})			
 		})
 		</script>		
@@ -41,7 +41,7 @@
 			
 
 			<!-- ********* Handlebars Inline Template ********* --> 
-			<script id="tmpl-HelloComponent" type="text/html">
+			<script id="tmpl-HelloView" type="text/html">
 				<div style='position:absolute'>Hello... {{name}} ({{count}})</div>
 			</script>
 			<!-- ********* /Handlebars Inline Template ********* --> 						

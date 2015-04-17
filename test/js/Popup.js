@@ -1,6 +1,8 @@
 (function(){
 	
 	/**
+	 * This is the Popup dialog. In this design, the Popup element is actually the screen, and the "dialog" is the DialogPopup
+	 * 
 	 * Action Events: 
 	 *  - Popup_DO_CLOSE: perform the close this popup
 	 * 
@@ -14,6 +16,16 @@
 			view.data = this;
 			return "<div class='Popup'><div class='dialog'><div class='dialog-inner'>dialog inner</div></div></div>";
 		},
+
+		docEvents: {
+			"keyup": function(event){
+				var view = this;
+				// if it is esc (27), we cancel
+				if (event.which === 27){
+					view.$el.trigger("Popup_DO_CLOSE");
+				}
+			}
+		}, 
 
 		events: {
 

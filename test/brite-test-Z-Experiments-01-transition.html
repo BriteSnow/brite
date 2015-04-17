@@ -8,20 +8,25 @@
 			<link rel="stylesheet" href="css/test.css"/>
 			<script type="text/javascript" src="../js-dependencies/jquery.js" ></script>
 			<!-- /Generic Test Includes -->
+			
+			<script type="text/javascript" src="../others/handlebars.min.js" ></script>
+
+			<script type="text/javascript" src="js/main.js"></script>
+			
 
 			<!-- We are using jQuery Render here, but can use any templating engine -->
 			<script type="text/javascript" src="../src/js/brite.core.js" ></script>
 			
-			<script type="text/javascript" src="js/HelloComponent.js"></script>		
+			<script type="text/javascript" src="js/HelloView.js"></script>		
 		
 		</head>
 		
 		<body>
-			<h2>NOTE WORKING NOW >> brite Transition (Experimental API for now)</h2>
+			<h2>NOT WORKING NOW >> brite Transition (Experimental API for now)</h2>
 
 			
 			<!-- Here we override the config with the transition:'wipe' -->
-			<button onclick="brite.display('HelloComponent',{name:'Mike'},{transition:'wipe'})">Display Hello World</button>
+			<button onclick="brite.display('HelloView',{name:'Mike'},{transition:'wipe'})">Display Hello World</button>
 			
 			
 			<div id="HelloWorld-Container" style="margin: 30px;border: solid 1px #dddddd;height: 30px;overflow:hidden;position:relative;">
@@ -65,7 +70,7 @@
 			<!-- /Transition -->				
 
 			<!-- ********* Handlebars Inline Template ********* --> 
-			<script id="tmpl-HelloComponent" type="text/html">
+			<script id="tmpl-HelloView" type="text/html">
 				<div style='position:absolute'>Hello... {{name}} ({{count}})</div>
 			</script>
 			<!-- ********* /Handlebars Inline Template ********* --> 

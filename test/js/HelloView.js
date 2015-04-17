@@ -4,11 +4,11 @@
 	var helloWorlCount = 0;
 
 	// BEST-PRACTICE: by convention, component name start with Upper Case 
-	//                because it is like a definition/class every brite.display("HelloComponent") will create a new instance
+	//                because it is like a definition/class every brite.display("HelloView") will create a new instance
 
 	// Note 1: in this example, we inline the component definition in the HTML, 
 	//       but look at the DialogPrompt.html/.js to see the recommended way (Object Oriented).
-	brite.registerComponent("HelloComponent", {
+	brite.registerComponent("HelloView", {
 		// Tell to empty the parent before adding this one
 		emptyParent: true
 	},
@@ -18,11 +18,11 @@
 		create : function(data) {
 			helloWorlCount++;
 			data.count = helloWorlCount;
-			// we can assume that the template/HelloComponent.html has been loaded and added to the DOM
+			// we can assume that the template/HelloView.html has been loaded and added to the DOM
 			// since we have set loadTmpl = true
 			
 			// this will return a HTML string, which is valid also
-			return render("tmpl-HelloComponent",data);
+			return render("tmpl-HelloView",data);
 		},
 
 		// The postDisplay will be called after the display
