@@ -16,6 +16,11 @@
 	<script type="text/javascript" src="../src/js/brite.core.js" ></script>
 	<script type="text/javascript" src="../src/js/brite.event.js" ></script>
 	
+	<script type="text/javascript">
+	// TEMPORARY FLAG until we fix he windows hybrid bug
+	// brite.ua.mouseOnly = true;
+	</script>
+
 	<style>
 		.demo-panel{
 			position: absolute;
@@ -129,7 +134,6 @@
 		$(".list-b").on("bdragmove",function(event,extra){
 			var $target = $(event.target);
 			if ($target.hasClass("panel")){
-				console.log("bdragmove",$target);
 				var $panelHeading = $(this);
 				var $panel = $panelHeading.closest(".panel");
 				var pos = $panel.position();

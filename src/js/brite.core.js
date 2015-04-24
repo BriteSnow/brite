@@ -1474,8 +1474,11 @@ brite.ua = {};
 	/**
 	 * Convenient methods to know if this user agent supports touch events. It tests "touchstart".
 	 */
+	brite.ua.mouseOnly = false; // TODO: temporary flag to force mouseOnly (while we add the window hybrid support)
 	brite.ua.hasTouch = function() {
-		return this.supportsEvent("touchstart");
+		var ht = (this.supportsEvent("touchstart") && !brite.ua.mouseOnly);
+		//console.log("has touch " + ht);
+		return ht;
 	};
 
 	brite.ua.hasCanvas = function() {

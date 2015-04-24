@@ -7,13 +7,12 @@ brite.event = brite.event || {};
 
 // ------ brite event helpers ------ //
 (function($){
-	var hasTouch = brite.ua.hasTouch();
 	/**
 	 * if it is a touch device, populate the event.pageX and event.page& from the event.touches[0].pageX/Y
 	 * @param {jQuery Event} e the jquery event object 
 	 */
 	brite.event.fixTouchEvent = function(e){
-			if (hasTouch) {
+			if (brite.ua.hasTouch()) {
 					var oe = e.originalEvent;
 					if (oe.touches.length > 0) {
 							e.pageX = oe.touches[0].pageX;
@@ -103,6 +102,8 @@ brite.event = brite.event || {};
 			end: "touchend"
 	};
 	
+	 
+
 	function getTapEvents(){
 		if (brite.ua.hasTouch()){
 			return touchEvents;
