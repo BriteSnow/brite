@@ -1,6 +1,6 @@
 var brite = brite || {};
 
-brite.version = "1.1.3";
+brite.version = "1.1.4";
 
 if ( typeof module === "object" && module && typeof module.exports === "object" ) {
 		module.exports = brite;
@@ -847,7 +847,7 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 				brite.dao.offAny(component.id);
 			}
 			
-			if (component.parentEvents){
+			if (component.parentEvents && component.$el){
 				$.each(component.parentEvents,function(key,val){
 					var parent = component.$el.bView(key);
 					if (parent && parent.$el){
@@ -1474,8 +1474,11 @@ brite.ua = {};
 	/**
 	 * Convenient methods to know if this user agent supports touch events. It tests "touchstart".
 	 */
+	brite.ua.mouseOnly = false; // TODO: temporary flag to force mouseOnly (while we add the window hybrid support)
 	brite.ua.hasTouch = function() {
-		return this.supportsEvent("touchstart");
+		var ht = (this.supportsEvent("touchstart") && !brite.ua.mouseOnly);
+		//console.log("has touch " + ht);
+		return ht;
 	};
 
 	brite.ua.hasCanvas = function() {
@@ -2030,13 +2033,12 @@ brite.event = brite.event || {};
 
 // ------ brite event helpers ------ //
 (function($){
-	var hasTouch = brite.ua.hasTouch();
 	/**
 	 * if it is a touch device, populate the event.pageX and event.page& from the event.touches[0].pageX/Y
 	 * @param {jQuery Event} e the jquery event object 
 	 */
 	brite.event.fixTouchEvent = function(e){
-			if (hasTouch) {
+			if (brite.ua.hasTouch()) {
 					var oe = e.originalEvent;
 					if (oe.touches.length > 0) {
 							e.pageX = oe.touches[0].pageX;
@@ -2126,6 +2128,8 @@ brite.event = brite.event || {};
 			end: "touchend"
 	};
 	
+	 
+
 	function getTapEvents(){
 		if (brite.ua.hasTouch()){
 			return touchEvents;

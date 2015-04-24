@@ -1,6 +1,6 @@
 var brite = brite || {};
 
-brite.version = "1.1.4-SNAPSHOT";
+brite.version = "1.1.4";
 
 if ( typeof module === "object" && module && typeof module.exports === "object" ) {
 		module.exports = brite;
