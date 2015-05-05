@@ -1,6 +1,6 @@
 var brite = brite || {};
 
-brite.version = "1.1.4";
+brite.version = "1.1.5-SNAPSHOT";
 
 if ( typeof module === "object" && module && typeof module.exports === "object" ) {
 		module.exports = brite;
@@ -864,6 +864,7 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 			
 			// Delete this element, as a sign at this component has been destroyed.
 			delete component.$el;
+			delete component.$element;
 		}
 	}
 
