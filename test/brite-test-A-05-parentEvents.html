@@ -121,6 +121,10 @@
             var clickedView = $(event.target).bView();
             this.$p().append("parentEvents: " + clickedView.title + "<br />"); 
           }
+        }, 
+        UnknownView: { // should be ingored as it does not exist
+        	"click": function(event){
+        	}
         }
       },
       
@@ -136,7 +140,8 @@
     <body>
     	<div class="sTestSection">
 	    <h2>View events</h2>
-
+			<div id="message" class="msg">
+			</div>
 			<div id="workspace">
 			  
 			</div>	

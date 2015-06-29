@@ -601,7 +601,7 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 		if (component.parentEvents){
 			$.each(component.parentEvents,function(key,val){
 				var parent = component.$el.bView(key);
-				if (parent !== null){
+				if (parent){
 					var events = component.parentEvents[key];
 					bindEvents(events,parent.$el,component,"." + component.id);
 				}
@@ -660,7 +660,7 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 		     return val + namespace;
 		    }).join(' ');
 			} 
-			
+
 			var eselector = edefs[1]; // can be undefined, but in this case it is direct.
 
 			var efn = getFn(component,etarget);
