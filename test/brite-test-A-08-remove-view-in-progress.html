@@ -1,0 +1,78 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+		<head>
+		
+			<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+			<title>briteUITest - remove view in progress</title>
+
+			<!-- Generic Test Includes -->
+			<link rel="stylesheet" href="css/test.css"/>
+			<link rel="stylesheet" href="../others/bootstrap/css/bootstrap.min.css" />
+			
+			
+			<script type="text/javascript" src="../js-dependencies/jquery.js" ></script>
+			<!-- /Generic Test Includes -->
+
+			<!-- This is just for internal testing. In dev or prod, use brite-snapshot.js or brite.js (or the .min equivalent) -->
+			<script type="text/javascript" src="../src/js/brite.core.js" ></script>
+			<script type="text/javascript" src="../src/js/brite.dao.js" ></script>
+			<script type="text/javascript" src="../src/js/brite.event.js" ></script>
+			
+			<script type="text/javascript" src="../others/handlebars.min.js" ></script>
+			<script type="text/javascript" src="js/main.js" ></script>
+
+			<link rel="stylesheet" href="css/Popup.css"/>
+			
+			<style type="text/css">
+			#view-ctn-1{
+				height: 40px;
+				border: solid 1px #ddd;
+				margin: 32px;
+			}
+			</style>
+
+			
+			<!-- The UserListView Component -->
+			<script type="text/javascript">
+			var globalCount = 0;
+
+
+			brite.registerView("TestView",{postDisplayDelay: 1000},{
+				create: function(){
+					return "<div>TestView<div>"
+				},
+
+				postDisplay: function(){
+					globalCount++;
+					console.log(this.$el);
+				}
+			})
+
+			$(function(){
+				var $message = $("#message");
+				var $ctn = $("#view-ctn-1");
+				brite.display("TestView",$ctn).done(function(testView){
+					console.log("done")
+					error("brite.display should not have completed. ERROR.");
+				}).fail(function(err){
+					success("brite.display promise failed as expected: " + err);
+				});
+
+				$ctn.bEmpty();
+
+			});
+			</script>
+
+		</head>
+		<body>
+			<h2>doc event</h2>
+
+			<div id="view-ctn-1">
+			</div>
+
+			<div id="message" class="msg"></div>
+
+	
+
+		</body>
+</html>
