@@ -9,30 +9,13 @@
 			<script type="text/javascript" src="../js-dependencies/jquery.js" ></script>
 			<!-- /Generic Test Includes -->
 
+
 			<!-- This is just for internal testing. In dev or prod, use brite-snapshot.js or brite.js (or the .min equivalent) -->
 			<script type="text/javascript" src="../src/js/brite.core.js" ></script>
-		</head>
+			<script type="text/javascript" src="../src/js/brite.dao.js" ></script>
+			<script type="text/javascript" src="../src/js/brite.event.js" ></script>
 
-		<body>
-		
-			<h2>brite Hello World</h2>
-
-			<h3>Hello World</h3>
-
-			<button id="helloButton">Display Hello World</button>
-
-
-			<div id="HelloWorld-Container" style="margin: 30px;border: solid 1px #dddddd;height: 30px">
-				
-			</div>
-
-			<script type="text/javascript">
-			$(document).ready(function(){
-				$("#helloButton").click(function(){
-					brite.display("helloWorld","#HelloWorld-Container",{name:"Mike"});
-				});
-			});
-			</script>
+			<script type="text/javascript" src="js/main.js" ></script>
 
 			<!-- Simple HelloWorld Component -->
 			<script type="text/javascript">
@@ -85,6 +68,40 @@
 
 			</script>
 			<!--  /Simple HelloWorld Component -->
+
+		</head>
+
+		<body>
+		
+			<h2>brite Hello World</h2>
+
+			<h3>Hello World</h3>
+
+			<button id="helloButton">Display Hello World</button>
+
+			<div id="HelloWorld-Container" style="margin: 30px;border: solid 1px #dddddd;height: 30px">
+				
+			</div>
+
+			<script type="text/javascript">
+			$(document).ready(function(){
+				$("#helloButton").click(function(){
+					brite.display("helloWorld","#HelloWorld-Container",{name:"Mike"});
+				});
+			});
+			</script>
+
+			<h3>View without parent<h3>
+
+			<div id="message" class="msg">
+
+			</div>
+		 
+			<script type="text/javascript">
+			$(document).ready(function(){
+					brite.display("helloWorld","#Unknown-container",{name:"Mike"});
+			});
+			</script>		 
 				
 				
 				

@@ -425,7 +425,6 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 
 						// TODO: this might need to be fore the renderComponent
 						initDeferred.resolve(component);
-
 					});
 
 				} else {
@@ -452,6 +451,8 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 									invokePostDisplayDfd = invokePostDisplay(component, data, config);
 									invokePostDisplayDfd.done(function() {
 										postDisplayDeferred.resolve(component);
+									}).fail(function(err){
+										postDisplayDeferred.reject(err);
 									});
 								});
 							}
@@ -463,8 +464,11 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 						invokePostDisplayDfd = invokePostDisplay(component, data, config);
 						invokePostDisplayDfd.done(function() {
 							postDisplayDeferred.resolve(component);
+						}).fail(function(err){
+							postDisplayDeferred.reject(err);
 						});
 					}
+
 
 				});
 
@@ -472,6 +476,8 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 			// ------ /render & resolve ------ //
 			processPromise.whenPostDisplay.done(function() {
 				processDeferred.resolve(component);
+			}).fail(function(err){
+				processDeferred.reject(err);
 			});
 		});
 
@@ -506,10 +512,20 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 			// note: if there is no parent, then, the sUI.diplay caller is responsible to add it
 			if (config.parent) {
 				$parent = $(config.parent);
-				if (config.emptyParent) {
-					$parent.bEmpty();
+				if ($parent.length > 0){
+					if (config.emptyParent) {
+						$parent.bEmpty();
+					}
+					$parent.append(component.$el);
+				}else{
+					if (console){
+						console.log("BRITE WARNING - parent ", config.parent, " not found when displaying", component);
+					}
 				}
-				$parent.append(component.$el);
+			}else {
+				if (console){
+					console.log("BRITE WARNING - no parent specified ", component, config);
+				}
 			}
 		}
 
@@ -616,27 +632,12 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 			// if the component has a delay >= 0, then, we use a setTimeout
 			if (config.postDisplayDelay >= 0) {
 				setTimeout(function() {
-					var postDisplayDfd = component.postDisplay(data, config);
-					if (postDisplayDfd && $.isFunction(postDisplayDfd.promise)) {
-						postDisplayDfd.done(function() {
-							invokeDfd.resolve();
-						});
-					} else {
-						invokeDfd.resolve();
-					}
+					performPostDisplay(component, data, config, invokeDfd);
 				}, config.postDisplayDelay);
 			}
 			// otherwise, we call it in sync
 			else {
-
-				var postDisplayDfd = component.postDisplay(data, config);
-				if (postDisplayDfd && $.isFunction(postDisplayDfd.promise)) {
-					postDisplayDfd.done(function() {
-						invokeDfd.resolve();
-					});
-				} else {
-					invokeDfd.resolve();
-				}
+				performPostDisplay(component, data, config, invokeDfd);
 			}
 		}
 		// if there is now postDisplay, then, trigger it anyway
@@ -647,6 +648,21 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 		return invokeDfd.promise();
 	}
 	
+	function performPostDisplay(component, data, config, invokeDfd){
+		if (!component.$el){
+			invokeDfd.reject("BRITE ERROR cannot call postDisplay a view already deleted " + ((component)?component.name:""));
+			return;
+		}
+		var postDisplayDfd = component.postDisplay(data, config);
+		if (postDisplayDfd && $.isFunction(postDisplayDfd.promise)) {
+			postDisplayDfd.done(function() {
+				invokeDfd.resolve();
+			});
+		} else {
+			invokeDfd.resolve();
+		}		
+	}
+
 	function bindEvents(eventMap,$baseElement,component,namespace){
 		$.each(eventMap,function(edef,etarget){
 			
