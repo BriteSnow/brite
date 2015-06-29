@@ -31,13 +31,13 @@ function render(templateName,data){
 // Assume that we have a #message div in the page
 function error(msg){
 	var $message = $("#message");
-	$message.css("background","red");
+	$message.addClass("error").removeClass("success");
 	$message.html(msg);
 }
 
 function success(msg){
 	var $message = $("#message");
-	$message.css("background","#dfd");
+	$message.addClass("success").removeClass("error");
 	$message.html(msg);
 }
 
@@ -50,5 +50,4 @@ function assertEquals(expected, actual, msg){
 		throw errorMsg;
 	}
 }
-
 // --------- /Very Basic Unit Testing --------- //

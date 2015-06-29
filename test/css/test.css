@@ -16,3 +16,20 @@ h2{
 	width: 80%;
 	height: 300px;
 }
+
+
+.msg{
+	padding: 10px;
+	margin: 32px;
+	height: 64px;
+	width: 600px;
+	border: solid 1px #ddd;
+}
+
+.msg.success{
+	background-color: #dfd;
+}
+
+.msg.error{
+	background-color: red;
+}
