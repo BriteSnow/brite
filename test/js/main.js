@@ -25,3 +25,30 @@ function render(templateName,data){
 	// run the template (handlebars templates get compiled into function)
 	return tmpl(data);
 }
+
+
+// --------- Very Basic Unit Testing --------- //
+// Assume that we have a #message div in the page
+function error(msg){
+	var $message = $("#message");
+	$message.css("background","red");
+	$message.html(msg);
+}
+
+function success(msg){
+	var $message = $("#message");
+	$message.css("background","#dfd");
+	$message.html(msg);
+}
+
+function assertEquals(expected, actual, msg){
+	if (expected === actual){
+		success("" + actual + " - " + msg);
+	}else{
+		var errorMsg = "expected: " + expected + " but got: " + actual + " - " + msg;
+		error(errorMsg);
+		throw errorMsg;
+	}
+}
+
+// --------- /Very Basic Unit Testing --------- //

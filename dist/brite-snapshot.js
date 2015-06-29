@@ -649,8 +649,18 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 	
 	function bindEvents(eventMap,$baseElement,component,namespace){
 		$.each(eventMap,function(edef,etarget){
+			
 			var edefs = edef.split(";");
-			var ename = edefs[0] + ((namespace)?namespace:"");
+			// get the event name(s) (space seperated)
+			var ename = edefs[0];
+
+			// If we have a namespace, add the namspace to each name 
+			if (namespace) {
+				ename = $.map($.trim(ename).split(' '), function(val) {
+		     return val + namespace;
+		    }).join(' ');
+			} 
+			
 			var eselector = edefs[1]; // can be undefined, but in this case it is direct.
 
 			var efn = getFn(component,etarget);

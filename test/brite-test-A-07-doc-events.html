@@ -21,13 +21,16 @@
 			<script type="text/javascript" src="../others/handlebars.min.js" ></script>
 			<script type="text/javascript" src="js/main.js" ></script>
 
-			<script type="text/javascript" src="js/Popup.js" ></script>
-			<script type="text/javascript" src="js/AddTaskPopup.js" ></script>
-
 			<link rel="stylesheet" href="css/Popup.css"/>
 			
 			<style type="text/css">
+			#view-ctn-1{
+				height: 40px;
+				border: solid 1px #ddd;
+				margin: 32px;
+			}
 			#message{
+				padding: 10px;
 				margin: 32px;
 				height: 64px;
 				width: 600px;
@@ -38,51 +41,59 @@
 			
 			<!-- The UserListView Component -->
 			<script type="text/javascript">
+			var globalCount = 0;
+
+
+			brite.registerView("TestView",{
+				create: function(){
+					return "<div>TestView<div>"
+				}, 
+				events: {
+					"click mouseover": function(){
+						// nothing, just to see binding
+					}
+				}, 
+				docEvents: {
+					"FIRST_EVENT SECOND_EVENT": function(){
+						globalCount++;
+					}
+				}
+			})
+
 			$(function(){
-				$("#raw-popup-btn").on("click", function(){
-					brite.display("Popup");
+				var $message = $("#message");
+				brite.display("TestView","#view-ctn-1").done(function(testView){
+					$message.html(globalCount);
+
+					// Setup
+					$(document).trigger("FIRST_EVENT");
+					$(document).trigger("SECOND_EVENT");
+					assertEquals(2,globalCount, "global count should be 2");
+
+					// Act
+					$("#view-ctn-1").bEmpty();
+					// now, those should have no effect, since the binding should be removed
+					$(document).trigger("FIRST_EVENT");
+					$(document).trigger("SECOND_EVENT");
+					$(document).trigger("SECOND_EVENT");
+
+					// Assert
+					// so, globalCount should still be 2
+					assertEquals(2,globalCount,"global count should be 2");
 				});
-
-				$("#add-item-btn").on("click", function(){
-					brite.display("AddTaskPopup").done(function(addTaskPopup){
-						addTaskPopup.onOk(function(data){
-							$("#message").html("Will create task with title: " + data.title);
-						});
-
-						addTaskPopup.onCancel(function(){
-							$("#message").html("Add Task Popup cancelled");
-						})
-					});
-				});			
 			});
 			</script>
 
 		</head>
 		<body>
-			<h2>Nested Popup / AddTaskPopup</h2>
+			<h2>doc event</h2>
 
-			<button id="raw-popup-btn">Raw Popup</button>
-			<button id="add-item-btn">Add Task Popup</button>
+			<div id="view-ctn-1">
+			</div>
 
 			<div id="message"></div>
 
-			<!-- ********* Handlebars Inline Template ********* --> 
-			<script id="tmpl-AddTaskPopup" type="text/html">
-				<header>Add Item</header>
-				<section class="content">
-					<form>
-						<div class="form-group">
-							<label>Task Title</label>
-							<input name="title" class="form-control" placeholder="Enter task title">
-						</div>
-					</form>					
-				</section>
-				<footer>
-					<button class="btn btn-default action-cancel">Cancel</button>
-					<button class="btn btn-primary action-ok">Add Item</button>
-				</footer>
-			</script>
-			<!-- ********* /Handlebars Inline Template ********* --> 			
+	
 
 		</body>
 </html>
