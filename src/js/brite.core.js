@@ -259,8 +259,14 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 					loadTemplateDfd = $.Deferred();
 					// if it is a string, then, it is the templatename, otherwise, the component name is the name
 					var templateName = (typeof loadTemplate == "string")?templateName:(name + ".html");
+					var url = null;
+					if (typeof brite.config.tmplPath === "function") {
+						url = brite.config.tmplPath(name);
+					}else{
+						url = brite.config.tmplPath + name + brite.config.tmplExt;
+					}
 					$.ajax({
-						url : brite.config.tmplPath + name + brite.config.tmplExt,
+						url : url,
 						async : true
 					}).complete(function(jqXHR, textStatus) {
 						$(brite.config.componentsHTMLHolder).append(jqXHR.responseText);
@@ -277,13 +283,18 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 			if (loadCss){
 				//TODO: need to add the checkCss support
 				loadCssDfd = $.Deferred();
-				var cssFileName = brite.config.cssPath + name + ".css";
-				var includeDfd = includeFile(cssFileName,"css");
+				var url = null;
+				if (typeof brite.config.cssPath === "function") {
+					url = brite.config.cssPath(name);
+				}else{
+					url = brite.config.cssPath + name + ".css";
+				}
+				var includeDfd = includeFile(url,"css");
 				includeDfd.done(function(){
 					loadCssDfd.resolve();
 				}).fail(function(){
 					if (console){
-						console.log("Brite ERROR: cannot load " + cssFileName + ". Ignoring issue");
+						console.log("Brite ERROR: cannot load " + url + ". Ignoring issue");
 					}
 					loadCssDfd.resolve();
 				});      
@@ -317,7 +328,11 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 		if (componentDef){
 			dfd.resolve(componentDef);
 		}else{
-			var resourceFile = brite.config.jsPath + name + ".js";
+			var resourceFile = null;
+			if (typeof brite.config.jsPath === "function")
+				resourceFile = brite.config.jsPath(name);
+			else
+				resourceFile = brite.config.jsPath + name + ".js";
 			var includeDfd = includeFile(resourceFile,"js");
 			includeDfd.done(function(){
 				componentDef = _componentDefStore[name];
