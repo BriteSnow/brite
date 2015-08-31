@@ -1,0 +1,38 @@
+{
+  "name": "britejs",
+  "version": "1.1.5-SNAPSHOT",
+  "description": "DOM Centric Minimalistic MVC Framework",
+  "main": "gulpfile.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+  },
+  "devDependencies": {
+    "gulp-concat": "^2.6.0",
+    "gulp": "^3.9.0",
+    "gulp-uglify": "^1.4.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BriteSnow/brite.git"
+  },
+  "keywords": [
+    "javascript",
+    "framework",
+    "MVC",
+    "HTML5",
+    "HTML",
+    "DOM",
+    "jQuery"
+  ],
+  "author": "jeremy.chone@gmail.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/BriteSnow/brite/issues"
+  },
+  "homepage": "https://github.com/BriteSnow/brite#readme"
+}
