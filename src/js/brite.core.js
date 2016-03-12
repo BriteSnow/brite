@@ -1,13 +1,15 @@
+'use strict';
+
 var brite = brite || {};
 
 brite.version = "1.1.5-SNAPSHOT";
 
 if ( typeof module === "object" && module && typeof module.exports === "object" ) {
-		module.exports = brite;
+	module.exports = brite;
 } else if ( typeof define === "function" && define.amd ) {
-		define( "brite", [], function () { return brite; } );
+	define( "brite", [], function () { return brite; } );
 } else {
-		window.brite = brite;
+	window.brite = brite;
 }
 
 // ------------------- //
@@ -244,6 +246,7 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 			var loadTemplateDfd, loadCssDfd;
 			// --------- Load the tmpl if needed --------- //
 			var loadTemplate = componentDef.config.loadTmpl; 
+			var url;
 			if (loadTemplate && !_templateLoadedPerComponentName[name] ){
 				// if we have a check template, we need to check if the template has been already loaded
 				var needsToLoadTemplate = true;
@@ -254,12 +257,12 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 						needsToLoadTemplate = false;
 					}         
 				}
-				 
+
 				if (needsToLoadTemplate){
 					loadTemplateDfd = $.Deferred();
 					// if it is a string, then, it is the templatename, otherwise, the component name is the name
 					var templateName = (typeof loadTemplate == "string")?templateName:(name + ".html");
-					var url = null;
+					url = null;
 					if (typeof brite.config.tmplPath === "function") {
 						url = brite.config.tmplPath(name);
 					}else{
@@ -268,7 +271,7 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 					$.ajax({
 						url : url,
 						async : true
-					}).complete(function(jqXHR, textStatus) {
+					}).complete(function(jqXHR) {
 						$(brite.config.componentsHTMLHolder).append(jqXHR.responseText);
 						_templateLoadedPerComponentName[name] = true;
 						loadTemplateDfd.resolve();
@@ -283,7 +286,7 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 			if (loadCss){
 				//TODO: need to add the checkCss support
 				loadCssDfd = $.Deferred();
-				var url = null;
+				url = null;
 				if (typeof brite.config.cssPath === "function") {
 					url = brite.config.cssPath(name);
 				}else{
@@ -630,7 +633,7 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 		}
 		
 		if (component.parentEvents){
-			$.each(component.parentEvents,function(key,val){
+			$.each(component.parentEvents,function(key, val){
 				var parent = component.$el.bView(key);
 				if (parent){
 					var events = component.parentEvents[key];
@@ -688,8 +691,8 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 			// If we have a namespace, add the namspace to each name 
 			if (namespace) {
 				ename = $.map($.trim(ename).split(' '), function(val) {
-		     return val + namespace;
-		    }).join(' ');
+					return val + namespace;
+				}).join(' ');
 			} 
 
 			var eselector = edefs[1]; // can be undefined, but in this case it is direct.
@@ -720,7 +723,7 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 					ename = ename.charAt(0).toUpperCase() + ename.slice(1);
 					var eventTypes = edefs[1];
 					var entityTypes = edefs[2];
-					brite.dao["on" + ename](eventTypes,entityTypes,function(event){
+					brite.dao["on" + ename](eventTypes,entityTypes,function(){
 						var args = $.makeArray(arguments);
 						efn.apply(component,args);						
 					},ns);
@@ -732,11 +735,11 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 	}
 	
 	function getFn(component,target){
-			var fn = target;
-			if (!$.isFunction(fn)){
-				fn = component[target];
-			}
-			return fn;		
+		var fn = target;
+		if (!$.isFunction(fn)){
+			fn = component[target];
+		}
+		return fn;		
 	}
 	// ------ /Helpers ------ //
 
@@ -767,7 +770,7 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 				// TODO: probably need to handle the error case here
 				fileref.onreadystatechange = function(){
 					if (fileref.readyState === "loaded" || fileref.readyState === "complete"){
-							dfd.resolve(fileName);
+						dfd.resolve(fileName);
 					}
 				};
 			}
@@ -889,7 +892,7 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 			}
 			
 			if (component.parentEvents && component.$el){
-				$.each(component.parentEvents,function(key,val){
+				$.each(component.parentEvents,function(key, val){
 					var parent = component.$el.bView(key);
 					if (parent && parent.$el){
 						parent.$el.off("." + component.id);
@@ -975,9 +978,9 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 			var $componentElements;
 
 			if (componentName) {
-				$componentElements = $(this).find("[data-b-view='" + componentName + "']");
+				$componentElements = $this.find("[data-b-view='" + componentName + "']");
 			} else {
-				$componentElements = $(this).find("[data-b-view]");
+				$componentElements = $this.find("[data-b-view]");
 			}
 
 			$componentElements.each(function() {
@@ -1005,9 +1008,9 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 			var $componentElements;
 
 			if (componentName) {
-				$componentElements = $(this).find("[data-b-view='" + componentName + "']:first");
+				$componentElements = $this.find("[data-b-view='" + componentName + "']:first");
 			} else {
-				$componentElements = $(this).find("[data-b-view]:first");
+				$componentElements = $this.find("[data-b-view]:first");
 			}
 
 			$componentElements.each(function() {
@@ -1084,7 +1087,7 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 					// if it fails, then, reject
 					// TODO: needs to support the failOnFirst: true
 					result.fail(function(ex){
-						var fails = $.map(function(val,idx){
+						var fails = $.map(function(val){
 							return {success:true,value:val};
 						});
 						fails.push({success:false,value:ex});
@@ -1158,7 +1161,6 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 		if (!pathToValue) {
 			return rootObj;
 		}
-		var result;
 		var i, l, names = pathToValue.split(".");
 		var iName, iVal = rootObj;
 		for (i = 0, l = names.length; i < l; i++) {
@@ -1377,12 +1379,10 @@ brite.ua = {};
 	var _hasTransition = null;
 	var _hasBackfaceVisibility = null;
 	var _hasCanvas = null;
-	var _transitionPrefix = null; 
 	var _eventsMap = {}; // {eventName:true/false,....}
 
 	var _browserType = null; // could be "webkit" "moz" "ms" "o"
-	
-	
+
 	// --------- Get brite.ua.browser --------- //
 	// Use the jquery compat code. (we still need this for the prefix)
 	function uaMatch( ua ) {
@@ -1419,7 +1419,7 @@ brite.ua = {};
 	
 	// --------- Prefix and rendererType ------ //
 	function computeBrowserType(){
-		$.each(CSS_PREFIXES,function(key,val){
+		$.each(CSS_PREFIXES,function(key){
 			if (brite.ua.browser[key]){
 				_browserType = key;
 				_cssPrefix = CSS_PREFIXES[key];
@@ -1427,6 +1427,13 @@ brite.ua = {};
 			}
 		});
 	}
+
+	brite.ua.browserType = function(){
+		if (_browserType === null){
+			computeBrowserType();
+		}
+		return _browserType;
+	};
 	
 	brite.ua.cssPrefix = function() {
 		if (_cssPrefix === null){
@@ -1518,9 +1525,10 @@ brite.ua = {};
 	 */
 	brite.ua.mouseOnly = false; // TODO: temporary flag to force mouseOnly (while we add the window hybrid support)
 	brite.ua.hasTouch = function() {
-		var ht = (this.supportsEvent("touchstart") && !brite.ua.mouseOnly);
-		//console.log("has touch " + ht);
-		return ht;
+		if (_hasTouch === null){
+			_hasTouch = (this.supportsEvent("touchstart") && !brite.ua.mouseOnly);
+		}
+		return _hasTouch;
 	};
 
 	brite.ua.hasCanvas = function() {
@@ -1557,11 +1565,11 @@ brite.ua = {};
 
 	// ------ Privates ------ //
 	function hasStyle(styleName,styleVarName,sampleValue,withPrefix){
-			var div = document.createElement('div');
-			styleName = (withPrefix)?(brite.ua.cssPrefix() + styleName):styleName;
-			div.innerHTML = '<div style="' + styleName + ': ' + sampleValue + '"></div>';
-			styleVarName = (withPrefix)?(brite.ua.cssVarPrefix() + styleVarName):styleVarName;
-			return (div.firstChild.style[styleVarName])?true:false;		
+		var div = document.createElement('div');
+		styleName = (withPrefix)?(brite.ua.cssPrefix() + styleName):styleName;
+		div.innerHTML = '<div style="' + styleName + ': ' + sampleValue + '"></div>';
+		styleVarName = (withPrefix)?(brite.ua.cssVarPrefix() + styleVarName):styleVarName;
+		return (div.firstChild.style[styleVarName])?true:false;		
 	}
 	
 	var isEventSupported = (function() {

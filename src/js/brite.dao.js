@@ -1,3 +1,5 @@
+'use strict';
+
 var brite = brite || {};
 
 /**
@@ -19,10 +21,10 @@ var brite = brite || {};
 	var daoDic = {};
 
 	//data change listeners
-	var daoChangeEventListeners = {};
+	//var daoChangeEventListeners = {};
 
 	//daoListeners
-	var daoListeners = {};
+	//var daoListeners = {};
 
 	function getDao(objectType) {
 		var dao = daoDic[objectType];
@@ -67,7 +69,7 @@ var brite = brite || {};
 		daoObject._entityType = entityType;
 		daoObject._handler = daoHandler;
 
-		$.each(daoHandler, function(k, v) {
+		$.each(daoHandler, function(k) {
 			// if it is a function and not an internalMethods
 			if ($.isFunction(daoHandler[k]) && !internalMethods[k]) {
 				var methodName = k;
@@ -386,7 +388,7 @@ var brite = brite || {};
 	 */
 	$.fn.bEntity = function(entityType) {
 
-		var i, result = null;
+		var result = null;
 		// iterate and process each matched element
 		this.each(function() {
 			// ignore if we already found one
@@ -434,7 +436,6 @@ var brite = brite || {};
 	$.fn.bObjRef = function(objType) {
 		var resultList = [];
 
-		var obj = null;
 		// iterate and process each matched element
 		this.each(function() {
 			var $this = $(this);

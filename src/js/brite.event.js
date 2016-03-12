@@ -1,3 +1,5 @@
+'use strict';
+
 var brite = brite || {};
 
 /**
@@ -12,15 +14,15 @@ brite.event = brite.event || {};
 	 * @param {jQuery Event} e the jquery event object 
 	 */
 	brite.event.fixTouchEvent = function(e){
-			if (brite.ua.hasTouch()) {
-					var oe = e.originalEvent;
-					if (oe.touches.length > 0) {
-							e.pageX = oe.touches[0].pageX;
-							e.pageY = oe.touches[0].pageY;
-					}
+		if (brite.ua.hasTouch()) {
+			var oe = e.originalEvent;
+			if (oe.touches.length > 0) {
+				e.pageX = oe.touches[0].pageX;
+				e.pageY = oe.touches[0].pageY;
 			}
-			
-			return e;
+		}
+		
+		return e;
 	};
 		
 	/**
@@ -46,7 +48,7 @@ brite.event = brite.event || {};
 // ------ /brite event helpers ------ //
 
 // ------ transition helper ------ //
-;(function($){
+(function($){
 	
 	/**
 	 * simple and convenient methods to perform css3 animations (takes care of the css prefix)
@@ -91,19 +93,17 @@ brite.event = brite.event || {};
 	var _dragging = false;
 	
 	var mouseEvents = {
-			start: "mousedown",
-			move: "mousemove",
-			end: "mouseup"
+		start: "mousedown",
+		move: "mousemove",
+		end: "mouseup"
 	};
 
 	var touchEvents = {
-			start: "touchstart",
-			move: "touchmove",
-			end: "touchend"
+		start: "touchstart",
+		move: "touchmove",
+		end: "touchend"
 	};
 	
-	 
-
 	function getTapEvents(){
 		if (brite.ua.hasTouch()){
 			return touchEvents;
@@ -177,7 +177,7 @@ brite.event = brite.event || {};
 	
 	// Note: those below are part of the drop events, but are not supported yet.
 	//       Need to think some more.
-	var BDRAGENTER="bdragenter",BDRAGOVER="bdragover",BDRAGLEAVE="bdragleave",BDROP="bdrop";
+	// var BDRAGENTER="bdragenter",BDRAGOVER="bdragover",BDRAGLEAVE="bdragleave",BDROP="bdrop";
 	
 	var dragThreshold = 5;
 	
@@ -199,8 +199,6 @@ brite.event = brite.event || {};
 		var tapEvents = getTapEvents();
 
 		$(this).on(tapEvents.start, handleObj.selector, function(event) {
-			var elem = this;
-			var $elem = $(this);
 			var dragStarted = false;
 			var startEvent = event;
 			var startPagePos = brite.event.eventPagePosition(startEvent);
@@ -320,8 +318,6 @@ brite.event = brite.event || {};
 				// old browser, just trigger the event since transition should not be supported anyway
 				triggerCustomEvent(this,jQuery.Event("btransitionend"),{type:"btransitionend"});
 			}
-		 
-
 		}
 
 	};   
