@@ -1,169 +1,171 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-        <title>briteUITest - parentEvents</title>
+		<head>
+			<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+			<title>briteUITest - parentEvents</title>
 
-		<!-- Generic Test Includes -->
-		<link rel="stylesheet" href="css/test.css"/>
-		<link rel="stylesheet" href="../others/bootstrap/css/bootstrap.min.css" />
-		
-		
-		<script type="text/javascript" src="../js-dependencies/jquery.js" ></script>
-		<!-- /Generic Test Includes -->
-
-		<!-- This is just for internal testing. In dev or prod, use brite-snapshot.js or brite.js (or the .min equivalent) -->
-		<script type="text/javascript" src="../src/js/brite.core.js" ></script>
-		<script type="text/javascript" src="../src/js/brite.dao.js" ></script>
-		<script type="text/javascript" src="../src/js/brite.event.js" ></script>
-		
-		<style type="text/css">
-		#workspace{
-		  position: relative;
-		  margin: 10px auto 10px auto;
-		  width: 80%;
-		  height: 600px;
-		  border: solid 1px red;
-		}
-		  
-		.ContainerView{
-		  position: relative;
-		  overflow: auto;
-		  width: 25%;
-		  height: 550px;
-		  float: left; 
-		  border: solid 1px blue;
-		  margin: 20px 4% 20px 4%;  
-		}
-		
-		.ContainerView h1{
-		  font-size: 12px; 
-		  color: #999;
-		  margin: 5px 0 0 0;
-		}
-		
-		.ContainerView button{
-		  position: absolute;
-		  
-		  bottom: 10px;
-		  width: 120px;
-		  left: 50%;
-		  margin-left: -60px;
-		}
-		
-		.SubView{
-		  position: relative;
-      width: 80%;
-      height: 400px;
-      border: solid 1px green;
-      margin: 20px auto 20px auto;		  
-		}
-		
-		.SubView .del{
-		  position: absolute;
-		  top: 0; right: 5px;
-		  cursor: pointer;
-		  font-size: 12px;
-		    
-		}
-		
-		.SubView h2{
-		  text-align: center;
-		  border: none;
-      font-size: 12px; 
-      color: #999;
-      margin: 5px 0 30px 0;
-    }
-    
-    .SubView p{
-      font-size: 11px;
-      height: 300px;
-      overflow: auto;
-    }
-    
-		</style>
-
-    
-    <!-- The UserListView Component -->
-    <script type="text/javascript">
-    
-    brite.registerView("ContainerView",{
-      create: function(data){
-        this.title = data.title;
-        return "<div class='ContainerView'> <h1>" + this.title + "</h1> <button class='btn clickme'>clickme</button></div>";
-      }
-    });
-    
-    brite.registerView("SubView",{
-      create: function(data){
-        return "<div class='SubView'><h2>SubView</h2><small class='del'>x</small><p></p></div>";
-      },
-      
-      events: {
-        "click; .del": function(event){
-          this.$el.bRemove();
-        } 
-      },
-      
-      docEvents: {
-        "click; .ContainerView button.clickme": function(event){
-          var clickedView = $(event.target).bView();
-          this.$p().append("docEvents: " + clickedView.title + "<br />"); 
-        }
-      },
-      
-      parentEvents: {
-        ContainerView: {
-          "click; button.clickme": function(event){
-            if (!this.$el){
-              console.log("ERROR: parentEvents did not get deleted, still fired on a deleted view");
-            }
-            var clickedView = $(event.target).bView();
-            this.$p().append("parentEvents: " + clickedView.title + "<br />"); 
-          }
-        }, 
-        UnknownView: { // should be ingored as it does not exist
-        	"click": function(event){
-        	}
-        }
-      },
-      
-      $p: function(){
-        this._$p = this._$p || this.$el.find("p:first"); 
-        return  this._$p;
-      }
-    });
-    
-    </script>
-
-    </head>
-    <body>
-    	<div class="sTestSection">
-	    <h2>View events</h2>
-			<div id="message" class="msg">
-			</div>
-			<div id="workspace">
-			  
-			</div>	
+			<!-- Generic Test Includes -->
+			<link rel="stylesheet" href="css/test.css"/>
+			<link rel="stylesheet" href="../others/bootstrap/css/bootstrap.min.css" />
 			
-			<!-- when click on create -->
-			<script type="text/javascript">
-			$(document).ready(function(){
-			  var $workspace = $("#workspace");
-			  
-			  brite.display("ContainerView",$workspace,{title:"Container1"}).done(containerViewDone);
-			  
-			  brite.display("ContainerView",$workspace,{title:"Container2"}).done(containerViewDone);
-			  
-			  brite.display("ContainerView",$workspace,{title:"Container3"}).done(containerViewDone);
-			    
-			  function containerViewDone(containerView){
-			    brite.display("SubView",containerView.$el);
-			  }
-      });
-      </script>
-        
+			
+			<script type="text/javascript" src="../js-dependencies/jquery.js" ></script>
+			<!-- /Generic Test Includes -->
+
+			<!-- This is just for internal testing. In dev or prod, use brite-snapshot.js or brite.js (or the .min equivalent) -->
+			<script type="text/javascript" src="../src/js/brite.core.js" ></script>
+			<script type="text/javascript" src="../src/js/brite.dao.js" ></script>
+			<script type="text/javascript" src="../src/js/brite.event.js" ></script>
+			
+			<style type="text/css">
+			#workspace{
+				position: relative;
+				margin: 10px auto 10px auto;
+				width: 80%;
+				height: 600px;
+				border: solid 1px red;
+			}
 				
-		</div> 
-    </body>
+			.ContainerView{
+				position: relative;
+				overflow: auto;
+				width: 25%;
+				height: 550px;
+				float: left; 
+				border: solid 1px blue;
+				margin: 20px 4% 20px 4%;  
+			}
+			
+			.ContainerView h1{
+				font-size: 12px; 
+				color: #999;
+				margin: 5px 0 0 0;
+			}
+			
+			.ContainerView button{
+				position: absolute;
+				
+				bottom: 10px;
+				width: 120px;
+				left: 50%;
+				margin-left: -60px;
+			}
+			
+			.SubView{
+				position: relative;
+				width: 80%;
+				height: 400px;
+				border: solid 1px green;
+				margin: 20px auto 20px auto;		  
+			}
+			
+			.SubView .del{
+				position: absolute;
+				top: 0; right: 5px;
+				cursor: pointer;
+				font-size: 12px;
+					
+			}
+			
+			.SubView h2{
+				text-align: center;
+				border: none;
+				font-size: 12px; 
+				color: #999;
+				margin: 5px 0 30px 0;
+			}
+			
+			.SubView p{
+				font-size: 11px;
+				height: 300px;
+				overflow: auto;
+			}
+			
+			</style>
+
+			
+			<!-- The UserListView Component -->
+			<script type="text/javascript">
+			
+			brite.registerView("ContainerView",{
+				create: function(data){
+					this.title = data.title;
+					return "<div class='ContainerView'> <h1>" + this.title + "</h1> <button class='btn clickme'>clickme</button></div>";
+				}
+			});
+			
+			brite.registerView("SubView",{
+				create: function(data){
+					return "<div class='SubView'><h2>SubView</h2><small class='del'>x</small><p></p></div>";
+				},
+				
+				events: {
+					"click; .del": function(event){
+						this.$el.bRemove();
+					} 
+				},
+				
+				docEvents: {
+					"click; .ContainerView button.clickme": function(event){
+						var clickedView = $(event.target).bView();
+						this.$p().append("docEvents: " + clickedView.title + "<br />"); 
+					}
+				},
+				
+				parentEvents: {
+					ContainerView: {
+						"click; button.clickme": function(event){
+							if (!this.$el){
+								console.log("ERROR: parentEvents did not get deleted, still fired on a deleted view");
+							}
+							var clickedView = $(event.target).bView();
+							this.$p().append("parentEvents: " + clickedView.title + "<br />"); 
+						}
+					}, 
+					UnknownView: { // should be ingored as it does not exist
+						"click": function(event){
+						}
+					}
+				},
+				
+				$p: function(){
+					this._$p = this._$p || this.$el.find("p:first"); 
+					return  this._$p;
+				}
+			});
+			
+			</script>
+
+		</head>
+
+		<body>
+			<div class="sTestSection">
+				<h2>View events</h2>
+				<div id="message" class="msg">
+				</div>
+
+				<div id="workspace">
+					
+				</div>	
+				
+				<!-- when click on create -->
+				<script type="text/javascript">
+				$(document).ready(function(){
+					var $workspace = $("#workspace");
+					
+					brite.display("ContainerView",$workspace,{title:"Container1"}).done(containerViewDone);
+					
+					brite.display("ContainerView",$workspace,{title:"Container2"}).done(containerViewDone);
+					
+					brite.display("ContainerView",$workspace,{title:"Container3"}).done(containerViewDone);
+						
+					function containerViewDone(containerView){
+						brite.display("SubView",containerView.$el);
+					}
+				});
+				</script>
+					
+					
+			</div> 
+		</body>
 </html>

@@ -1,6 +1,9 @@
 # Ignore Mac stuff
 .DS_Store
 
+# Ignore the dev folder (which is the space for developer notes and artifacts)
+dev/
+
 # Ignore Sublime Stuff
 *.sublime-project
 *.sublime-workspace
