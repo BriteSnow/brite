@@ -1,6 +1,6 @@
 {
   "name": "britejs",
-  "version": "1.1.5-SNAPSHOT",
+  "version": "1.1.5",
   "description": "DOM Centric Minimalistic MVC Framework",
   "main": "gulpfile.js",
   "directories": {
