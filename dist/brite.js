@@ -1,13 +1,15 @@
+'use strict';
+
 var brite = brite || {};
 
-brite.version = "1.1.4";
+brite.version = "1.1.5";
 
 if ( typeof module === "object" && module && typeof module.exports === "object" ) {
-		module.exports = brite;
+	module.exports = brite;
 } else if ( typeof define === "function" && define.amd ) {
-		define( "brite", [], function () { return brite; } );
+	define( "brite", [], function () { return brite; } );
 } else {
-		window.brite = brite;
+	window.brite = brite;
 }
 
 // ------------------- //
@@ -244,6 +246,7 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 			var loadTemplateDfd, loadCssDfd;
 			// --------- Load the tmpl if needed --------- //
 			var loadTemplate = componentDef.config.loadTmpl; 
+			var url;
 			if (loadTemplate && !_templateLoadedPerComponentName[name] ){
 				// if we have a check template, we need to check if the template has been already loaded
 				var needsToLoadTemplate = true;
@@ -254,15 +257,21 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 						needsToLoadTemplate = false;
 					}         
 				}
-				 
+
 				if (needsToLoadTemplate){
 					loadTemplateDfd = $.Deferred();
 					// if it is a string, then, it is the templatename, otherwise, the component name is the name
 					var templateName = (typeof loadTemplate == "string")?templateName:(name + ".html");
+					url = null;
+					if (typeof brite.config.tmplPath === "function") {
+						url = brite.config.tmplPath(name);
+					}else{
+						url = brite.config.tmplPath + name + brite.config.tmplExt;
+					}
 					$.ajax({
-						url : brite.config.tmplPath + name + brite.config.tmplExt,
+						url : url,
 						async : true
-					}).complete(function(jqXHR, textStatus) {
+					}).complete(function(jqXHR) {
 						$(brite.config.componentsHTMLHolder).append(jqXHR.responseText);
 						_templateLoadedPerComponentName[name] = true;
 						loadTemplateDfd.resolve();
@@ -277,13 +286,18 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 			if (loadCss){
 				//TODO: need to add the checkCss support
 				loadCssDfd = $.Deferred();
-				var cssFileName = brite.config.cssPath + name + ".css";
-				var includeDfd = includeFile(cssFileName,"css");
+				url = null;
+				if (typeof brite.config.cssPath === "function") {
+					url = brite.config.cssPath(name);
+				}else{
+					url = brite.config.cssPath + name + ".css";
+				}
+				var includeDfd = includeFile(url,"css");
 				includeDfd.done(function(){
 					loadCssDfd.resolve();
 				}).fail(function(){
 					if (console){
-						console.log("Brite ERROR: cannot load " + cssFileName + ". Ignoring issue");
+						console.log("Brite ERROR: cannot load " + url + ". Ignoring issue");
 					}
 					loadCssDfd.resolve();
 				});      
@@ -317,7 +331,11 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 		if (componentDef){
 			dfd.resolve(componentDef);
 		}else{
-			var resourceFile = brite.config.jsPath + name + ".js";
+			var resourceFile = null;
+			if (typeof brite.config.jsPath === "function")
+				resourceFile = brite.config.jsPath(name);
+			else
+				resourceFile = brite.config.jsPath + name + ".js";
 			var includeDfd = includeFile(resourceFile,"js");
 			includeDfd.done(function(){
 				componentDef = _componentDefStore[name];
@@ -425,7 +443,6 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 
 						// TODO: this might need to be fore the renderComponent
 						initDeferred.resolve(component);
-
 					});
 
 				} else {
@@ -452,6 +469,8 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 									invokePostDisplayDfd = invokePostDisplay(component, data, config);
 									invokePostDisplayDfd.done(function() {
 										postDisplayDeferred.resolve(component);
+									}).fail(function(err){
+										postDisplayDeferred.reject(err);
 									});
 								});
 							}
@@ -463,8 +482,11 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 						invokePostDisplayDfd = invokePostDisplay(component, data, config);
 						invokePostDisplayDfd.done(function() {
 							postDisplayDeferred.resolve(component);
+						}).fail(function(err){
+							postDisplayDeferred.reject(err);
 						});
 					}
+
 
 				});
 
@@ -472,6 +494,8 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 			// ------ /render & resolve ------ //
 			processPromise.whenPostDisplay.done(function() {
 				processDeferred.resolve(component);
+			}).fail(function(err){
+				processDeferred.reject(err);
 			});
 		});
 
@@ -506,10 +530,20 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 			// note: if there is no parent, then, the sUI.diplay caller is responsible to add it
 			if (config.parent) {
 				$parent = $(config.parent);
-				if (config.emptyParent) {
-					$parent.bEmpty();
+				if ($parent.length > 0){
+					if (config.emptyParent) {
+						$parent.bEmpty();
+					}
+					$parent.append(component.$el);
+				}else{
+					if (console){
+						console.log("BRITE WARNING - parent ", config.parent, " not found when displaying", component);
+					}
 				}
-				$parent.append(component.$el);
+			}else {
+				if (console){
+					console.log("BRITE WARNING - no parent specified ", component, config);
+				}
 			}
 		}
 
@@ -599,9 +633,9 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 		}
 		
 		if (component.parentEvents){
-			$.each(component.parentEvents,function(key,val){
+			$.each(component.parentEvents,function(key, val){
 				var parent = component.$el.bView(key);
-				if (parent !== null){
+				if (parent){
 					var events = component.parentEvents[key];
 					bindEvents(events,parent.$el,component,"." + component.id);
 				}
@@ -616,27 +650,12 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 			// if the component has a delay >= 0, then, we use a setTimeout
 			if (config.postDisplayDelay >= 0) {
 				setTimeout(function() {
-					var postDisplayDfd = component.postDisplay(data, config);
-					if (postDisplayDfd && $.isFunction(postDisplayDfd.promise)) {
-						postDisplayDfd.done(function() {
-							invokeDfd.resolve();
-						});
-					} else {
-						invokeDfd.resolve();
-					}
+					performPostDisplay(component, data, config, invokeDfd);
 				}, config.postDisplayDelay);
 			}
 			// otherwise, we call it in sync
 			else {
-
-				var postDisplayDfd = component.postDisplay(data, config);
-				if (postDisplayDfd && $.isFunction(postDisplayDfd.promise)) {
-					postDisplayDfd.done(function() {
-						invokeDfd.resolve();
-					});
-				} else {
-					invokeDfd.resolve();
-				}
+				performPostDisplay(component, data, config, invokeDfd);
 			}
 		}
 		// if there is now postDisplay, then, trigger it anyway
@@ -647,10 +666,35 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 		return invokeDfd.promise();
 	}
 	
+	function performPostDisplay(component, data, config, invokeDfd){
+		if (!component.$el){
+			invokeDfd.reject("BRITE ERROR cannot call postDisplay a view already deleted " + ((component)?component.name:""));
+			return;
+		}
+		var postDisplayDfd = component.postDisplay(data, config);
+		if (postDisplayDfd && $.isFunction(postDisplayDfd.promise)) {
+			postDisplayDfd.done(function() {
+				invokeDfd.resolve();
+			});
+		} else {
+			invokeDfd.resolve();
+		}		
+	}
+
 	function bindEvents(eventMap,$baseElement,component,namespace){
 		$.each(eventMap,function(edef,etarget){
+			
 			var edefs = edef.split(";");
-			var ename = edefs[0] + ((namespace)?namespace:"");
+			// get the event name(s) (space seperated)
+			var ename = edefs[0];
+
+			// If we have a namespace, add the namspace to each name 
+			if (namespace) {
+				ename = $.map($.trim(ename).split(' '), function(val) {
+					return val + namespace;
+				}).join(' ');
+			} 
+
 			var eselector = edefs[1]; // can be undefined, but in this case it is direct.
 
 			var efn = getFn(component,etarget);
@@ -679,7 +723,7 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 					ename = ename.charAt(0).toUpperCase() + ename.slice(1);
 					var eventTypes = edefs[1];
 					var entityTypes = edefs[2];
-					brite.dao["on" + ename](eventTypes,entityTypes,function(event){
+					brite.dao["on" + ename](eventTypes,entityTypes,function(){
 						var args = $.makeArray(arguments);
 						efn.apply(component,args);						
 					},ns);
@@ -691,11 +735,11 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 	}
 	
 	function getFn(component,target){
-			var fn = target;
-			if (!$.isFunction(fn)){
-				fn = component[target];
-			}
-			return fn;		
+		var fn = target;
+		if (!$.isFunction(fn)){
+			fn = component[target];
+		}
+		return fn;		
 	}
 	// ------ /Helpers ------ //
 
@@ -726,7 +770,7 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 				// TODO: probably need to handle the error case here
 				fileref.onreadystatechange = function(){
 					if (fileref.readyState === "loaded" || fileref.readyState === "complete"){
-							dfd.resolve(fileName);
+						dfd.resolve(fileName);
 					}
 				};
 			}
@@ -848,7 +892,7 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 			}
 			
 			if (component.parentEvents && component.$el){
-				$.each(component.parentEvents,function(key,val){
+				$.each(component.parentEvents,function(key, val){
 					var parent = component.$el.bView(key);
 					if (parent && parent.$el){
 						parent.$el.off("." + component.id);
@@ -864,6 +908,7 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 			
 			// Delete this element, as a sign at this component has been destroyed.
 			delete component.$el;
+			delete component.$element;
 		}
 	}
 
@@ -933,9 +978,9 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 			var $componentElements;
 
 			if (componentName) {
-				$componentElements = $(this).find("[data-b-view='" + componentName + "']");
+				$componentElements = $this.find("[data-b-view='" + componentName + "']");
 			} else {
-				$componentElements = $(this).find("[data-b-view]");
+				$componentElements = $this.find("[data-b-view]");
 			}
 
 			$componentElements.each(function() {
@@ -963,9 +1008,9 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 			var $componentElements;
 
 			if (componentName) {
-				$componentElements = $(this).find("[data-b-view='" + componentName + "']:first");
+				$componentElements = $this.find("[data-b-view='" + componentName + "']:first");
 			} else {
-				$componentElements = $(this).find("[data-b-view]:first");
+				$componentElements = $this.find("[data-b-view]:first");
 			}
 
 			$componentElements.each(function() {
@@ -1042,7 +1087,7 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 					// if it fails, then, reject
 					// TODO: needs to support the failOnFirst: true
 					result.fail(function(ex){
-						var fails = $.map(function(val,idx){
+						var fails = $.map(function(val){
 							return {success:true,value:val};
 						});
 						fails.push({success:false,value:ex});
@@ -1116,7 +1161,6 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 		if (!pathToValue) {
 			return rootObj;
 		}
-		var result;
 		var i, l, names = pathToValue.split(".");
 		var iName, iVal = rootObj;
 		for (i = 0, l = names.length; i < l; i++) {
@@ -1335,12 +1379,10 @@ brite.ua = {};
 	var _hasTransition = null;
 	var _hasBackfaceVisibility = null;
 	var _hasCanvas = null;
-	var _transitionPrefix = null; 
 	var _eventsMap = {}; // {eventName:true/false,....}
 
 	var _browserType = null; // could be "webkit" "moz" "ms" "o"
-	
-	
+
 	// --------- Get brite.ua.browser --------- //
 	// Use the jquery compat code. (we still need this for the prefix)
 	function uaMatch( ua ) {
@@ -1377,7 +1419,7 @@ brite.ua = {};
 	
 	// --------- Prefix and rendererType ------ //
 	function computeBrowserType(){
-		$.each(CSS_PREFIXES,function(key,val){
+		$.each(CSS_PREFIXES,function(key){
 			if (brite.ua.browser[key]){
 				_browserType = key;
 				_cssPrefix = CSS_PREFIXES[key];
@@ -1385,6 +1427,13 @@ brite.ua = {};
 			}
 		});
 	}
+
+	brite.ua.browserType = function(){
+		if (_browserType === null){
+			computeBrowserType();
+		}
+		return _browserType;
+	};
 	
 	brite.ua.cssPrefix = function() {
 		if (_cssPrefix === null){
@@ -1476,9 +1525,10 @@ brite.ua = {};
 	 */
 	brite.ua.mouseOnly = false; // TODO: temporary flag to force mouseOnly (while we add the window hybrid support)
 	brite.ua.hasTouch = function() {
-		var ht = (this.supportsEvent("touchstart") && !brite.ua.mouseOnly);
-		//console.log("has touch " + ht);
-		return ht;
+		if (_hasTouch === null){
+			_hasTouch = (this.supportsEvent("touchstart") && !brite.ua.mouseOnly);
+		}
+		return _hasTouch;
 	};
 
 	brite.ua.hasCanvas = function() {
@@ -1515,11 +1565,11 @@ brite.ua = {};
 
 	// ------ Privates ------ //
 	function hasStyle(styleName,styleVarName,sampleValue,withPrefix){
-			var div = document.createElement('div');
-			styleName = (withPrefix)?(brite.ua.cssPrefix() + styleName):styleName;
-			div.innerHTML = '<div style="' + styleName + ': ' + sampleValue + '"></div>';
-			styleVarName = (withPrefix)?(brite.ua.cssVarPrefix() + styleVarName):styleVarName;
-			return (div.firstChild.style[styleVarName])?true:false;		
+		var div = document.createElement('div');
+		styleName = (withPrefix)?(brite.ua.cssPrefix() + styleName):styleName;
+		div.innerHTML = '<div style="' + styleName + ': ' + sampleValue + '"></div>';
+		styleVarName = (withPrefix)?(brite.ua.cssVarPrefix() + styleVarName):styleVarName;
+		return (div.firstChild.style[styleVarName])?true:false;		
 	}
 	
 	var isEventSupported = (function() {
@@ -1554,6 +1604,9 @@ brite.ua = {};
 // ----------------------------------- //
 
 
+
+'use strict';
+
 var brite = brite || {};
 
 /**
@@ -1575,10 +1628,10 @@ var brite = brite || {};
 	var daoDic = {};
 
 	//data change listeners
-	var daoChangeEventListeners = {};
+	//var daoChangeEventListeners = {};
 
 	//daoListeners
-	var daoListeners = {};
+	//var daoListeners = {};
 
 	function getDao(objectType) {
 		var dao = daoDic[objectType];
@@ -1623,7 +1676,7 @@ var brite = brite || {};
 		daoObject._entityType = entityType;
 		daoObject._handler = daoHandler;
 
-		$.each(daoHandler, function(k, v) {
+		$.each(daoHandler, function(k) {
 			// if it is a function and not an internalMethods
 			if ($.isFunction(daoHandler[k]) && !internalMethods[k]) {
 				var methodName = k;
@@ -1942,7 +1995,7 @@ var brite = brite || {};
 	 */
 	$.fn.bEntity = function(entityType) {
 
-		var i, result = null;
+		var result = null;
 		// iterate and process each matched element
 		this.each(function() {
 			// ignore if we already found one
@@ -1990,7 +2043,6 @@ var brite = brite || {};
 	$.fn.bObjRef = function(objType) {
 		var resultList = [];
 
-		var obj = null;
 		// iterate and process each matched element
 		this.each(function() {
 			var $this = $(this);
@@ -2024,6 +2076,9 @@ var brite = brite || {};
 
 // ------ /LEGACY jQuery DAO Helper ------ //
 
+
+'use strict';
+
 var brite = brite || {};
 
 /**
@@ -2038,15 +2093,15 @@ brite.event = brite.event || {};
 	 * @param {jQuery Event} e the jquery event object 
 	 */
 	brite.event.fixTouchEvent = function(e){
-			if (brite.ua.hasTouch()) {
-					var oe = e.originalEvent;
-					if (oe.touches.length > 0) {
-							e.pageX = oe.touches[0].pageX;
-							e.pageY = oe.touches[0].pageY;
-					}
+		if (brite.ua.hasTouch()) {
+			var oe = e.originalEvent;
+			if (oe.touches.length > 0) {
+				e.pageX = oe.touches[0].pageX;
+				e.pageY = oe.touches[0].pageY;
 			}
-			
-			return e;
+		}
+		
+		return e;
 	};
 		
 	/**
@@ -2072,7 +2127,7 @@ brite.event = brite.event || {};
 // ------ /brite event helpers ------ //
 
 // ------ transition helper ------ //
-;(function($){
+(function($){
 	
 	/**
 	 * simple and convenient methods to perform css3 animations (takes care of the css prefix)
@@ -2117,19 +2172,17 @@ brite.event = brite.event || {};
 	var _dragging = false;
 	
 	var mouseEvents = {
-			start: "mousedown",
-			move: "mousemove",
-			end: "mouseup"
+		start: "mousedown",
+		move: "mousemove",
+		end: "mouseup"
 	};
 
 	var touchEvents = {
-			start: "touchstart",
-			move: "touchmove",
-			end: "touchend"
+		start: "touchstart",
+		move: "touchmove",
+		end: "touchend"
 	};
 	
-	 
-
 	function getTapEvents(){
 		if (brite.ua.hasTouch()){
 			return touchEvents;
@@ -2203,7 +2256,7 @@ brite.event = brite.event || {};
 	
 	// Note: those below are part of the drop events, but are not supported yet.
 	//       Need to think some more.
-	var BDRAGENTER="bdragenter",BDRAGOVER="bdragover",BDRAGLEAVE="bdragleave",BDROP="bdrop";
+	// var BDRAGENTER="bdragenter",BDRAGOVER="bdragover",BDRAGLEAVE="bdragleave",BDROP="bdrop";
 	
 	var dragThreshold = 5;
 	
@@ -2225,8 +2278,6 @@ brite.event = brite.event || {};
 		var tapEvents = getTapEvents();
 
 		$(this).on(tapEvents.start, handleObj.selector, function(event) {
-			var elem = this;
-			var $elem = $(this);
 			var dragStarted = false;
 			var startEvent = event;
 			var startPagePos = brite.event.eventPagePosition(startEvent);
@@ -2346,8 +2397,6 @@ brite.event = brite.event || {};
 				// old browser, just trigger the event since transition should not be supported anyway
 				triggerCustomEvent(this,jQuery.Event("btransitionend"),{type:"btransitionend"});
 			}
-		 
-
 		}
 
 	};   
