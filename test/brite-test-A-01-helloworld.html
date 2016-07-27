@@ -4,28 +4,30 @@
 			<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 			<title>briteUITest - brite</title>
 
-			<!-- Generic Test Includes -->
-			<link rel="stylesheet" href="css/test.css"/>
+			<!-- ****** Generic Test Includes ****** -->
+			<link rel="stylesheet" href="css/test.css"/>			
+			<link rel="stylesheet" href="../others/bootstrap/css/bootstrap.css" />
+
+			<!-- only brite.js dependency --> 			
 			<script type="text/javascript" src="../js-dependencies/jquery.js" ></script>
-			<!-- /Generic Test Includes -->
 
+			<!-- include the brite.min.js in prod -->
+			<script type="text/javascript" src="../dist/brite.js" ></script>
 
-			<!-- This is just for internal testing. In dev or prod, use brite-snapshot.js or brite.js (or the .min equivalent) -->
-			<script type="text/javascript" src="../src/js/brite.core.js" ></script>
-			<script type="text/javascript" src="../src/js/brite.dao.js" ></script>
-			<script type="text/javascript" src="../src/js/brite.event.js" ></script>
-
-			<script type="text/javascript" src="js/main.js" ></script>
+			<!-- some test utilities -->
+			<script type="text/javascript" src="../others/handlebars.min.js" ></script>			
+			<script type="text/javascript" src="js/main.js" ></script>		
+			<!-- ****** /Generic Test Includes ****** -->
 
 			<!-- Simple HelloWorld Component -->
 			<script type="text/javascript">
 				var helloWorlCount = 0;
 				
 				brite.registerComponent("helloWorld",
-				 {
+					{
 						// Tell to empty the parent before adding the output of built element
 						emptyParent: true
-				 },
+					},
 					
 					{// Build the component $element
 						create: function(data){
@@ -99,7 +101,8 @@
 		 
 			<script type="text/javascript">
 			$(document).ready(function(){
-					brite.display("helloWorld","#Unknown-container-test",{name:"Mike"});
+				// brite.js should console an error saying that this parent doesnot exist.
+				brite.display("helloWorld","#Unknown-container-test",{name:"Mike"});
 			});
 			</script>		 
 				

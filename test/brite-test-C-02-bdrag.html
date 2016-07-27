@@ -1,155 +1,158 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-	<title>brite - test - bdragstart, bdragmove, bdragend</title>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<title>brite - test - bdragstart, bdragmove, bdragend</title>
 
-	
-	<link rel="stylesheet" href="../others/bootstrap/css/bootstrap.css"/>
+		<!-- ****** Generic Test Includes ****** -->
+		<link rel="stylesheet" href="css/test.css"/>      
+		<link rel="stylesheet" href="../others/bootstrap/css/bootstrap.css" />
 
-	<!-- Generic Test Includes -->
-	<link rel="stylesheet" href="css/test.css"/>
-	<script type="text/javascript" src="../js-dependencies/jquery.js" ></script>
-	<!-- /Generic Test Includes -->
+		<!-- only brite.js dependency -->       
+		<script type="text/javascript" src="../js-dependencies/jquery.js" ></script>
 
-	<!-- This is just for internal testing. In dev or prod, use brite-snapshot.js or brite.js (or the .min equivalent) -->
-	<script type="text/javascript" src="../src/js/brite.core.js" ></script>
-	<script type="text/javascript" src="../src/js/brite.event.js" ></script>
-	
-	<script type="text/javascript">
-	// TEMPORARY FLAG until we fix he windows hybrid bug
-	// brite.ua.mouseOnly = true;
-	</script>
+		<!-- include the brite.min.js in prod -->
+		<script type="text/javascript" src="../dist/brite.js" ></script>
 
-	<style>
-		.demo-panel{
-			position: absolute;
-			width: 200px;
-			height: 300px;
-		}
-		.demo-panel .panel-heading{
-			cursor: pointer;
-			user-select: none;
-			-webkit-user-select: none;
-		}
-		.demo-panel .list-group{
-			height: 220px;
-			border: solid 1px red;
-			overflow: scroll;
-		}
-		.demo-panel .list-group-item{
-			position: relative;
-		}
+		<!-- some test utilities -->
+		<script type="text/javascript" src="../others/handlebars.min.js" ></script>     
+		<script type="text/javascript" src="js/main.js" ></script>    
+		<!-- ****** /Generic Test Includes ****** -->
 
-		.demo-panel .drag-handle{
-			cursor: pointer;
-			position: absolute;
-			top: 2px; bottom: 2px; left: 2px;
-			width: 10px;
-			background: #ddd;
-			user-select: none;
-			-webkit-user-select: none;
-		}
+		<script type="text/javascript">
+		// TEMPORARY FLAG until we fix he windows hybrid bug
+		// brite.ua.mouseOnly = true;
+		</script>
 
-		.demo-panel.list-b{
-			height: 340px;
-			padding: 15px;
-			background-color:#ddd;
-		}
-		.demo-panel.list-b .panel-body{
-			background: white;
-		}
-
-		.drag-helper{
-			position: absolute;
-			width: 100px;
-			background: #efefef;
-			padding: 10px;
-			color: red;
-		}
-	</style>
-
-	<script type="text/javascript">
-	$(function(){
-		var itemSize = 20;
-		// populate data for each panel
-		$(".demo-panel").each(function(){
-			var i;
-			var $demoPanel = $(this);
-			var htmls = [];
-			for (i = 0; i < itemSize; i++){
-				htmls.push('<li class="list-group-item"><div class="drag-handle"></div>Item - ' + i + '</li>');
+		<style>
+			.demo-panel{
+				position: absolute;
+				width: 200px;
+				height: 300px;
 			}
-			$demoPanel.find(".list-group").html(htmls.join("\n"));
-		});
-
-		function dragPanel(event,extra){
-			var $panelHeading = $(this);
-			var $panel = $panelHeading.closest(".panel");
-			var pos = $panel.position();
-			var top = pos.top + event.bextra.deltaY;
-			var left = pos.left + event.bextra.deltaX;
-			$panel.css({top: top + "px",left: left + "px"});			
-		}
-
-		function dragItemStart(event,extra){
-			var $dragHandle = $(this);
-			var $li = $dragHandle.closest("li");
-			var $helper = $("<div class='drag-helper'>dragging</div>");
-			$("body").append($helper);
-			var offset = $dragHandle.offset();
-			$helper.css({top: offset.top - 15 + "px",left: offset.left - 15 + "px"});
-			$dragHandle.data("$helper",$helper);
-		}
-
-		function dragItemMove(event,extra){
-			var $dragHandle = $(this);
-			var $helper = $dragHandle.data("$helper");
-			var pos = $helper.position();
-			var top = pos.top + event.bextra.deltaY;
-			var left = pos.left + event.bextra.deltaX;
-			$helper.css({top: top + "px",left: left + "px"});
-		}
-
-		function dragItemEnd(event,extra){
-			var $dragHandle = $(this);
-			var $helper = $dragHandle.data("$helper");
-			if ($helper){
-				$helper.remove();
+			.demo-panel .panel-heading{
+				cursor: pointer;
+				user-select: none;
+				-webkit-user-select: none;
 			}
-		}
+			.demo-panel .list-group{
+				height: 220px;
+				border: solid 1px red;
+				overflow: scroll;
+			}
+			.demo-panel .list-group-item{
+				position: relative;
+			}
 
-		// TEST with drag on handlers only. 
-		// Enable drag on .panel from the .panel-heading, using delegate
-		$(".list-a").on("bdragmove",".panel-heading",dragPanel);
-		// enable drag on .list-group-item via .drag-handle
-		$(".list-a").on("bdragstart",".drag-handle",dragItemStart);
-		$(".list-a").on("bdragmove",".drag-handle",dragItemMove);	
-		$(".list-a").on("bdragend",".drag-handle",dragItemEnd);
+			.demo-panel .drag-handle{
+				cursor: pointer;
+				position: absolute;
+				top: 2px; bottom: 2px; left: 2px;
+				width: 10px;
+				background: #ddd;
+				user-select: none;
+				-webkit-user-select: none;
+			}
 
+			.demo-panel.list-b{
+				height: 340px;
+				padding: 15px;
+				background-color:#ddd;
+			}
+			.demo-panel.list-b .panel-body{
+				background: white;
+			}
 
-		// TEST with drag on container as well
-		// TODO: need to fix bdrag because with this option, 
-		//       does not work on touch devices (cannot scroll the list)
-		$(".list-b").on("bdragmove",function(event,extra){
-			var $target = $(event.target);
-			if ($target.hasClass("panel")){
+			.drag-helper{
+				position: absolute;
+				width: 100px;
+				background: #efefef;
+				padding: 10px;
+				color: red;
+			}
+		</style>
+
+		<script type="text/javascript">
+		$(function(){
+			var itemSize = 20;
+			// populate data for each panel
+			$(".demo-panel").each(function(){
+				var i;
+				var $demoPanel = $(this);
+				var htmls = [];
+				for (i = 0; i < itemSize; i++){
+					htmls.push('<li class="list-group-item"><div class="drag-handle"></div>Item - ' + i + '</li>');
+				}
+				$demoPanel.find(".list-group").html(htmls.join("\n"));
+			});
+
+			function dragPanel(event,extra){
 				var $panelHeading = $(this);
 				var $panel = $panelHeading.closest(".panel");
 				var pos = $panel.position();
 				var top = pos.top + event.bextra.deltaY;
 				var left = pos.left + event.bextra.deltaX;
-				$panel.css({top: top + "px",left: left + "px"});				
+				$panel.css({top: top + "px",left: left + "px"});			
 			}
-		});		
-		// enable drag on .list-group-item via .drag-handle
-		$(".list-b").on("bdragstart",".drag-handle",dragItemStart);
-		$(".list-b").on("bdragmove",".drag-handle",dragItemMove);	
-		$(".list-b").on("bdragend",".drag-handle",dragItemEnd);		
 
-	});
-	</script>
-</head>
+			function dragItemStart(event,extra){
+				var $dragHandle = $(this);
+				//var $li = $dragHandle.closest("li");
+				var $helper = $("<div class='drag-helper'>dragging</div>");
+				$("body").append($helper);
+				var offset = $dragHandle.offset();
+				$helper.css({top: offset.top - 15 + "px",left: offset.left - 15 + "px"});
+				$dragHandle.data("$helper",$helper);
+			}
+
+			function dragItemMove(event,extra){
+				var $dragHandle = $(this);
+				var $helper = $dragHandle.data("$helper");
+				var pos = $helper.position();
+				var top = pos.top + event.bextra.deltaY;
+				var left = pos.left + event.bextra.deltaX;
+				$helper.css({top: top + "px",left: left + "px"});
+			}
+
+			function dragItemEnd(event,extra){
+				var $dragHandle = $(this);
+				var $helper = $dragHandle.data("$helper");
+				if ($helper){
+					$helper.remove();
+				}
+			}
+
+			// TEST with drag on handlers only. 
+			// Enable drag on .panel from the .panel-heading, using delegate
+			$(".list-a").on("bdragmove",".panel-heading",dragPanel);
+			// enable drag on .list-group-item via .drag-handle
+			$(".list-a").on("bdragstart",".drag-handle",dragItemStart);
+			$(".list-a").on("bdragmove",".drag-handle",dragItemMove);	
+			$(".list-a").on("bdragend",".drag-handle",dragItemEnd);
+
+
+			// TEST with drag on container as well
+			// TODO: need to fix bdrag because with this option, 
+			//       does not work on touch devices (cannot scroll the list)
+			$(".list-b").on("bdragmove",function(event,extra){
+				var $target = $(event.target);
+				if ($target.hasClass("panel")){
+					var $panelHeading = $(this);
+					var $panel = $panelHeading.closest(".panel");
+					var pos = $panel.position();
+					var top = pos.top + event.bextra.deltaY;
+					var left = pos.left + event.bextra.deltaX;
+					$panel.css({top: top + "px",left: left + "px"});				
+				}
+			});		
+			// enable drag on .list-group-item via .drag-handle
+			$(".list-b").on("bdragstart",".drag-handle",dragItemStart);
+			$(".list-b").on("bdragmove",".drag-handle",dragItemMove);	
+			$(".list-b").on("bdragend",".drag-handle",dragItemEnd);		
+
+		});
+		</script>
+	</head>
 <body>
 
 <div class="panel panel-primary demo-panel list-a" style="top:100px;left:100px">

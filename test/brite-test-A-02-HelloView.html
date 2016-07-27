@@ -1,31 +1,33 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 		<head>
-				<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-				<title>briteUITest - brite</title>
+			<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+			<title>briteUITest - brite</title>
+			
+			<!-- ****** Generic Test Includes ****** -->
+			<link rel="stylesheet" href="css/test.css"/>			
+			<link rel="stylesheet" href="../others/bootstrap/css/bootstrap.css" />
 
-		<!-- Generic Test Includes -->
-		<link rel="stylesheet" href="css/test.css"/>
-		<script type="text/javascript" src="../js-dependencies/jquery.js" ></script>
-		<!-- /Generic Test Includes -->
-		
-		<!-- We are using jQuery Render here, but can use any templating engine -->
-		<script type="text/javascript" src="../others/handlebars.min.js" ></script>
-		
-		<!-- This is just for internal testing. In dev or prod, use brite-snapshot.js or brite.js (or the .min equivalent) -->
-		<script type="text/javascript" src="../src/js/brite.core.js" ></script>
-		<!-- /Brite Lib --> 
-		
-		<script type="text/javascript" src="js/main.js"></script>
-		<script type="text/javascript" src="js/HelloView.js"></script>
-		
-		<script type="text/javascript">
-		$(function(){
-			$("#helloButton").on("click",function(){
-				brite.display("HelloView","#HelloWorld-Container",{name:"Mike"});
-			})			
-		})
-		</script>		
+			<!-- only brite.js dependency --> 			
+			<script type="text/javascript" src="../js-dependencies/jquery.js" ></script>
+
+			<!-- include the brite.min.js in prod -->
+			<script type="text/javascript" src="../dist/brite.js" ></script>
+
+			<!-- some test utilities -->
+			<script type="text/javascript" src="../others/handlebars.min.js" ></script>			
+			<script type="text/javascript" src="js/main.js" ></script>		
+			<!-- ****** /Generic Test Includes ****** -->
+				
+			<script type="text/javascript" src="js/HelloView.js"></script>
+			
+			<script type="text/javascript">
+			$(function(){
+				$("#helloButton").on("click",function(){
+					brite.display("HelloView","#HelloWorld-Container",{name:"Mike"});
+				});	
+			});
+			</script>		
 		
 		</head>
 		<body>

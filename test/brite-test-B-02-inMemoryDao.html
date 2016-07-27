@@ -1,172 +1,177 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
-  <head>
-      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-      <title>briteUITest - brite.dao</title>
-  
-  <!-- Generic Test Includes -->
-  <link rel="stylesheet" href="css/test.css"/>
-  <script type="text/javascript" src="js/testunit.js" ></script>
-  <script type="text/javascript" src="../js-dependencies/jquery.js" ></script>
-  <!-- /Generic Test Includes -->
-  
-  <!-- This is just for internal testing. In dev or prod, use brite-snapshot.js or brite.js (or the .min equivalent) -->
-  <script type="text/javascript" src="../src/js/brite.core.js" ></script>
-  <script type="text/javascript" src="../src/js/brite.dao.js" ></script>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<title>briteUITest - brite.dao</title>
+	
+		<!-- ****** Generic Test Includes ****** -->
+		<link rel="stylesheet" href="css/test.css"/>      
+		<link rel="stylesheet" href="../others/bootstrap/css/bootstrap.css" />
 
-  <!-- Note: the DaoHandlers are not part of the brite.js file, so, include them seperately --> 
-  <script type="text/javascript" src="../extra/brite.InMemoryDaoHandler.js" ></script>
-  
-  <style type="text/css">
-    #testList li{
-      font-family: monospace;
-    }
-  </style>
-  
-  
-  <script type="text/javascript">
-    var usersSeed = [{id:"001",name:"Mike Donavan",city:"San Francisco"},
-                     {id:"002",name:"Jennifer Aniston",city:"Los Angeles"}];
-                     
-    var dao = brite.registerDao(new brite.InMemoryDaoHandler("User",usersSeed));
-  </script>
-  
-  
-  </head>
-  <body>
-    <h2>InMemory DAO</h2>
-  
-  	<div class="">
-  		<h3>Test List</h3>
-  		<ul id="testList">
-  		</ul>
-  		
-  		<script type="text/javascript">
-      $(function(){
-        
-        var userDao = brite.dao("User");
+		<!-- only brite.js dependency -->       
+		<script type="text/javascript" src="../js-dependencies/jquery.js" ></script>
 
-        // Test 001
-        userDao.get("001").done(function(user){
-          assertEqual("brite.dao.get","Mike Donavan",user.name);
-        });
-        
-        var newUserId = null;
-        // test create
-        userDao.create({name:"John Doe",city:"New York"}).done(function(newUser){
-           assertEqual("brite.dao.create John Doe (user.name match)","John Doe",newUser.name);
-           assertNotNull("brite.dao.create John Doe (user.id exist)",newUser.id,"user.id");    
-           newUserId = newUser.id;     
-        });
-        
-        // test delete
-        userDao.delete(newUserId).done(function(userIdRemoved){
-          assertEqual("brite.dao.remove John Doe",newUserId,userIdRemoved);
-          
-          userDao.get(newUserId).done(function(johnUser){
-            assertNull("brite.dao.remove John Doe",johnUser,"userId");
-          });
-        });
-        
-        // test deleteMany
-        $.when(userDao.create({name:"John Doe",city:"New York"}),userDao.create({name:"Rachel Lake",city:"Tahoe"}))
-        .done(function(newUser1,newUser2){
-          var ids = [newUser1.id,newUser2.id];
-          userDao.deleteMany(ids).done(function(){
-            userDao.list().done(function(l){
-              assertEqual("brite.dao.removeAll",2,l.length);
-            });
-          });
-        });
-        
-        // test update (update user 001 city to "Paris")
-        userDao.get("001").done(function(user001){
-          assertEqual("brite.dao.update","San Francisco",user001.city);
-          user001.city = "Paris";
-          // check that it did not change the store (since we just modified the obj reference and did not call .update). 
-          userDao.get("001").done(function(checkUser001){
-            // should still be "San Francisco"
-            assertEqual("brite.dao.update","San Francisco",checkUser001.city);
-            
-            // now, do the real update user001
-            user001.id = "001";
-            userDao.update(user001).done(function(updatedUser001){
-              assertEqual("brite.dao.update","Paris",updatedUser001.city);
-              
-              // double check that the store really changed
-              userDao.get("001").done(function(doubleCheckUser001){
-                assertEqual("brite.dao.update","Paris",doubleCheckUser001.city);
-              });
-            });
-          });          
-        });  
-        
-        // test list
-        userDao.list({match:{city:"Paris"}}).done(function(userList){
-          assertEqual("brite.dao.list (Paris=1)",1,userList.length);        
-        });        
+		<!-- include the brite.min.js in prod -->
+		<script type="text/javascript" src="../dist/brite.js" ></script>
 
-        // create another user in paris
-        userDao.create({name:"Flo C",city:"Paris"}).done(function(newParisUser){
-          assertEqual("brite.dao.create (Paris)","Paris",newParisUser.city);
-          // we list everybody in paris (should have 2)
-          userDao.count({city:"Paris"}).done(function(count){
-            assertEqual("brite.dao.count (Paris=2)",2,count);
-            
-            // move Paris people to New York
-            userDao.batchUpdate({city:"New York"},{city:"Paris"}).done(function(updatedItems){
-                assertEqual("brite.dao.batchUpdate (Paris to New York = 2)",2,updatedItems.length);
-                // Check we have 2 in new york
-                userDao.list({match:{city:"New York"}}).done(function(userList){
-                  assertEqual("brite.dao.list updated (New York = 2)",2,userList.length);
-                  // delete all New York people
-                  userDao.batchDelete({city:"New York"}).done(function(deletedList){
-                    assertEqual("brite.dao.batchDelete (New York)",2,deletedList.length);
-                    
-                    // check nobody in New York
-                    userDao.list({match:{city:"New York"}}).done(function(userList){
-                      assertEqual("brite.dao.list updated (New York = 0)",0,userList.length);
-                    });
-                  });
-                });                
-            });
-            
-          });              
-        });
-                
+		<!-- some test utilities -->
+		<script type="text/javascript" src="../others/handlebars.min.js" ></script>     
+		<script type="text/javascript" src="js/main.js" ></script>    
+		<!-- ****** /Generic Test Includes ****** -->
 
-      });
-      
-  		</script>
-  		<script type="text/javascript">
-      $(function(){
-        function CustomDaoHandler(entityType,seed, opts){
-          this.constructor._super.constructor.call(this,entityType,seed, opts);
-        }
-        brite.inherit(CustomDaoHandler,brite.InMemoryDaoHandler);
-        
-        CustomDaoHandler.prototype.remove = function(id){
-          return this.delete(id);
-        }
-        
-        var taskSeed = [{id:"001",name:"Mike Donavan"},
-                     {id:"002",name:"Jennifer Aniston"}];
-                     
-        var dao = brite.registerDao(new CustomDaoHandler("Task",taskSeed));
-        var hasTrigger = false;
-        brite.dao.onDataChange("Task",function(){
-          hasTrigger = true;
-        },"testDataChange");
-        dao.remove("001");
-        
-        setTimeout(function(){
-          assertEqual("brite.dao.remove dataChange",true,hasTrigger);
-          brite.dao.offDataChange("testDataChange");
-        },500);
-        
+		<script type="text/javascript" src="js/testunit.js" ></script>
+		
+		<!-- Note: the DaoHandlers are not part of the brite.js file, so, include them seperately --> 
+		<script type="text/javascript" src="../extra/brite.InMemoryDaoHandler.js" ></script>
+		
+		<style type="text/css">
+			#testList li{
+				font-family: monospace;
+			}
+		</style>
+		
+		
+		<script type="text/javascript">
+			var usersSeed = [{id:"001",name:"Mike Donavan",city:"San Francisco"},
+											{id:"002",name:"Jennifer Aniston",city:"Los Angeles"}];
+											
+			brite.registerDao(new brite.InMemoryDaoHandler("User",usersSeed));
+		</script>
+	
+	
+	</head>
+	<body>
+		<h2>InMemory DAO</h2>
+	
+		<div class="">
+			<h3>Test List</h3>
+			<ul id="testList">
+			</ul>
+			
+<script type="text/javascript">
+$(function(){
+	
+	var userDao = brite.dao("User");
 
-      });
-      
-  		</script>
-  </body>
+	// Test 001
+	userDao.get("001").done(function(user){
+		assertEqual("brite.dao.get","Mike Donavan",user.name);
+	});
+	
+	var newUserId = null;
+	// test create
+	userDao.create({name:"John Doe",city:"New York"}).done(function(newUser){
+		assertEqual("brite.dao.create John Doe (user.name match)","John Doe",newUser.name);
+		assertNotNull("brite.dao.create John Doe (user.id exist)",newUser.id,"user.id");    
+		newUserId = newUser.id;     
+	});
+	
+	// test delete
+	userDao.delete(newUserId).done(function(userIdRemoved){
+		assertEqual("brite.dao.remove John Doe",newUserId,userIdRemoved);
+		
+		userDao.get(newUserId).done(function(johnUser){
+			assertNull("brite.dao.remove John Doe",johnUser,"userId");
+		});
+	});
+	
+	// test deleteMany
+	$.when(userDao.create({name:"John Doe",city:"New York"}),userDao.create({name:"Rachel Lake",city:"Tahoe"}))
+	.done(function(newUser1,newUser2){
+		var ids = [newUser1.id,newUser2.id];
+		userDao.deleteMany(ids).done(function(){
+			userDao.list().done(function(l){
+				assertEqual("brite.dao.removeAll",2,l.length);
+			});
+		});
+	});
+	
+	// test update (update user 001 city to "Paris")
+	userDao.get("001").done(function(user001){
+		assertEqual("brite.dao.update","San Francisco",user001.city);
+		user001.city = "Paris";
+		// check that it did not change the store (since we just modified the obj reference and did not call .update). 
+		userDao.get("001").done(function(checkUser001){
+			// should still be "San Francisco"
+			assertEqual("brite.dao.update","San Francisco",checkUser001.city);
+			
+			// now, do the real update user001
+			user001.id = "001";
+			userDao.update(user001).done(function(updatedUser001){
+				assertEqual("brite.dao.update","Paris",updatedUser001.city);
+				
+				// double check that the store really changed
+				userDao.get("001").done(function(doubleCheckUser001){
+					assertEqual("brite.dao.update","Paris",doubleCheckUser001.city);
+				});
+			});
+		});          
+	});  
+	
+	// test list
+	userDao.list({match:{city:"Paris"}}).done(function(userList){
+		assertEqual("brite.dao.list (Paris=1)",1,userList.length);        
+	});        
+
+	// create another user in paris
+	userDao.create({name:"Flo C",city:"Paris"}).done(function(newParisUser){
+		assertEqual("brite.dao.create (Paris)","Paris",newParisUser.city);
+		// we list everybody in paris (should have 2)
+		userDao.count({city:"Paris"}).done(function(count){
+			assertEqual("brite.dao.count (Paris=2)",2,count);
+			
+			// move Paris people to New York
+			userDao.batchUpdate({city:"New York"},{city:"Paris"}).done(function(updatedItems){
+				assertEqual("brite.dao.batchUpdate (Paris to New York = 2)",2,updatedItems.length);
+				// Check we have 2 in new york
+				userDao.list({match:{city:"New York"}}).done(function(userList){
+					assertEqual("brite.dao.list updated (New York = 2)",2,userList.length);
+					// delete all New York people
+					userDao.batchDelete({city:"New York"}).done(function(deletedList){
+						assertEqual("brite.dao.batchDelete (New York)",2,deletedList.length);
+						
+						// check nobody in New York
+						userDao.list({match:{city:"New York"}}).done(function(userList){
+							assertEqual("brite.dao.list updated (New York = 0)",0,userList.length);
+						});
+					});
+				});                
+			});
+			
+		});              
+	});
+					
+
+});
+
+</script>
+<script type="text/javascript">
+$(function(){
+	function CustomDaoHandler(entityType,seed, opts){
+		this.constructor._super.constructor.call(this,entityType,seed, opts);
+	}
+	brite.inherit(CustomDaoHandler,brite.InMemoryDaoHandler);
+	
+	CustomDaoHandler.prototype.remove = function(id){
+		return this.delete(id);
+	};
+	
+	var taskSeed = [{id:"001",name:"Mike Donavan"},
+							{id:"002",name:"Jennifer Aniston"}];
+							
+	var dao = brite.registerDao(new CustomDaoHandler("Task",taskSeed));
+	var hasTrigger = false;
+	brite.dao.onDataChange("Task",function(){
+		hasTrigger = true;
+	},"testDataChange");
+	dao.remove("001");
+	
+	setTimeout(function(){
+		assertEqual("brite.dao.remove dataChange",true,hasTrigger);
+		brite.dao.offDataChange("testDataChange");
+	},500);
+});			
+</script>
+
+	</body>
 </html>

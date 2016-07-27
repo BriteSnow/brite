@@ -1,42 +1,53 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <meta name="viewport" content="initial-scale=1.0; maximum-scale=1.0"/>
-    <title>brite - test - utils</title>
-    <!-- Generic Test Includes -->
-    <link rel="stylesheet" href="css/test.css"/>
-    <script type="text/javascript" src="../js-dependencies/jquery.js" ></script>
-    <!-- /Generic Test Includes -->
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<meta name="viewport" content="initial-scale=1.0; maximum-scale=1.0"/>
+		<title>brite - test - utils</title>
+		
+		<!-- ****** Generic Test Includes ****** -->
+		<link rel="stylesheet" href="css/test.css"/>      
+		<link rel="stylesheet" href="../others/bootstrap/css/bootstrap.css" />
 
-    <!-- This is just for internal testing. In dev or prod, use brite-snapshot.js or brite.js (or the .min equivalent) -->
-    <script type="text/javascript" src="../src/js/brite.core.js" ></script>
-    <style>
-      #msg{
-        margin: 10px;
-        border: dotted 1px #ddd;
-        padding: 5px;
-      }
-      
-    </style>
-  </head>
-  <body>
-    <h2>bPosition</h2>
-    <div class="sTestSrc sTestShowSrc">
-      <div id="msg">
-      </div>
-      
-      <script type="text/javascript">
-        $( function() {
-          var $msg = $("#msg");
-          var r;
-          
-          // test brite.substract
-          r = brite.substract({a:24,b:8},{a:12,b:12});
-          $msg.append("<p>brite.substract (should be 12/-4): " + r.a + "/" + r.b + "</p>");
-          
-        });
-      </script>
-    </div>
-  </body>
+		<!-- only brite.js dependency -->       
+		<script type="text/javascript" src="../js-dependencies/jquery.js" ></script>
+
+		<!-- include the brite.min.js in prod -->
+		<script type="text/javascript" src="../dist/brite.js" ></script>
+
+		<!-- some test utilities -->
+		<script type="text/javascript" src="../others/handlebars.min.js" ></script>     
+		<script type="text/javascript" src="js/main.js" ></script>    
+		<!-- ****** /Generic Test Includes ****** -->
+
+		<!-- This is just for internal testing. In dev or prod, use brite-snapshot.js or brite.js (or the .min equivalent) -->
+		<script type="text/javascript" src="../src/js/brite.core.js" ></script>
+		<style>
+			#msg{
+				margin: 10px;
+				border: dotted 1px #ddd;
+				padding: 5px;
+			}
+			
+		</style>
+	</head>
+	<body>
+		<h2>bPosition</h2>
+		<div class="sTestSrc sTestShowSrc">
+			<div id="msg">
+			</div>
+			
+			<script type="text/javascript">
+				$( function() {
+					var $msg = $("#msg");
+					var r;
+					
+					// test brite.substract
+					r = brite.substract({a:24,b:8},{a:12,b:12});
+					$msg.append("<p>brite.substract (should be 12/-4): " + r.a + "/" + r.b + "</p>");
+					
+				});
+			</script>
+		</div>
+	</body>
 </html>

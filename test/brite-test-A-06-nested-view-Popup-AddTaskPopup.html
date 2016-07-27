@@ -3,23 +3,23 @@
 		<head>
 		
 			<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-			<title>briteUITest - netsted view popup</title>
+			<title>briteUITest - nested view popup</title>
 
-			<!-- Generic Test Includes -->
-			<link rel="stylesheet" href="css/test.css"/>
-			<link rel="stylesheet" href="../others/bootstrap/css/bootstrap.min.css" />
-			
-			
+			<!-- ****** Generic Test Includes ****** -->
+			<link rel="stylesheet" href="css/test.css"/>			
+			<link rel="stylesheet" href="../others/bootstrap/css/bootstrap.css" />
+
+			<!-- only brite.js dependency --> 			
 			<script type="text/javascript" src="../js-dependencies/jquery.js" ></script>
-			<!-- /Generic Test Includes -->
 
-			<!-- This is just for internal testing. In dev or prod, use brite-snapshot.js or brite.js (or the .min equivalent) -->
-			<script type="text/javascript" src="../src/js/brite.core.js" ></script>
-			<script type="text/javascript" src="../src/js/brite.dao.js" ></script>
-			<script type="text/javascript" src="../src/js/brite.event.js" ></script>
+			<!-- include the brite.min.js in prod -->
+			<script type="text/javascript" src="../dist/brite.js" ></script>
+
+			<!-- some test utilities -->
+			<script type="text/javascript" src="../others/handlebars.min.js" ></script>			
+			<script type="text/javascript" src="js/main.js" ></script>		
+			<!-- ****** /Generic Test Includes ****** -->
 			
-			<script type="text/javascript" src="../others/handlebars.min.js" ></script>
-			<script type="text/javascript" src="js/main.js" ></script>
 
 			<script type="text/javascript" src="js/Popup.js" ></script>
 			<script type="text/javascript" src="js/AddTaskPopup.js" ></script>

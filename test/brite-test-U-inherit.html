@@ -1,47 +1,51 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-        <title>briteUITest - Test Inerit</title>
+  <head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<title>briteUITest - Test Inerit</title>
 
-        <!-- Generic Test Includes -->
-        <link rel="stylesheet" href="css/test.css"/>
-        <script type="text/javascript" src="../js-dependencies/jquery.js" ></script>
-        <!-- /Generic Test Includes -->
+		<!-- ****** Generic Test Includes ****** -->
+		<link rel="stylesheet" href="css/test.css"/>      
+		<link rel="stylesheet" href="../others/bootstrap/css/bootstrap.css" />
 
-        <!-- This is just for internal testing. In dev or prod, use brite-snapshot.js or brite.js (or the .min equivalent) -->
-        <script type="text/javascript" src="../src/js/brite.core.js" ></script>
-        
-    </head>
-    <body>
-        <h2>brite.inherit</h2>
-        <p>car.printSpec: <span id="car_printSpec"></span></p>
-    
-    <script type="text/javascript">
-        function Vehicule(){
-        }
-        
-        Vehicule.prototype.printSpec = function(name){
-          var dispName = name || "vehicule";
-          return "This " + dispName + " has " + this.wheels + " wheels";  
-        }        
-        
-        function Car(wheels){
-          this.wheels= wheels;
-        }
-        
-        brite.inherit(Car,Vehicule);
-        
-        Car.prototype.printSpec = function(){
-          return Car._super.printSpec.call(this,"car");
-        }
-            
-      $(function(){
-        
-        var car1 = new Car(4);
-        $("#car_printSpec").html(car1.printSpec());
-        
-      });
-    </script>
-    </body>
+		<!-- only brite.js dependency -->       
+		<script type="text/javascript" src="../js-dependencies/jquery.js" ></script>
+
+		<!-- include the brite.min.js in prod -->
+		<script type="text/javascript" src="../dist/brite.js" ></script>
+
+		<!-- some test utilities -->
+		<script type="text/javascript" src="../others/handlebars.min.js" ></script>     
+		<script type="text/javascript" src="js/main.js" ></script>    
+		<!-- ****** /Generic Test Includes ****** -->
+	</head>
+	<body>
+		<h2>brite.inherit</h2>
+		<p>car.printSpec: <span id="car_printSpec"></span></p>
+	
+		<script type="text/javascript">
+			function Vehicule(){
+			}
+			
+			Vehicule.prototype.printSpec = function(name){
+				var dispName = name || "vehicule";
+				return "This " + dispName + " has " + this.wheels + " wheels";  
+			};    
+			
+			function Car(wheels){
+				this.wheels= wheels;
+			}
+			
+			brite.inherit(Car,Vehicule);
+			
+			Car.prototype.printSpec = function(){
+				return Car._super.printSpec.call(this,"car");
+			};
+				
+			$(function(){
+				var car1 = new Car(4);
+				$("#car_printSpec").html(car1.printSpec());		
+			});
+		</script>
+	</body>
 </html>

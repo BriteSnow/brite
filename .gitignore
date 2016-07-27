@@ -8,7 +8,7 @@ dev/
 *.sublime-project
 *.sublime-workspace
 
-node_modules
+node_modules/
 
 # Ignore Custom scripts
 britedoc.sh
