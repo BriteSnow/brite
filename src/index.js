@@ -6,7 +6,7 @@ var event = require("./brite-event.js");
 
 require("./brite-jquery-plugins.js");
 
-var version = "1.1.6";
+var version = "1.1.7-SNAPSHOT";
 
 module.exports = {
 	version: version,
