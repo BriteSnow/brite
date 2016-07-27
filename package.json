@@ -1,6 +1,6 @@
 {
   "name": "brite",
-  "version": "1.1.5",
+  "version": "1.1.6",
   "description": "DOM Centric Minimalistic MVC Framework",
   "author": "Jeremy Chone <jeremy.chone@gmail.com>",
   "main": "src/index.js",
@@ -15,8 +15,7 @@
   "directories": {
     "test": "test"
   },
-  "dependencies": {
-  },
+  "dependencies": {},
   "devDependencies": {
     "gulp-concat": "^2.6.0",
     "gulp": "^3.9.1",
