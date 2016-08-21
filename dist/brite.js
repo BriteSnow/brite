@@ -2402,6 +2402,8 @@ utils.flushUI = function(){
 };
 
 },{"./brite-ua.js":5}],7:[function(require,module,exports){
+var version = "1.1.7-SNAPSHOT";
+
 var core = require("./brite-core.js");
 var ua = require("./brite-ua.js");
 var dao = require("./brite-dao.js");
@@ -2410,7 +2412,7 @@ var event = require("./brite-event.js");
 
 require("./brite-jquery-plugins.js");
 
-var version = "1.1.7-SNAPSHOT";
+
 
 module.exports = {
 	version: version,
