@@ -1,4 +1,15 @@
-# brite.js
+# Next Gen DOM Native MVC Lib >> [mvdom](https://github.com/mvdom/mvdom)
+
+**For new project, checkout [mvdom - DOM Native MVC Library](https://github.com/mvdom/mvdom)**, a completely rewritten library for modern browsers (chrome, firefox, safari, chrominium Edge), with fully leverage the DOM Native component model (i.e., customElement/WebComponent). 
+
+Go to **[mvdom](https://github.com/mvdom/mvdom)**
+
+
+# britejs Deprecation Notice
+
+The documentation below is just for previous applications using britejs micro-library. **For new project, please checkout [mvdom](https://github.com/mvdom/mvdom)**, it's over 20x smaller as it has no jquery or any other dependencies (5kb compressed all included), fully embrace DOM Native Custom Element APIs (that are game changer for component model), and have simpler and more powerful APIs. britejs was a key inspiration for [mvdom](https://github.com/mvdom/mvdom), but given the new mvdom scope, a full rewrite was required. 
+
+# brite.js (legacy library)
 brite.js is a simple but powerful DOM centric MVC (D-MVC) framework for building high-end HTML5 applications.
 The driving concept is to just add the missing MVC pieces to the DOM rather than force fitting Desktop MVC
 and Widget patterns to the DOM. The result is simpler, easier to optimize, and more scalable HTML/CSS/JS
